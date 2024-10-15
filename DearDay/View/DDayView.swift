@@ -11,8 +11,8 @@ struct DDayView: View {
     var body: some View {
         NavigationStack {
             List(sampleDDays) { dday in
-                NavigationLink(destination: DDayDetailView(title: dday.title, date: dday.date)) {
-                    DDayCardView(title: dday.title, date: dday.date)
+                NavigationLink(destination: DDayDetailView(title: dday.title, date: dday.date, startFromDayOne: dday.startFromDayOne)) {
+                    DDayCardView(title: dday.title, date: dday.date, startFromDayOne: dday.startFromDayOne)
                 }
             }
             .listStyle(.grouped)

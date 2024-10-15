@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct DDayDetailView: View {
+    @State private var showingAnniversarySheet: Bool = false
+    
     var title: String
     var date: Date
+    var startFromDayOne: Bool
     
     var body: some View {
         NavigationStack {
@@ -23,7 +26,7 @@ struct DDayDetailView: View {
                     Image("SampleImage1")
                         .resizable()
                         .scaledToFit()
-                    Text(DateFormatterManager.shared.calculateDDayAsDayOne(from: date))
+                    Text(DateFormatterManager.shared.calculateDDay(from: date, startFromDayOne: startFromDayOne))
                         .foregroundColor(.gray)
                         .font(.largeTitle)
                         .fontWeight(.bold)
@@ -46,7 +49,7 @@ struct DDayDetailView: View {
                 }
                 ToolbarItem(placement: .bottomBar) {
                     Button {
-                        print("Setting Button Tap")
+                        showingAnniversarySheet.toggle()
                     } label: {
                         Text("기념일 보기")
                             .foregroundStyle(.gray)
@@ -54,12 +57,16 @@ struct DDayDetailView: View {
                     }
                 }
             }
+            .sheet(isPresented: $showingAnniversarySheet, content: {
+                AnniversaryView(date: date, startFromDayOne: startFromDayOne)
+                    .presentationDetents([.medium])
+            })
         }
     }
 }
 
 #Preview {
-    DDayDetailView(title: "COMET", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 22))!)
+    DDayDetailView(title: "COMET", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 22))!, startFromDayOne: true)
 }
 
 

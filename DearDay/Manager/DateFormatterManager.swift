@@ -18,23 +18,14 @@ final class DateFormatterManager {
         return dateFormatter.string(from: date)
     }
     
-    // Function to calculate D-day, treating the start date as Day 0
-    func calculateDDayAsDayZero(from date: Date) -> String {
+    // Unified function to calculate D-day with Day 0 or Day 1 option
+    func calculateDDay(from date: Date, startFromDayOne: Bool) -> String {
         let calendar = Calendar.current
         let components = calendar.dateComponents([.day], from: date, to: Date())
+        
         if let dayDifference = components.day {
-            return dayDifference >= 0 ? "+\(dayDifference)" : "\(dayDifference - 1)"
-        }
-        return "N/A"
-    }
-    
-    // Function to calculate D-day, treating the start date as Day 1
-    func calculateDDayAsDayOne(from date: Date) -> String {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.day], from: date, to: Date())
-        if let dayDifference = components.day {
-            let ddayValue = dayDifference + 1  // Treat start date as Day 1
-            return ddayValue >= 0 ? "+\(ddayValue)" : "\(ddayValue - 2)"
+            let ddayValue = startFromDayOne ? (dayDifference + 1) : dayDifference
+            return ddayValue >= 0 ? "+\(ddayValue)" : "\(ddayValue - (startFromDayOne ? 2 : 1))"
         }
         return "N/A"
     }
