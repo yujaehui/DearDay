@@ -14,6 +14,8 @@
 		09F38C8A2CBCE80900F824D7 /* DDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C892CBCE80900F824D7 /* DDayView.swift */; };
 		09F38C8C2CBCEA7F00F824D7 /* DDayCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C8B2CBCEA7F00F824D7 /* DDayCardView.swift */; };
 		09F38C8E2CBCEFC000F824D7 /* DDayDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C8D2CBCEFC000F824D7 /* DDayDetailView.swift */; };
+		09F38C9A2CBE3EC400F824D7 /* DateFormatterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C992CBE3EC400F824D7 /* DateFormatterManager.swift */; };
+		09F38C9E2CBE4C6600F824D7 /* DDayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C9D2CBE4C6600F824D7 /* DDayModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +27,8 @@
 		09F38C892CBCE80900F824D7 /* DDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDayView.swift; sourceTree = "<group>"; };
 		09F38C8B2CBCEA7F00F824D7 /* DDayCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDayCardView.swift; sourceTree = "<group>"; };
 		09F38C8D2CBCEFC000F824D7 /* DDayDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDayDetailView.swift; sourceTree = "<group>"; };
+		09F38C992CBE3EC400F824D7 /* DateFormatterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterManager.swift; sourceTree = "<group>"; };
+		09F38C9D2CBE4C6600F824D7 /* DDayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDayModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,13 +61,13 @@
 		09F38C7A2CBCE7D500F824D7 /* DearDay */ = {
 			isa = PBXGroup;
 			children = (
+				09F38C9C2CBE4C5B00F824D7 /* Model */,
+				09F38C9B2CBE4C4400F824D7 /* View */,
+				09F38C982CBE3EB300F824D7 /* Manager */,
 				09F38C7B2CBCE7D500F824D7 /* DearDayApp.swift */,
 				09F38C7D2CBCE7D500F824D7 /* ContentView.swift */,
 				09F38C7F2CBCE7D500F824D7 /* Assets.xcassets */,
 				09F38C812CBCE7D500F824D7 /* Preview Content */,
-				09F38C892CBCE80900F824D7 /* DDayView.swift */,
-				09F38C8B2CBCEA7F00F824D7 /* DDayCardView.swift */,
-				09F38C8D2CBCEFC000F824D7 /* DDayDetailView.swift */,
 			);
 			path = DearDay;
 			sourceTree = "<group>";
@@ -74,6 +78,32 @@
 				09F38C822CBCE7D500F824D7 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		09F38C982CBE3EB300F824D7 /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				09F38C992CBE3EC400F824D7 /* DateFormatterManager.swift */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
+		09F38C9B2CBE4C4400F824D7 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				09F38C892CBCE80900F824D7 /* DDayView.swift */,
+				09F38C8B2CBCEA7F00F824D7 /* DDayCardView.swift */,
+				09F38C8D2CBCEFC000F824D7 /* DDayDetailView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		09F38C9C2CBE4C5B00F824D7 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				09F38C9D2CBE4C6600F824D7 /* DDayModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -148,8 +178,10 @@
 			files = (
 				09F38C8E2CBCEFC000F824D7 /* DDayDetailView.swift in Sources */,
 				09F38C8C2CBCEA7F00F824D7 /* DDayCardView.swift in Sources */,
+				09F38C9E2CBE4C6600F824D7 /* DDayModel.swift in Sources */,
 				09F38C7E2CBCE7D500F824D7 /* ContentView.swift in Sources */,
 				09F38C7C2CBCE7D500F824D7 /* DearDayApp.swift in Sources */,
+				09F38C9A2CBE3EC400F824D7 /* DateFormatterManager.swift in Sources */,
 				09F38C8A2CBCE80900F824D7 /* DDayView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
