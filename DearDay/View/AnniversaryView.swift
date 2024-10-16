@@ -9,23 +9,37 @@ import SwiftUI
 
 struct AnniversaryView: View {
     var dday: DDay
-    var maxAnniversaries: Int = 30000
-    
+    var maxAnniversaries: Int = 36400
+    var maxYears: Int = 100
+
     var anniversaryIntervals: [Int] {
         var intervals = [1, 10, 50]
         intervals.append(contentsOf: stride(from: 100, through: maxAnniversaries, by: 100))
         return intervals
     }
+
+    var anniversaryYears: [Int] {
+        return Array(1...maxYears).map { $0 * 365 }
+    }
     
     var anniversaries: [(days: Int, date: Date)] {
         var dates: [(days: Int, date: Date)] = [(daysUntilEvent(), Date())]
         let calendar = Calendar.current
+
         for days in anniversaryIntervals {
             let offset = dday.startFromDayOne ? days - 1 : days
             if let anniversary = calendar.date(byAdding: .day, value: offset, to: dday.date) {
                 dates.append((days, anniversary))
             }
         }
+
+        for yearDays in anniversaryYears {
+            let offset = dday.startFromDayOne ? yearDays - 1 : yearDays
+            if let anniversary = calendar.date(byAdding: .day, value: offset, to: dday.date) {
+                dates.append((yearDays, anniversary))
+            }
+        }
+
         return dates.sorted { $0.date < $1.date }
     }
     
@@ -36,8 +50,12 @@ struct AnniversaryView: View {
                     Text("Today")
                         .foregroundColor(.red)
                         .font(.headline)
+                } else if anniversary.days % 365 == 0 {
+                    Text("\(anniversary.days / 365) Years") // Display as yearly anniversary
+                        .foregroundColor(isPast(anniversary.date) ? .gray : .primary)
+                        .font(.headline)
                 } else {
-                    Text("\(anniversary.days)Days")
+                    Text("\(anniversary.days) Days")
                         .foregroundColor(isPast(anniversary.date) ? .gray : .primary)
                         .font(.headline)
                 }
@@ -65,6 +83,7 @@ struct AnniversaryView: View {
         return calendar.dateComponents([.day], from: Date(), to: dday.date).day ?? 0
     }
 }
+
 
 #Preview {
     AnniversaryView(dday: DDay(type: .numberOfDays, title: "COMET", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 22))!, startFromDayOne: true))

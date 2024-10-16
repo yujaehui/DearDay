@@ -19,7 +19,7 @@ struct DDayCardView: View {
             
             Spacer()
             VStack(alignment: .trailing) {
-                Text(DateFormatterManager.shared.calculateDDay(from: dday.date, startFromDayOne: dday.startFromDayOne))
+                Text(DateFormatterManager.shared.calculateDDay(from: dday.date, startFromDayOne: dday.startFromDayOne, repeatType: dday.repeatType))
                     .foregroundColor(.gray)
                     .font(.title3)
                     .fontWeight(.bold)

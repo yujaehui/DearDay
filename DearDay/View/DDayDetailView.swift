@@ -9,7 +9,6 @@ import SwiftUI
 
 struct DDayDetailView: View {
     @State private var showingAnniversarySheet: Bool = false
-    @State private var showingCountingDaysSheet: Bool = false
     @State private var showingDeleteAlert = false
     
     var dday: DDay
@@ -21,20 +20,26 @@ struct DDayDetailView: View {
                     .lineLimit(1)
                     .foregroundColor(.gray)
                     .font(.title3)
-                
-                HStack(alignment: .bottom, spacing: 20) {
-                    Image("SampleImage1")
-                        .resizable()
-                        .scaledToFit()
-                    Text(DateFormatterManager.shared.calculateDDay(from: dday.date, startFromDayOne: dday.startFromDayOne))
+                Image("SampleImage2")
+                    .resizable()
+                    .scaledToFit()
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(DateFormatterManager.shared.formatDate(dday.date))
+                            .foregroundColor(.gray.opacity(0.8))
+                            .font(.callout)
+                        if dday.repeatType != .none {
+                            Text("[\(dday.repeatType.rawValue) 반복]")
+                                .foregroundColor(.gray.opacity(0.8))
+                                .font(.caption)
+                        }
+                    }
+                    Spacer()
+                    Text(DateFormatterManager.shared.calculateDDay(from: dday.date, startFromDayOne: dday.startFromDayOne, repeatType: dday.repeatType))
                         .foregroundColor(.gray)
                         .font(.largeTitle)
                         .fontWeight(.bold)
                 }
-                Text(DateFormatterManager.shared.formatDate(dday.date))
-                    .foregroundColor(.gray.opacity(0.8))
-                    .font(.callout)
-                
             }
             .padding()
             .toolbar {
@@ -65,13 +70,6 @@ struct DDayDetailView: View {
                             Text("기념일 보기")
                                 .foregroundStyle(.gray)
                         }
-                    } else if dday.type == .dDay {
-                        Button {
-                            showingCountingDaysSheet.toggle()
-                        } label: {
-                            Text("날짜 계산하기")
-                                .foregroundStyle(.gray)
-                        }
                     }
                 }
             }
@@ -79,10 +77,10 @@ struct DDayDetailView: View {
                 AnniversaryView(dday: dday)
                     .presentationDetents([.medium])
             })
-            .sheet(isPresented: $showingCountingDaysSheet, content: {
-                CountingDaysView()
-                    .presentationDetents([.medium])
-            })
+            .alert("해당 디데이를 삭제하시겠습니까?", isPresented: $showingDeleteAlert) {
+                Button("취소", role: .cancel) { }
+                Button("삭제", role: .destructive) { }
+            }
         }
     }
 }
