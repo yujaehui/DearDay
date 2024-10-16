@@ -19,11 +19,11 @@ struct DDayCardView: View {
             
             Spacer()
             VStack(alignment: .trailing) {
-                Text(DateFormatterManager.shared.calculateDDay(from: dday.date, startFromDayOne: dday.startFromDayOne, repeatType: dday.repeatType))
+                Text(DateFormatterManager.shared.calculateDDay(from: dday.date, isLunar: dday.isLunarDate, startFromDayOne: dday.startFromDayOne, repeatType: dday.repeatType))
                     .foregroundColor(.gray)
                     .font(.title3)
                     .fontWeight(.bold)
-                Text(DateFormatterManager.shared.formatDate(dday.date))
+                Text(DateFormatterManager.shared.formatDate(dday.date, isLunar: dday.isLunarDate))
                     .foregroundColor(.gray.opacity(0.8))
                     .font(.caption)
             }
@@ -34,6 +34,6 @@ struct DDayCardView: View {
 }
 
 #Preview {
-    DDayCardView(dday: DDay(type: .numberOfDays, title: "COMET", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 22))!, startFromDayOne: true))
+    DDayCardView(dday: DDay(type: .numberOfDays, title: "COMET", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 22))!, isLunarDate: false, startFromDayOne: true))
 }
 

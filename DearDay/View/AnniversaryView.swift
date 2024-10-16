@@ -51,7 +51,7 @@ struct AnniversaryView: View {
                         .foregroundColor(.red)
                         .font(.headline)
                 } else if anniversary.days % 365 == 0 {
-                    Text("\(anniversary.days / 365) Years") // Display as yearly anniversary
+                    Text("\(anniversary.days / 365) Years")
                         .foregroundColor(isPast(anniversary.date) ? .gray : .primary)
                         .font(.headline)
                 } else {
@@ -60,7 +60,7 @@ struct AnniversaryView: View {
                         .font(.headline)
                 }
                 
-                Text(DateFormatterManager.shared.formatDate(anniversary.date))
+                Text(DateFormatterManager.shared.formatDate(anniversary.date, isLunar: dday.isLunarDate))
                     .foregroundColor(.gray)
                     .font(.subheadline)
             }
@@ -86,5 +86,5 @@ struct AnniversaryView: View {
 
 
 #Preview {
-    AnniversaryView(dday: DDay(type: .numberOfDays, title: "COMET", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 22))!, startFromDayOne: true))
+    AnniversaryView(dday: DDay(type: .numberOfDays, title: "COMET", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 22))!, isLunarDate: false, startFromDayOne: true))
 }

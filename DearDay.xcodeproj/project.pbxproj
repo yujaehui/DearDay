@@ -17,6 +17,7 @@
 		09F38C9A2CBE3EC400F824D7 /* DateFormatterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C992CBE3EC400F824D7 /* DateFormatterManager.swift */; };
 		09F38C9E2CBE4C6600F824D7 /* DDayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C9D2CBE4C6600F824D7 /* DDayModel.swift */; };
 		09F38CA02CBE5FAE00F824D7 /* AnniversaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C9F2CBE5FAE00F824D7 /* AnniversaryView.swift */; };
+		09F38CAC2CBFB1C000F824D7 /* DDayImageCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38CAB2CBFB1C000F824D7 /* DDayImageCardView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		09F38C992CBE3EC400F824D7 /* DateFormatterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterManager.swift; sourceTree = "<group>"; };
 		09F38C9D2CBE4C6600F824D7 /* DDayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDayModel.swift; sourceTree = "<group>"; };
 		09F38C9F2CBE5FAE00F824D7 /* AnniversaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnniversaryView.swift; sourceTree = "<group>"; };
+		09F38CAB2CBFB1C000F824D7 /* DDayImageCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDayImageCardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +98,7 @@
 				09F38C892CBCE80900F824D7 /* DDayView.swift */,
 				09F38C8B2CBCEA7F00F824D7 /* DDayCardView.swift */,
 				09F38C8D2CBCEFC000F824D7 /* DDayDetailView.swift */,
+				09F38CAB2CBFB1C000F824D7 /* DDayImageCardView.swift */,
 				09F38C9F2CBE5FAE00F824D7 /* AnniversaryView.swift */,
 			);
 			path = View;
@@ -187,6 +190,7 @@
 				09F38CA02CBE5FAE00F824D7 /* AnniversaryView.swift in Sources */,
 				09F38C9A2CBE3EC400F824D7 /* DateFormatterManager.swift in Sources */,
 				09F38C8A2CBCE80900F824D7 /* DDayView.swift in Sources */,
+				09F38CAC2CBFB1C000F824D7 /* DDayImageCardView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

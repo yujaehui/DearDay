@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct DDayDetailView: View {
+struct DDayDetailView: View {    
     @State private var showingAnniversarySheet: Bool = false
     @State private var showingDeleteAlert = false
     
@@ -15,33 +15,7 @@ struct DDayDetailView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 20) {
-                Text(dday.title)
-                    .lineLimit(1)
-                    .foregroundColor(.gray)
-                    .font(.title3)
-                Image("SampleImage2")
-                    .resizable()
-                    .scaledToFit()
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(DateFormatterManager.shared.formatDate(dday.date))
-                            .foregroundColor(.gray.opacity(0.8))
-                            .font(.callout)
-                        if dday.repeatType != .none {
-                            Text("[\(dday.repeatType.rawValue) 반복]")
-                                .foregroundColor(.gray.opacity(0.8))
-                                .font(.caption)
-                        }
-                    }
-                    Spacer()
-                    Text(DateFormatterManager.shared.calculateDDay(from: dday.date, startFromDayOne: dday.startFromDayOne, repeatType: dday.repeatType))
-                        .foregroundColor(.gray)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                }
-            }
-            .padding()
+            DDayImageCardView(dday: dday)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
@@ -86,7 +60,7 @@ struct DDayDetailView: View {
 }
 
 #Preview {
-    DDayDetailView(dday: DDay(type: .numberOfDays, title: "COMET", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 22))!, startFromDayOne: true))
+    DDayDetailView(dday: DDay(type: .numberOfDays, title: "COMET", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 22))!, isLunarDate: false, startFromDayOne: true))
 }
 
 

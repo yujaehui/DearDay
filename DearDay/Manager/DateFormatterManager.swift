@@ -11,27 +11,43 @@ final class DateFormatterManager {
     static let shared = DateFormatterManager()
     private init() {}
     
-    func formatDate(_ date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy.MM.dd.E"
-        return dateFormatter.string(from: date)
+    func convertToSolar(from lunarDate: Date) -> Date {
+        // API 연결 예정
+        return lunarDate
     }
     
-    func calculateDDay(from date: Date, startFromDayOne: Bool, repeatType: RepeatType) -> String {
+    func formatDate(_ date: Date, isLunar: Bool) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy.MM.dd.E"
+        
+        let formattedDate = isLunar ? convertToSolar(from: date) : date
+        return dateFormatter.string(from: formattedDate)
+    }
+    
+    func calculateDDay(from date: Date, isLunar: Bool, startFromDayOne: Bool, repeatType: RepeatType) -> String {
         let calendar = Calendar.current
         var adjustedDate = date
+        
+        if isLunar {
+            adjustedDate = convertToSolar(from: date)
+        }
 
-        if date < Date() {
+        if adjustedDate < Date() {
             switch repeatType {
             case .month:
-                if let newDate = calendar.date(byAdding: .month, value: 1, to: date) {
-                    adjustedDate = newDate
+                while adjustedDate < Date() {
+                    if let newDate = calendar.date(byAdding: .month, value: 1, to: adjustedDate) {
+                        adjustedDate = newDate
+                    }
                 }
             case .year:
-                if let newDate = calendar.date(byAdding: .year, value: 1, to: date) {
-                    adjustedDate = newDate
+                while adjustedDate < Date() {
+                    if let newDate = calendar.date(byAdding: .year, value: 1, to: adjustedDate) {
+                        adjustedDate = newDate
+                    }
                 }
-            default: break
+            default:
+                break
             }
         }
 
@@ -44,5 +60,4 @@ final class DateFormatterManager {
         
         return "N/A"
     }
-
 }
