@@ -11,6 +11,7 @@ struct DDayImageCardView: View {
     var sampleImageList = ["SampleImage1", "SampleImage2", "SampleImage3"]
     
     var dday: DDay
+    @State private var ddayText: String = "Loading..."
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -23,7 +24,7 @@ struct DDayImageCardView: View {
                 .scaledToFit()
             HStack {
                 VStack(alignment: .leading) {
-                    Text(DateFormatterManager.shared.formatDate(dday.date, isLunar: dday.isLunarDate))
+                    Text(DateFormatterManager.shared.formatDate(dday.date))
                         .foregroundColor(.gray.opacity(0.8))
                         .font(.callout)
                     if dday.repeatType != .none {
@@ -33,13 +34,16 @@ struct DDayImageCardView: View {
                     }
                 }
                 Spacer()
-                Text(DateFormatterManager.shared.calculateDDay(from: dday.date, isLunar: dday.isLunarDate, startFromDayOne: dday.startFromDayOne, repeatType: dday.repeatType))
+                Text(ddayText)
                     .foregroundColor(.gray)
                     .font(.largeTitle)
                     .fontWeight(.bold)
             }
         }
         .padding()
+        .task {
+            ddayText = await DateFormatterManager.shared.calculateDDay(from: dday.date, isLunar: dday.isLunarDate, startFromDayOne: dday.startFromDayOne, repeatType: dday.repeatType)
+        }
     }
 }
 

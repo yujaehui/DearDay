@@ -60,7 +60,7 @@ struct AnniversaryView: View {
                         .font(.headline)
                 }
                 
-                Text(DateFormatterManager.shared.formatDate(anniversary.date, isLunar: dday.isLunarDate))
+                Text(DateFormatterManager.shared.formatDate(anniversary.date))
                     .foregroundColor(.gray)
                     .font(.subheadline)
             }
