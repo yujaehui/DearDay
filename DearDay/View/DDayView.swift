@@ -11,8 +11,8 @@ struct DDayView: View {
     var body: some View {
         NavigationStack {
             List(sampleDDays) { dday in
-                NavigationLink(destination: DDayDetailView(title: dday.title, date: dday.date, startFromDayOne: dday.startFromDayOne)) {
-                    DDayCardView(title: dday.title, date: dday.date, startFromDayOne: dday.startFromDayOne)
+                NavigationLink(destination: DDayDetailView(dday: dday)) {
+                    DDayCardView(dday: dday)
                 }
             }
             .listStyle(.grouped)
@@ -43,7 +43,7 @@ struct DDayView: View {
                 }
             }
         }
-        .tint(.gray) // To change the back button color.
+        .tint(.gray)
     }
 }
 

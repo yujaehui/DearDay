@@ -8,24 +8,22 @@
 import SwiftUI
 
 struct DDayCardView: View {
-    var title: String
-    var date: Date
-    var startFromDayOne: Bool
+    var dday: DDay
     
     var body: some View {
         HStack(spacing: 20) {
-            Text(title)
+            Text(dday.title)
                 .foregroundColor(.gray)
                 .font(.callout)
                 .lineLimit(1)
             
             Spacer()
             VStack(alignment: .trailing) {
-                Text(DateFormatterManager.shared.calculateDDay(from: date, startFromDayOne: startFromDayOne))
+                Text(DateFormatterManager.shared.calculateDDay(from: dday.date, startFromDayOne: dday.startFromDayOne))
                     .foregroundColor(.gray)
                     .font(.title3)
                     .fontWeight(.bold)
-                Text(DateFormatterManager.shared.formatDate(date))
+                Text(DateFormatterManager.shared.formatDate(dday.date))
                     .foregroundColor(.gray.opacity(0.8))
                     .font(.caption)
             }
@@ -36,6 +34,6 @@ struct DDayCardView: View {
 }
 
 #Preview {
-    DDayCardView(title: "COMET", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 22))!, startFromDayOne: true)
+    DDayCardView(dday: DDay(type: .numberOfDays, title: "COMET", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 22))!, startFromDayOne: true))
 }
 
