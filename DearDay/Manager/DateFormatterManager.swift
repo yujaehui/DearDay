@@ -57,7 +57,7 @@ final class DateFormatterManager {
             } else if ddayValue == 0 {
                 return "D-DAY"
             } else {
-                return "\(ddayValue - 1)"
+                return "\(ddayValue)"
             }
         }
         
@@ -72,13 +72,10 @@ final class DateFormatterManager {
         
         do {
             let solarDateItems = try await APIService.shared.fetchSolarDateItems(lunYear: currentYear, lunMonth: month, lunDay: day)
-            
-            let currentDate = Date()
             for solarItem in solarDateItems {
-                print(solarItem.solYear, solarItem.solMonth, solarItem.solDay)
-                if let convertedDate = calendar.date(from: DateComponents(year: Int(solarItem.solYear), month: Int(solarItem.solMonth), day: Int(solarItem.solDay))) {
-                    print(convertedDate, currentDate)
-                    if convertedDate >= currentDate {
+                if let convertedDate = calendar.date(from: DateComponents(year: Int(solarItem.solYear), month: Int(solarItem.solMonth), day: Int(solarItem.solDay)! + 1)) {
+                    print(convertedDate, Date())
+                    if convertedDate >= Date() {
                         return convertedDate
                     }
                 }
@@ -86,7 +83,7 @@ final class DateFormatterManager {
             
             let solarDateItemsNextYear = try await APIService.shared.fetchSolarDateItems(lunYear: currentYear + 1, lunMonth: month, lunDay: day)
             for solarItemNextYear in solarDateItemsNextYear {
-                if let nextYearConvertedDate = calendar.date(from: DateComponents(year: Int(solarItemNextYear.solYear), month: Int(solarItemNextYear.solMonth), day: Int(solarItemNextYear.solDay))) {
+                if let nextYearConvertedDate = calendar.date(from: DateComponents(year: Int(solarItemNextYear.solYear), month: Int(solarItemNextYear.solMonth), day: Int(solarItemNextYear.solDay)! + 1)) {
                     return nextYearConvertedDate
                 }
             }

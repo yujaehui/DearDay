@@ -24,7 +24,7 @@ struct DDayImageCardView: View {
                 .scaledToFit()
             HStack {
                 VStack(alignment: .leading) {
-                    Text(DateFormatterManager.shared.formatDate(dday.date))
+                    Text("\(DateFormatterManager.shared.formatDate(dday.date))\(dday.isLunarDate ? " (음력)" : "")")
                         .foregroundColor(.gray.opacity(0.8))
                         .font(.callout)
                     if dday.repeatType != .none {
