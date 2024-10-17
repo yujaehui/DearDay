@@ -22,7 +22,7 @@ final class DateFormatterManager {
         var adjustedDate = date
         
         if isLunar {
-            if let closestLunarDate = await fetchClosestLunarDate(from: date) {
+            if let closestLunarDate = await fetchClosestLunarDate(from: date, repeatType: repeatType) {
                 adjustedDate = closestLunarDate
             } else {
                 return "N/A"
@@ -64,32 +64,49 @@ final class DateFormatterManager {
         return "N/A"
     }
     
-    private func fetchClosestLunarDate(from date: Date) async -> Date? {
+    private func fetchClosestLunarDate(from date: Date, repeatType: RepeatType) async -> Date? {
         let calendar = Calendar.current
         let currentYear = calendar.component(.year, from: Date())
+        let year = calendar.component(.year, from: date)
         let month = calendar.component(.month, from: date)
         let day = calendar.component(.day, from: date)
         
-        do {
-            let solarDateItems = try await APIService.shared.fetchSolarDateItems(lunYear: currentYear, lunMonth: month, lunDay: day)
-            for solarItem in solarDateItems {
-                if let convertedDate = calendar.date(from: DateComponents(year: Int(solarItem.solYear), month: Int(solarItem.solMonth), day: Int(solarItem.solDay)! + 1)) {
-                    print(convertedDate, Date())
-                    if convertedDate >= Date() {
+        switch repeatType {
+        case .none:
+            do {
+                let solarDateItems = try await APIService.shared.fetchSolarDateItems(lunYear: year, lunMonth: month, lunDay: day)
+                for solarItem in solarDateItems {
+                    if let convertedDate = calendar.date(from: DateComponents(year: Int(solarItem.solYear), month: Int(solarItem.solMonth), day: Int(solarItem.solDay)!)) {
                         return convertedDate
                     }
                 }
+                
+            } catch {
+                print("Error fetching closest lunar date: \(error)")
             }
-            
-            let solarDateItemsNextYear = try await APIService.shared.fetchSolarDateItems(lunYear: currentYear + 1, lunMonth: month, lunDay: day)
-            for solarItemNextYear in solarDateItemsNextYear {
-                if let nextYearConvertedDate = calendar.date(from: DateComponents(year: Int(solarItemNextYear.solYear), month: Int(solarItemNextYear.solMonth), day: Int(solarItemNextYear.solDay)! + 1)) {
-                    return nextYearConvertedDate
+        case .month:
+            break
+        case .year:
+            do {
+                let solarDateItems = try await APIService.shared.fetchSolarDateItems(lunYear: currentYear, lunMonth: month, lunDay: day)
+                for solarItem in solarDateItems {
+                    if let convertedDate = calendar.date(from: DateComponents(year: Int(solarItem.solYear), month: Int(solarItem.solMonth), day: Int(solarItem.solDay)! + 1)) {
+                        if convertedDate >= Date() {
+                            return convertedDate
+                        }
+                    }
                 }
+                
+                let solarDateItemsNextYear = try await APIService.shared.fetchSolarDateItems(lunYear: currentYear + 1, lunMonth: month, lunDay: day)
+                for solarItemNextYear in solarDateItemsNextYear {
+                    if let nextYearConvertedDate = calendar.date(from: DateComponents(year: Int(solarItemNextYear.solYear), month: Int(solarItemNextYear.solMonth), day: Int(solarItemNextYear.solDay)! + 1)) {
+                        return nextYearConvertedDate
+                    }
+                }
+                
+            } catch {
+                print("Error fetching closest lunar date: \(error)")
             }
-            
-        } catch {
-            print("Error fetching closest lunar date: \(error)")
         }
         
         return nil
