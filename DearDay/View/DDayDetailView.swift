@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct DDayDetailView: View {    
-    @State private var showingAnniversarySheet: Bool = false
-    @State private var showingDeleteAlert = false
+    @State private var isPresentedAnniversaryView: Bool = false
+    @State private var isPresentedDeleteAlert = false
     
     var dday: DDay
     
@@ -25,7 +25,7 @@ struct DDayDetailView: View {
                             Label("수정", systemImage: "square.and.pencil")
                         }
                         Button(role: .destructive) {
-                            showingDeleteAlert.toggle()
+                            isPresentedDeleteAlert.toggle()
                         } label: {
                             Label("삭제", systemImage: "trash")
                         }
@@ -39,7 +39,7 @@ struct DDayDetailView: View {
                 ToolbarItem(placement: .bottomBar) {
                     if dday.type == .numberOfDays {
                         Button {
-                            showingAnniversarySheet.toggle()
+                            isPresentedAnniversaryView.toggle()
                         } label: {
                             Text("기념일 보기")
                                 .foregroundStyle(.gray)
@@ -47,11 +47,11 @@ struct DDayDetailView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showingAnniversarySheet, content: {
+            .sheet(isPresented: $isPresentedAnniversaryView, content: {
                 AnniversaryView(dday: dday)
                     .presentationDetents([.medium])
             })
-            .alert("해당 디데이를 삭제하시겠습니까?", isPresented: $showingDeleteAlert) {
+            .alert("해당 디데이를 삭제하시겠습니까?", isPresented: $isPresentedDeleteAlert) {
                 Button("취소", role: .cancel) { }
                 Button("삭제", role: .destructive) { }
             }

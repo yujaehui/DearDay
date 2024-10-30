@@ -8,14 +8,32 @@
 import SwiftUI
 
 struct DDayView: View {
+    @State private var isPresentedSelectDDayTypeAlertView = false
+    @State private var navigateToAddDDayView = false
+    @State private var selectedDDayType: DDayType = .dDay
+    
     var body: some View {
         NavigationStack {
-            List(sampleDDays) { dday in
-                NavigationLink(destination: DDayDetailView(dday: dday)) {
-                    DDayCardView(dday: dday)
+            ZStack {
+                List(sampleDDays) { dday in
+                    NavigationLink(destination: DDayDetailView(dday: dday)) {
+                        DDayCardView(dday: dday)
+                    }
+                }
+                .listStyle(.grouped)
+                .navigationDestination(isPresented: $navigateToAddDDayView) {
+                    AddDDayView(type: selectedDDayType)
+                }
+                
+                
+                if isPresentedSelectDDayTypeAlertView {
+                    SelectDDayTypeAlertView(
+                        isPresentedSelectDDayTypeAlertView: $isPresentedSelectDDayTypeAlertView,
+                        selectedDDayType: $selectedDDayType,
+                        navigateToAddDDayView: $navigateToAddDDayView
+                    )
                 }
             }
-            .listStyle(.grouped)
             .navigationTitle("")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -26,7 +44,7 @@ struct DDayView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        print("D-Day Add Button Tap")
+                        isPresentedSelectDDayTypeAlertView.toggle()
                     } label: {
                         Image(systemName: "plus")
                             .foregroundColor(.gray)
@@ -46,6 +64,7 @@ struct DDayView: View {
         .tint(.gray)
     }
 }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

@@ -7,12 +7,12 @@
 
 import Foundation
 
-enum DDayType: String {
+enum DDayType: String, CaseIterable {
     case dDay = "D-DAY"
     case numberOfDays = "날짜 수"
 }
 
-enum RepeatType: String {
+enum RepeatType: String, CaseIterable {
     case none
     case month = "매월"
     case year = "매년"

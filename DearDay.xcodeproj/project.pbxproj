@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		095B58D62CD215AF00EC3531 /* DDayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58D52CD215AF00EC3531 /* DDayViewModel.swift */; };
 		095B58D92CD2272800EC3531 /* ViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58D82CD2272800EC3531 /* ViewModelType.swift */; };
+		095B58DB2CD2346600EC3531 /* AddDDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58DA2CD2346600EC3531 /* AddDDayView.swift */; };
+		095B58DD2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58DC2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift */; };
 		09F38C7C2CBCE7D500F824D7 /* DearDayApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C7B2CBCE7D500F824D7 /* DearDayApp.swift */; };
 		09F38C7E2CBCE7D500F824D7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C7D2CBCE7D500F824D7 /* ContentView.swift */; };
 		09F38C802CBCE7D500F824D7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F38C7F2CBCE7D500F824D7 /* Assets.xcassets */; };
@@ -30,6 +32,8 @@
 /* Begin PBXFileReference section */
 		095B58D52CD215AF00EC3531 /* DDayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDayViewModel.swift; sourceTree = "<group>"; };
 		095B58D82CD2272800EC3531 /* ViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelType.swift; sourceTree = "<group>"; };
+		095B58DA2CD2346600EC3531 /* AddDDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDDayView.swift; sourceTree = "<group>"; };
+		095B58DC2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectDDayTypeAlertView.swift; sourceTree = "<group>"; };
 		09F38C782CBCE7D500F824D7 /* DearDay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DearDay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09F38C7B2CBCE7D500F824D7 /* DearDayApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DearDayApp.swift; sourceTree = "<group>"; };
 		09F38C7D2CBCE7D500F824D7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -97,13 +101,13 @@
 		09F38C7A2CBCE7D500F824D7 /* DearDay */ = {
 			isa = PBXGroup;
 			children = (
-				095B58D72CD2271900EC3531 /* Protocol */,
 				09F38CB82CBFC65200F824D7 /* Info.plist */,
+				09F38C982CBE3EB300F824D7 /* Manager */,
 				09F38CAF2CBFBA6B00F824D7 /* Network */,
 				09F38C9C2CBE4C5B00F824D7 /* Model */,
 				09F38C9B2CBE4C4400F824D7 /* View */,
 				095B58D42CD2159A00EC3531 /* ViewModel */,
-				09F38C982CBE3EB300F824D7 /* Manager */,
+				095B58D72CD2271900EC3531 /* Protocol */,
 				09F38C7B2CBCE7D500F824D7 /* DearDayApp.swift */,
 				09F38C7D2CBCE7D500F824D7 /* ContentView.swift */,
 				09F38C7F2CBCE7D500F824D7 /* Assets.xcassets */,
@@ -136,6 +140,8 @@
 				09F38C8D2CBCEFC000F824D7 /* DDayDetailView.swift */,
 				09F38CAB2CBFB1C000F824D7 /* DDayImageCardView.swift */,
 				09F38C9F2CBE5FAE00F824D7 /* AnniversaryView.swift */,
+				095B58DA2CD2346600EC3531 /* AddDDayView.swift */,
+				095B58DC2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -196,11 +202,12 @@
 			};
 			buildConfigurationList = 09F38C732CBCE7D500F824D7 /* Build configuration list for PBXProject "DearDay" */;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = en;
+			developmentRegion = ko;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				ko,
 			);
 			mainGroup = 09F38C6F2CBCE7D500F824D7;
 			productRefGroup = 09F38C792CBCE7D500F824D7 /* Products */;
@@ -232,9 +239,11 @@
 			files = (
 				09F38C8E2CBCEFC000F824D7 /* DDayDetailView.swift in Sources */,
 				09F38C8C2CBCEA7F00F824D7 /* DDayCardView.swift in Sources */,
+				095B58DB2CD2346600EC3531 /* AddDDayView.swift in Sources */,
 				09F38C9E2CBE4C6600F824D7 /* DDayModel.swift in Sources */,
 				09F38C7E2CBCE7D500F824D7 /* ContentView.swift in Sources */,
 				09F38CB52CBFBF3500F824D7 /* SolarDateXMLParser.swift in Sources */,
+				095B58DD2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift in Sources */,
 				09F38CB12CBFBA7B00F824D7 /* APIKey.swift in Sources */,
 				09F38C7C2CBCE7D500F824D7 /* DearDayApp.swift in Sources */,
 				09F38CA02CBE5FAE00F824D7 /* AnniversaryView.swift in Sources */,
