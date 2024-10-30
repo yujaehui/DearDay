@@ -36,5 +36,5 @@ var sampleDDays: [DDay] = [
     DDay(type: .dDay, title: "100DAYS", date: Calendar.current.date(from: DateComponents(year: 2024, month: 12, day: 30))!, isLunarDate: false),
     DDay(type: .dDay, title: "payday", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 30))!, isLunarDate: false, repeatType: .month),
     DDay(type: .dDay, title: "Lunar Test", date: Calendar.current.date(from: DateComponents(year: 2020, month: 9, day: 15))!, isLunarDate: true, repeatType: .year),
-    DDay(type: .numberOfDays, title: "Mommy Birth", date: Calendar.current.date(from: DateComponents(year: 1971, month: 9, day: 11))!, isLunarDate: true, startFromDayOne: true)
+    DDay(type: .dDay, title: "Mommy Birth", date: Calendar.current.date(from: DateComponents(year: 1971, month: 9, day: 11))!, isLunarDate: true, repeatType: .year)
 ]

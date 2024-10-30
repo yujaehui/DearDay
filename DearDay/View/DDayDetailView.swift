@@ -59,8 +59,4 @@ struct DDayDetailView: View {
     }
 }
 
-#Preview {
-    DDayDetailView(dday: DDay(type: .numberOfDays, title: "COMET", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 22))!, isLunarDate: false, startFromDayOne: true))
-}
-
 

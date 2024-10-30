@@ -7,11 +7,10 @@
 
 import SwiftUI
 
-struct DDayImageCardView: View {
-    var sampleImageList = ["SampleImage1", "SampleImage2", "SampleImage3"]
-    
+struct DDayImageCardView: View {    
     var dday: DDay
-    @State private var ddayText: String = "Loading..."
+    
+    @StateObject private var viewModel = DDayViewModel()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -19,7 +18,7 @@ struct DDayImageCardView: View {
                 .lineLimit(1)
                 .foregroundColor(.gray)
                 .font(.title3)
-            Image(sampleImageList.randomElement()!)
+            Image("SampleImage1")
                 .resizable()
                 .scaledToFit()
             HStack {
@@ -34,7 +33,7 @@ struct DDayImageCardView: View {
                     }
                 }
                 Spacer()
-                Text(ddayText)
+                Text(viewModel.output.ddayText)
                     .foregroundColor(.gray)
                     .font(.largeTitle)
                     .fontWeight(.bold)
@@ -42,11 +41,7 @@ struct DDayImageCardView: View {
         }
         .padding()
         .task {
-            ddayText = await DateFormatterManager.shared.calculateDDay(from: dday.date, isLunar: dday.isLunarDate, startFromDayOne: dday.startFromDayOne, repeatType: dday.repeatType)
+            viewModel.action(.loadDDay(dday))
         }
     }
-}
-
-#Preview {
-    DDayImageCardView(dday: DDay(type: .numberOfDays, title: "COMET", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 22))!, isLunarDate: false, startFromDayOne: true))
 }

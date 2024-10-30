@@ -9,7 +9,8 @@ import SwiftUI
 
 struct DDayCardView: View {
     var dday: DDay
-    @State private var ddayText: String = "Loading..."
+    
+    @StateObject private var viewModel = DDayViewModel()
     
     var body: some View {
         HStack(spacing: 20) {
@@ -20,7 +21,7 @@ struct DDayCardView: View {
             
             Spacer()
             VStack(alignment: .trailing) {
-                Text(ddayText)
+                Text(viewModel.output.ddayText)
                     .foregroundColor(.gray)
                     .font(.title3)
                     .fontWeight(.bold)
@@ -31,11 +32,7 @@ struct DDayCardView: View {
         }
         .padding(8)
         .task {
-            ddayText = await DateFormatterManager.shared.calculateDDay(from: dday.date, isLunar: dday.isLunarDate, startFromDayOne: dday.startFromDayOne, repeatType: dday.repeatType)
+            viewModel.action(.loadDDay(dday))
         }
     }
-}
-
-#Preview {
-    DDayCardView(dday: DDay(type: .numberOfDays, title: "COMET", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 22))!, isLunarDate: false, startFromDayOne: true))
 }

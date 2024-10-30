@@ -83,8 +83,3 @@ struct AnniversaryView: View {
         return calendar.dateComponents([.day], from: Date(), to: dday.date).day ?? 0
     }
 }
-
-
-#Preview {
-    AnniversaryView(dday: DDay(type: .numberOfDays, title: "COMET", date: Calendar.current.date(from: DateComponents(year: 2024, month: 9, day: 22))!, isLunarDate: false, startFromDayOne: true))
-}
