@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+import RealmSwift
 
 struct DDayImageCardView: View {    
-    var dday: DDay
+    @ObservedRealmObject var dday: DDay
     
     @StateObject private var viewModel = DDayViewModel()
     
@@ -18,9 +19,11 @@ struct DDayImageCardView: View {
                 .lineLimit(1)
                 .foregroundColor(.gray)
                 .font(.title3)
-            Image("SampleImage1")
-                .resizable()
-                .scaledToFit()
+            if let image = ImageDocumentManager.shared.loadImageToDocument(fileName: "\(dday.pk)") {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+            }
             HStack {
                 VStack(alignment: .leading) {
                     Text("\(DateFormatterManager.shared.formatDate(dday.date))\(dday.isLunarDate ? " (음력)" : "")")

@@ -25,5 +25,4 @@ final class APIService {
         let parsedItems = parser.parse(data: data)
         return parsedItems
     }
-
 }

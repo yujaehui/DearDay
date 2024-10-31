@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import RealmSwift
 
 struct DDayCardView: View {
-    var dday: DDay
-    
+    @ObservedRealmObject var dday: DDay
+
     @StateObject private var viewModel = DDayViewModel()
     
     var body: some View {

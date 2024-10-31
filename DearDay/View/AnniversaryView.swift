@@ -6,9 +6,13 @@
 //
 
 import SwiftUI
+import RealmSwift
+
+//TODO: Today와 기념일이 겹치는 경우 처리 필요
 
 struct AnniversaryView: View {
-    var dday: DDay
+    @ObservedRealmObject var dday: DDay
+    
     var maxAnniversaries: Int = 36400
     var maxYears: Int = 100
 

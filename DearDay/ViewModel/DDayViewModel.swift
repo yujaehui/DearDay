@@ -79,13 +79,13 @@ extension DDayViewModel: ViewModelType {
     private func fetchClosestSolarDate(from date: Date, repeatType: RepeatType) async -> Date? {
         let calendar = Calendar.current
         let currentYear = calendar.component(.year, from: Date())
-        let targetYear = calendar.component(.year, from: date)
+        let year = calendar.component(.year, from: date)
         let month = calendar.component(.month, from: date)
         let day = calendar.component(.day, from: date)
         
         switch repeatType {
         case .none:
-            return await fetchSolarDate(year: targetYear, month: month, day: day)
+            return await fetchSolarDate(year: year, month: month, day: day)
         case .year:
             if let thisYearDate = await fetchSolarDate(year: currentYear, month: month, day: day), thisYearDate >= Date() {
                 return thisYearDate
@@ -132,3 +132,4 @@ extension DDayViewModel: ViewModelType {
         return adjustedDate
     }
 }
+
