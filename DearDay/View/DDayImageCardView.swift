@@ -10,7 +10,6 @@ import RealmSwift
 
 struct DDayImageCardView: View {    
     @ObservedRealmObject var dDay: DDay
-    
     @StateObject private var viewModel = DDayViewModel()
     
     var body: some View {
@@ -47,4 +46,8 @@ struct DDayImageCardView: View {
             viewModel.action(.loadDDay(dDay))
         }
     }
+}
+
+#Preview {
+    DDayImageCardView(dDay: DDay(type: .numberOfDays, title: "test", date: Date(), isLunarDate: true, startFromDayOne: false, repeatType: .year))
 }

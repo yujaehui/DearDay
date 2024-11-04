@@ -28,24 +28,42 @@ class DDayViewModel {
 extension DDayViewModel: ViewModelType {
     struct Input {
         var loadDDay = PassthroughSubject<DDay, Never>()
+        var updateLunarDate = PassthroughSubject<Date, Never>()
     }
     
     struct Output {
         var dDayText: String = "Loading..."
+        var solarDate: Date?
     }
     
     enum Action {
         case loadDDay(DDay)
+        case updateLunarDate(Date)
     }
     
     func action(_ action: Action) {
         switch action {
         case .loadDDay(let dDay):
             input.loadDDay.send(dDay)
+        case .updateLunarDate(let lunarDate):
+            input.updateLunarDate.send(lunarDate)
         }
     }
     
     func transform() {
+        input.updateLunarDate
+            .flatMap { lunarDate in
+                return Future { promise in
+                    Task {
+                        let solarDate = await self.apiService.fetchSolarDate(lunarDate: lunarDate)
+                        promise(.success(solarDate))
+                    }
+                }
+            }
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.output.solarDate, on: self)
+            .store(in: &cancellables)
+        
         input.loadDDay
             .sink { [weak self] dDay in
                 guard let self = self else { return }

@@ -14,13 +14,13 @@ struct EditDDayView: View {
     
     @ObservedRealmObject var dDay: DDay
     
-    @State var type: DDayType = .dDay
-    @State var title: String = ""
-    @State var selectedDate = Date()
-    @State var isLunarDate: Bool = false
-    @State var startFromDayOne: Bool = false
-    @State var isRepeatOn: Bool = false
-    @State var repeatType: RepeatType = .none
+    @State var type: DDayType
+    @State var title: String
+    @State var selectedDate: Date
+    @State var isLunarDate: Bool
+    @State var startFromDayOne: Bool
+    @State var isRepeatOn: Bool
+    @State var repeatType: RepeatType
     @State var selectedImage: UIImage?
     
     @State private var isPresentedImagePicker = false
@@ -31,6 +31,7 @@ struct EditDDayView: View {
     
     init(dDay: DDay) {
         _dDay = ObservedRealmObject(wrappedValue: dDay)
+        _type = State(initialValue: dDay.type)
         _title = State(initialValue: dDay.title)
         _selectedDate = State(initialValue: dDay.date)
         _isLunarDate = State(initialValue: dDay.isLunarDate)

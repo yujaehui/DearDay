@@ -8,8 +8,6 @@
 import Foundation
 
 final class APIService {
-    static let shared = APIService()
-    //private init() {}
     
     func fetchSolarDate(lunarDate: Date) async -> Date? {
         let calendar = Calendar.current

@@ -18,11 +18,11 @@ final class DateFormatterManager {
     }
     
     func calculateDDayString(from date: Date, startFromDayOne: Bool, calendar: Calendar) -> String {
-        let components = calendar.dateComponents([.day], from: date, to: Date())
+        let components = calendar.dateComponents([.day], from: calendar.startOfDay(for: date), to: calendar.startOfDay(for: Date()))
         
         if let dayDifference = components.day {
-            let dDayValue = startFromDayOne ? (dayDifference + 2) : (dayDifference - 1)
-            if dayDifference == 0 {
+            let dDayValue = startFromDayOne ? (dayDifference + 1) : (dayDifference)
+            if dDayValue == 0 {
                 return "D-DAY"
             } else if dDayValue > 0 {
                 return "+\(dDayValue)"
