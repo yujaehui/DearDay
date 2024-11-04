@@ -84,14 +84,12 @@ struct EditDDayView: View {
                 Section {
                     Toggle("음력", isOn: $isLunarDate)
                     
-                    if type == .numberOfDays {
-                        Toggle("설정일을 1부터 시작", isOn: $startFromDayOne)
+                    if type == .dDay {
+                        Toggle("반복", isOn: $isRepeatOn)
+                            .onChange(of: isRepeatOn) { newValue in
+                                repeatType = newValue ? .year : .none
+                            }
                     }
-                    
-                    Toggle("반복", isOn: $isRepeatOn)
-                        .onChange(of: isRepeatOn) { newValue in
-                            repeatType = newValue ? .year : .none
-                        }
                     
                     if isRepeatOn {
                         Picker("반복 조건", selection: $repeatType) {

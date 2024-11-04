@@ -17,19 +17,32 @@ final class DateFormatterManager {
         return dateFormatter.string(from: date)
     }
     
-    func calculateDDayString(from date: Date, startFromDayOne: Bool, calendar: Calendar) -> String {
+    func calculateDDayString(from date: Date, type: DDayType, startFromDayOne: Bool, calendar: Calendar) -> String {
         let components = calendar.dateComponents([.day], from: calendar.startOfDay(for: date), to: calendar.startOfDay(for: Date()))
         
-        if let dayDifference = components.day {
-            let dDayValue = startFromDayOne ? (dayDifference + 1) : (dayDifference)
-            if dDayValue == 0 {
-                return "D-DAY"
-            } else if dDayValue > 0 {
-                return "+\(dDayValue)"
-            } else {
-                return "\(dDayValue)"
+        switch type {
+        case .dDay:
+            if let dayDifference = components.day {
+                if dayDifference == 0 {
+                    return "D-DAY"
+                } else if dayDifference > 0 {
+                    return "+\(dayDifference)"
+                } else {
+                    return "\(dayDifference)"
+                }
+            }
+        case .numberOfDays:
+            if let dayDifference = components.day {
+                let dDayValue = dayDifference + 1
+                if dDayValue > 0 {
+                    return "+\(dDayValue)"
+                } else {
+                    return "\(dDayValue - 1)"
+                }
             }
         }
+        
+        
         return "N/A"
     }
 }

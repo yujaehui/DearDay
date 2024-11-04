@@ -70,6 +70,7 @@ extension DDayViewModel: ViewModelType {
                 Task {
                     let dDayText = await self.calculateDDay(
                         from: dDay.date,
+                        type: dDay.type,
                         isLunar: dDay.isLunarDate,
                         startFromDayOne: dDay.startFromDayOne,
                         repeatType: dDay.repeatType
@@ -80,7 +81,7 @@ extension DDayViewModel: ViewModelType {
             .store(in: &cancellables)
     }
     
-    private func calculateDDay(from date: Date, isLunar: Bool, startFromDayOne: Bool, repeatType: RepeatType) async -> String {
+    private func calculateDDay(from date: Date, type: DDayType, isLunar: Bool, startFromDayOne: Bool, repeatType: RepeatType) async -> String {
         let calendar = Calendar.current
         var adjustedDate = date
         
@@ -96,7 +97,7 @@ extension DDayViewModel: ViewModelType {
             adjustedDate = adjustForRepeatingDateIfNeeded(date: adjustedDate, repeatType: repeatType, calendar: calendar)
         }
         
-        return DateFormatterManager.shared.calculateDDayString(from: adjustedDate, startFromDayOne: startFromDayOne, calendar: calendar)
+        return DateFormatterManager.shared.calculateDDayString(from: adjustedDate, type: type, startFromDayOne: startFromDayOne, calendar: calendar)
     }
     
     private func fetchClosestSolarDate(from date: Date, repeatType: RepeatType) async -> Date? {

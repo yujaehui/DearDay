@@ -61,7 +61,7 @@ struct SelectDDayTypeAlertView: View {
                                 .foregroundStyle(.black)
                                 .font(.title3)
                                 .fontWeight(.bold)
-                            Text("연인 기념일 등 (1일부터 시작 가능)")
+                            Text("연인 기념일 등 (D+는 1부터 시작)")
                                 .foregroundStyle(.gray)
                         }
                     }
