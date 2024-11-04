@@ -21,11 +21,11 @@ final class DateFormatterManager {
         let components = calendar.dateComponents([.day], from: date, to: Date())
         
         if let dayDifference = components.day {
-            let dDayValue = startFromDayOne ? (dayDifference + 2) : (dayDifference)
-            if dDayValue > 0 {
-                return "+\(dDayValue)"
-            } else if dDayValue == 0 {
+            let dDayValue = startFromDayOne ? (dayDifference + 2) : (dayDifference - 1)
+            if dayDifference == 0 {
                 return "D-DAY"
+            } else if dDayValue > 0 {
+                return "+\(dDayValue)"
             } else {
                 return "\(dDayValue)"
             }

@@ -12,7 +12,7 @@ final class DDayRepository {
     private let realm = try! Realm()
     
     func createItem(_ item: DDay) {
-        print(realm.configuration.fileURL)
+        //print(realm.configuration.fileURL)
         do {
             try realm.write {
                 realm.add(item)
@@ -21,16 +21,6 @@ final class DDayRepository {
             print(error)
         }
     }
-    
-//    func updateItem(_ item: DDay) {
-//        do {
-//            try realm.write {
-//                realm.add(item, update: .modified)
-//            }
-//        } catch {
-//            print(error)
-//        }
-//    }
     
     func updateItem(_ item: DDay, title: String, date: Date, isLunarDate: Bool, startFromDayOne: Bool, repeatType: RepeatType) {
         guard let item = realm.object(ofType: DDay.self, forPrimaryKey: item.pk) else {

@@ -10,12 +10,17 @@ import Combine
 
 @MainActor
 class DDayViewModel {
+    private let repository: DDayRepository
+    private let apiService: APIService
+    
     var cancellables = Set<AnyCancellable>()
     
     var input = Input()
     @Published var output = Output()
     
-    init() {
+    init(repository: DDayRepository = DDayRepository(), apiService: APIService = APIService()) {
+        self.repository = repository
+        self.apiService = apiService
         transform()
     }
 }
@@ -85,30 +90,14 @@ extension DDayViewModel: ViewModelType {
         
         switch repeatType {
         case .none:
-            return await fetchSolarDate(year: year, month: month, day: day)
+            return await self.apiService.fetchSolarDate(year: year, month: month, day: day)
         case .year:
-            if let thisYearDate = await fetchSolarDate(year: currentYear, month: month, day: day), thisYearDate >= Date() {
+            if let thisYearDate = await self.apiService.fetchSolarDate(year: currentYear, month: month, day: day), thisYearDate >= Date() {
                 return thisYearDate
             }
-            return await fetchSolarDate(year: currentYear + 1, month: month, day: day)
+            return await self.apiService.fetchSolarDate(year: currentYear + 1, month: month, day: day)
         case .month: return nil
         }
-    }
-    
-    private func fetchSolarDate(year: Int, month: Int, day: Int) async -> Date? {
-        let calendar = Calendar.current
-        
-        do {
-            let solarDateItems = try await APIService.shared.fetchSolarDateItems(lunYear: year, lunMonth: month, lunDay: day)
-            for solarItem in solarDateItems {
-                if let convertedDate = calendar.date(from: DateComponents(year: Int(solarItem.solYear), month: Int(solarItem.solMonth), day: Int(solarItem.solDay))) {
-                    return convertedDate
-                }
-            }
-        } catch {
-            print("Error fetching closest lunar date for year \(year): \(error)")
-        }
-        return nil
     }
     
     private func adjustForRepeatingDateIfNeeded(date: Date, repeatType: RepeatType, calendar: Calendar) -> Date {
