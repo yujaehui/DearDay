@@ -1,15 +1,18 @@
 //
-//  AddDDayView.swift
+//  EditDDayView.swift
 //  DearDay
 //
-//  Created by Jaehui Yu on 10/30/24.
+//  Created by Jaehui Yu on 11/4/24.
 //
 
 import SwiftUI
 import PhotosUI
+import RealmSwift
 
-struct AddDDayView: View {
-    @StateObject private var viewModel = AddDDayViewModel()
+struct EditDDayView: View {
+    @StateObject private var viewModel = EditDDayViewModel()
+    
+    @ObservedRealmObject var dDay: DDay
     
     @State var type: DDayType = .dDay
     @State var title: String = ""
@@ -25,6 +28,17 @@ struct AddDDayView: View {
     @State private var alertMessage = ""
     
     @Environment(\.dismiss) private var dismiss
+    
+    init(dDay: DDay) {
+        _dDay = ObservedRealmObject(wrappedValue: dDay)
+        _title = State(initialValue: dDay.title)
+        _selectedDate = State(initialValue: dDay.date)
+        _isLunarDate = State(initialValue: dDay.isLunarDate)
+        _startFromDayOne = State(initialValue: dDay.startFromDayOne)
+        _isRepeatOn = State(initialValue: dDay.repeatType == .none ? false : true)
+        _repeatType = State(initialValue: dDay.repeatType)
+        _selectedImage = State(initialValue: ImageDocumentManager.shared.loadImageToDocument(fileName: "\(dDay.pk)"))
+    }
     
     var body: some View {
         NavigationStack {
@@ -133,7 +147,7 @@ struct AddDDayView: View {
                             alertMessage = "해당 날짜는 음양력 계산이 불가능합니다."
                             isPresentedErrorAlert = true
                         } else {
-                            let dDay = DDay(
+                            let newDDay = DDay(
                                 type: type,
                                 title: title,
                                 date: selectedDate,
@@ -141,11 +155,11 @@ struct AddDDayView: View {
                                 startFromDayOne: startFromDayOne,
                                 repeatType: repeatType
                             )
-                            viewModel.action(.addDDay(dDay, selectedImage))
+                            viewModel.action(.editDDay(dDay, newDDay, selectedImage))
                             
                         }
                     } label: {
-                        Text("추가")
+                        Text("수정")
                             .foregroundColor(.gray)
                     }
                     .alert(isPresented: $isPresentedErrorAlert) {
@@ -153,56 +167,13 @@ struct AddDDayView: View {
                     }
                 }
             }
-            .onReceive(viewModel.output.addCompleted) {
+            .onReceive(viewModel.output.editCompleted) {
                 dismiss()
             }
         }
     }
 }
 
-
-struct ImagePicker: UIViewControllerRepresentable {
-    @Binding var selectedImage: UIImage?
-    
-    func makeUIViewController(context: Context) -> PHPickerViewController {
-        var configuration = PHPickerConfiguration()
-        configuration.filter = .images
-        configuration.selectionLimit = 1
-        
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = context.coordinator
-        return picker
-    }
-    
-    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
-    
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-    
-    class Coordinator: NSObject, PHPickerViewControllerDelegate {
-        let parent: ImagePicker
-        
-        init(_ parent: ImagePicker) {
-            self.parent = parent
-        }
-        
-        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-            picker.dismiss(animated: true)
-            
-            guard let provider = results.first?.itemProvider, provider.canLoadObject(ofClass: UIImage.self) else { return }
-            
-            provider.loadObject(ofClass: UIImage.self) { image, _ in
-                DispatchQueue.main.async {
-                    self.parent.selectedImage = image as? UIImage
-                }
-            }
-        }
-    }
-}
-
-#Preview {
-    AddDDayView(type: .dDay)
-}
-
-
+//#Preview {
+//    EditDDayView()
+//}

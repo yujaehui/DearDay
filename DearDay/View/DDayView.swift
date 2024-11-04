@@ -9,7 +9,7 @@ import SwiftUI
 import RealmSwift
 
 struct DDayView: View {
-    @ObservedResults(DDay.self) var ddays
+    @ObservedResults(DDay.self) var dDays
     
     @State private var isPresentedSelectDDayTypeAlertView = false
     @State private var navigateToAddDDayView = false
@@ -18,9 +18,9 @@ struct DDayView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                List(ddays) { dday in
-                    NavigationLink(destination: DDayDetailView(dday: dday)) {
-                        DDayCardView(dday: dday)
+                List(dDays) { dDay in
+                    NavigationLink(destination: DDayDetailView(dDay: dDay)) {
+                        DDayCardView(dDay: dDay)
                     }
                 }
                 .listStyle(.grouped)

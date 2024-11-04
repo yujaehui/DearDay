@@ -11,7 +11,7 @@ import RealmSwift
 //TODO: Today와 기념일이 겹치는 경우 처리 필요
 
 struct AnniversaryView: View {
-    @ObservedRealmObject var dday: DDay
+    @ObservedRealmObject var dDay: DDay
     
     var maxAnniversaries: Int = 36400
     var maxYears: Int = 100
@@ -31,15 +31,15 @@ struct AnniversaryView: View {
         let calendar = Calendar.current
 
         for days in anniversaryIntervals {
-            let offset = dday.startFromDayOne ? days - 1 : days
-            if let anniversary = calendar.date(byAdding: .day, value: offset, to: dday.date) {
+            let offset = dDay.startFromDayOne ? days - 1 : days
+            if let anniversary = calendar.date(byAdding: .day, value: offset, to: dDay.date) {
                 dates.append((days, anniversary))
             }
         }
 
         for yearDays in anniversaryYears {
-            let offset = dday.startFromDayOne ? yearDays - 1 : yearDays
-            if let anniversary = calendar.date(byAdding: .day, value: offset, to: dday.date) {
+            let offset = dDay.startFromDayOne ? yearDays - 1 : yearDays
+            if let anniversary = calendar.date(byAdding: .day, value: offset, to: dDay.date) {
                 dates.append((yearDays, anniversary))
             }
         }
@@ -84,6 +84,6 @@ struct AnniversaryView: View {
     
     private func daysUntilEvent() -> Int {
         let calendar = Calendar.current
-        return calendar.dateComponents([.day], from: Date(), to: dday.date).day ?? 0
+        return calendar.dateComponents([.day], from: Date(), to: dDay.date).day ?? 0
     }
 }

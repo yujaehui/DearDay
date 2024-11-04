@@ -1,15 +1,15 @@
 //
-//  AddDDayViewModel.swift
+//  EditDDayViewModel.swift
 //  DearDay
 //
-//  Created by Jaehui Yu on 10/31/24.
+//  Created by Jaehui Yu on 11/4/24.
 //
 
 import SwiftUI
 import Combine
 
 @MainActor
-class AddDDayViewModel {
+class EditDDayViewModel {
     private let repository = DDayRepository()
     
     var cancellables = Set<AnyCancellable>()
@@ -22,28 +22,28 @@ class AddDDayViewModel {
     }
 }
 
-extension AddDDayViewModel: ViewModelType {
+extension EditDDayViewModel: ViewModelType {
     struct Input {
         var updateLunarDate = PassthroughSubject<Date, Never>()
-        var addDDay = PassthroughSubject<(DDay, UIImage?), Never>()
+        var editDDay = PassthroughSubject<(DDay, DDay, UIImage?), Never>()
     }
     
     struct Output {
         var solarDate: Date?
-        var addCompleted = PassthroughSubject<Void, Never>() // 추가 완료 신호
+        var editCompleted = PassthroughSubject<Void, Never>() // 수정 완료 신호
     }
     
     enum Action {
         case updateLunarDate(Date)
-        case addDDay(DDay, UIImage?)
+        case editDDay(DDay, DDay, UIImage?)
     }
     
     func action(_ action: Action) {
         switch action {
         case .updateLunarDate(let lunarDate):
             input.updateLunarDate.send(lunarDate)
-        case .addDDay(let dDay, let image):
-            input.addDDay.send((dDay, image))
+        case .editDDay(let dDay,let newDDay, let image):
+            input.editDDay.send((dDay, newDDay, image))
         }
     }
     
@@ -57,14 +57,20 @@ extension AddDDayViewModel: ViewModelType {
             }
             .store(in: &cancellables)
         
-        input.addDDay
-            .sink { [weak self] dDay, image in
+        input.editDDay
+            .sink { [weak self] dDay, newDDay, image in
                 guard let self = self else { return }
-                if let image = image {
-                    ImageDocumentManager.shared.saveImageToDocument(image: image, fileName: "\(dDay.pk)")
+                // 1. 이전 이미지가 있다면 제거
+                if ImageDocumentManager.shared.loadImageToDocument(fileName: "\(newDDay.pk)") != nil {
+                    ImageDocumentManager.shared.removeImageFromDocument(fileName: "\(newDDay.pk)")
                 }
-                self.repository.createItem(dDay)
-                self.output.addCompleted.send() // 추가 완료 이벤트 전송
+                // 2. 현재 이미지가 있다면 추가
+                if let image = image {
+                    ImageDocumentManager.shared.saveImageToDocument(image: image, fileName: "\(newDDay.pk)")
+                }
+                
+                self.repository.updateItem(dDay, title: newDDay.title, date: newDDay.date, isLunarDate: newDDay.isLunarDate, startFromDayOne: newDDay.startFromDayOne, repeatType: newDDay.repeatType)
+                self.output.editCompleted.send() // 추가 완료 이벤트 전송
             }
             .store(in: &cancellables)
     }

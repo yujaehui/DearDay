@@ -36,17 +36,17 @@ extension DDayDetailViewModel: ViewModelType {
     
     func action(_ action: Action) {
         switch action {
-        case .deleteDDay(let dday):
-            input.deleteDDay.send(dday)
+        case .deleteDDay(let dDay):
+            input.deleteDDay.send(dDay)
         }
     }
     
     func transform() {
         input.deleteDDay
-            .sink { [weak self] dday in
+            .sink { [weak self] dDay in
                 guard let self = self else { return }
-                ImageDocumentManager.shared.removeImageFromDocument(fileName: "\(dday.pk)")
-                self.repository.deleteItem(dday)
+                ImageDocumentManager.shared.removeImageFromDocument(fileName: "\(dDay.pk)")
+                self.repository.deleteItem(dDay)
                 self.output.deleteCompleted.send() // 삭제 완료 이벤트 전송
             }
             .store(in: &cancellables)

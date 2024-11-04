@@ -21,13 +21,13 @@ final class DateFormatterManager {
         let components = calendar.dateComponents([.day], from: date, to: Date())
         
         if let dayDifference = components.day {
-            let ddayValue = startFromDayOne ? (dayDifference + 1) : (dayDifference - 1)
-            if ddayValue > 0 {
-                return "+\(ddayValue)"
-            } else if ddayValue == 0 {
+            let dDayValue = startFromDayOne ? (dayDifference + 2) : (dayDifference)
+            if dDayValue > 0 {
+                return "+\(dDayValue)"
+            } else if dDayValue == 0 {
                 return "D-DAY"
             } else {
-                return "\(ddayValue)"
+                return "\(dDayValue)"
             }
         }
         return "N/A"

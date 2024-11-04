@@ -8,8 +8,8 @@
 import SwiftUI
 import RealmSwift
 
-struct DDayDetailView: View {    
-    @ObservedRealmObject var dday: DDay
+struct DDayDetailView: View {
+    @ObservedRealmObject var dDay: DDay
     
     @StateObject private var viewModel = DDayDetailViewModel()
     
@@ -21,52 +21,53 @@ struct DDayDetailView: View {
     
     var body: some View {
         NavigationStack {
-            DDayImageCardView(dday: dday)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Button {
-                            isPresentedAddDDayView.toggle()
+            DDayImageCardView(dDay: dDay)
+                .id(dDay)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Menu {
+                            Button {
+                                isPresentedAddDDayView.toggle()
+                            } label: {
+                                Label("수정", systemImage: "square.and.pencil")
+                            }
+                            Button(role: .destructive) {
+                                isPresentedDeleteAlert.toggle()
+                            } label: {
+                                Label("삭제", systemImage: "trash")
+                            }
                         } label: {
-                            Label("수정", systemImage: "square.and.pencil")
+                            Image(systemName: "ellipsis")
+                                .foregroundColor(.gray)
+                                .rotationEffect(.degrees(90))
                         }
-                        Button(role: .destructive) {
-                            isPresentedDeleteAlert.toggle()
-                        } label: {
-                            Label("삭제", systemImage: "trash")
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis")
-                            .foregroundColor(.gray)
-                            .rotationEffect(.degrees(90))
+                        
                     }
-                    
-                }
-                ToolbarItem(placement: .bottomBar) {
-                    if dday.type == .numberOfDays {
-                        Button {
-                            isPresentedAnniversaryView.toggle()
-                        } label: {
-                            Text("기념일 보기")
-                                .foregroundStyle(.gray)
+                    ToolbarItem(placement: .bottomBar) {
+                        if dDay.type == .numberOfDays {
+                            Button {
+                                isPresentedAnniversaryView.toggle()
+                            } label: {
+                                Text("기념일 보기")
+                                    .foregroundStyle(.gray)
+                            }
                         }
                     }
                 }
-            }
-            .sheet(isPresented: $isPresentedAnniversaryView) {
-                AnniversaryView(dday: dday)
-                    .presentationDetents([.medium])
-            }
-            .sheet(isPresented: $isPresentedAddDDayView) {
-                //TODO: EditDDayView로 이동 및 DDay 업데이트 로직 구현
-            }
-            .alert("해당 디데이를 삭제하시겠습니까?", isPresented: $isPresentedDeleteAlert) {
-                Button("취소", role: .cancel) { }
-                Button("삭제", role: .destructive) {
-                    viewModel.action(.deleteDDay(dday))
-                    dismiss()
+                .sheet(isPresented: $isPresentedAnniversaryView) {
+                    AnniversaryView(dDay: dDay)
+                        .presentationDetents([.medium])
                 }
-            }
+                .sheet(isPresented: $isPresentedAddDDayView) {
+                    EditDDayView(dDay: dDay)
+                }
+                .alert("해당 디데이를 삭제하시겠습니까?", isPresented: $isPresentedDeleteAlert) {
+                    Button("취소", role: .cancel) { }
+                    Button("삭제", role: .destructive) {
+                        viewModel.action(.deleteDDay(dDay))
+                        dismiss()
+                    }
+                }
         }
     }
 }

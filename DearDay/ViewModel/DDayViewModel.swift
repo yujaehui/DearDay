@@ -26,7 +26,7 @@ extension DDayViewModel: ViewModelType {
     }
     
     struct Output {
-        var ddayText: String = "Loading..."
+        var dDayText: String = "Loading..."
     }
     
     enum Action {
@@ -35,23 +35,23 @@ extension DDayViewModel: ViewModelType {
     
     func action(_ action: Action) {
         switch action {
-        case .loadDDay(let dday):
-            input.loadDDay.send(dday)
+        case .loadDDay(let dDay):
+            input.loadDDay.send(dDay)
         }
     }
     
     func transform() {
         input.loadDDay
-            .sink { [weak self] dday in
+            .sink { [weak self] dDay in
                 guard let self = self else { return }
                 Task {
-                    let ddayText = await self.calculateDDay(
-                        from: dday.date,
-                        isLunar: dday.isLunarDate,
-                        startFromDayOne: dday.startFromDayOne,
-                        repeatType: dday.repeatType
+                    let dDayText = await self.calculateDDay(
+                        from: dDay.date,
+                        isLunar: dDay.isLunarDate,
+                        startFromDayOne: dDay.startFromDayOne,
+                        repeatType: dDay.repeatType
                     )
-                    self.output.ddayText = ddayText
+                    self.output.dDayText = dDayText
                 }
             }
             .store(in: &cancellables)

@@ -9,34 +9,34 @@ import SwiftUI
 import RealmSwift
 
 struct DDayImageCardView: View {    
-    @ObservedRealmObject var dday: DDay
+    @ObservedRealmObject var dDay: DDay
     
     @StateObject private var viewModel = DDayViewModel()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text(dday.title)
+            Text(dDay.title)
                 .lineLimit(1)
                 .foregroundColor(.gray)
                 .font(.title3)
-            if let image = ImageDocumentManager.shared.loadImageToDocument(fileName: "\(dday.pk)") {
+            if let image = ImageDocumentManager.shared.loadImageToDocument(fileName: "\(dDay.pk)") {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
             }
             HStack {
                 VStack(alignment: .leading) {
-                    Text("\(DateFormatterManager.shared.formatDate(dday.date))\(dday.isLunarDate ? " (음력)" : "")")
+                    Text("\(DateFormatterManager.shared.formatDate(dDay.date))\(dDay.isLunarDate ? " (음력)" : "")")
                         .foregroundColor(.gray.opacity(0.8))
                         .font(.callout)
-                    if dday.repeatType != .none {
-                        Text("[\(dday.repeatType.rawValue) 반복]")
+                    if dDay.repeatType != .none {
+                        Text("[\(dDay.repeatType.rawValue) 반복]")
                             .foregroundColor(.gray.opacity(0.8))
                             .font(.caption)
                     }
                 }
                 Spacer()
-                Text(viewModel.output.ddayText)
+                Text(viewModel.output.dDayText)
                     .foregroundColor(.gray)
                     .font(.largeTitle)
                     .fontWeight(.bold)
@@ -44,7 +44,7 @@ struct DDayImageCardView: View {
         }
         .padding()
         .task {
-            viewModel.action(.loadDDay(dday))
+            viewModel.action(.loadDDay(dDay))
         }
     }
 }
