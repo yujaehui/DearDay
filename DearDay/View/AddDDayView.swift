@@ -9,6 +9,7 @@ import SwiftUI
 import PhotosUI
 
 struct AddDDayView: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = AddDDayViewModel()
     
     @State var type: DDayType = .dDay
@@ -23,8 +24,6 @@ struct AddDDayView: View {
     @State private var isPresentedImagePicker = false
     @State private var isPresentedErrorAlert = false
     @State private var alertMessage = ""
-    
-    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {

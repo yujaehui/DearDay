@@ -8,15 +8,19 @@
 import Foundation
 import Combine
 
+@MainActor
 final class DDayDetailViewModel {
-    private let repository = DDayRepository()
+    private let repository: DDayRepository
+    private let apiService: APIService
     
     var cancellables = Set<AnyCancellable>()
     
     var input = Input()
     @Published var output = Output()
     
-    init() {
+    init(repository: DDayRepository = DDayRepository(), apiService: APIService = APIService()) {
+        self.repository = repository
+        self.apiService = apiService
         transform()
     }
 }

@@ -10,8 +10,8 @@ import RealmSwift
 
 struct DDayImageCardView: View {    
     @ObservedRealmObject var dDay: DDay
-    @StateObject private var viewModel = DDayViewModel()
-    
+    @StateObject private var viewModel: DDayCardViewModel = DDayCardViewModel()
+
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text(dDay.title)

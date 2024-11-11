@@ -27,7 +27,7 @@ final class DDay: Object, ObjectKeyIdentifiable {
     @Persisted var isLunarDate: Bool
     @Persisted var startFromDayOne: Bool
     @Persisted var repeatType: RepeatType = .none
-    
+        
     convenience init(type: DDayType, title: String, date: Date, isLunarDate: Bool, startFromDayOne: Bool, repeatType: RepeatType) {
         self.init()
         self.type = type

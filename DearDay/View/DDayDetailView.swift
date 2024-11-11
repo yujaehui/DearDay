@@ -9,16 +9,14 @@ import SwiftUI
 import RealmSwift
 
 struct DDayDetailView: View {
+    @Environment(\.dismiss) private var dismiss
     @ObservedRealmObject var dDay: DDay
-    
     @StateObject private var viewModel = DDayDetailViewModel()
     
     @State private var isPresentedAnniversaryView: Bool = false
     @State private var isPresentedAddDDayView: Bool = false
     @State private var isPresentedDeleteAlert = false
-    
-    @Environment(\.dismiss) private var dismiss
-    
+        
     var body: some View {
         NavigationStack {
             DDayImageCardView(dDay: dDay)

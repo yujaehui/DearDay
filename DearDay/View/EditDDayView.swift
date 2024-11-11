@@ -10,9 +10,9 @@ import PhotosUI
 import RealmSwift
 
 struct EditDDayView: View {
-    @StateObject private var viewModel = EditDDayViewModel()
-    
+    @Environment(\.dismiss) private var dismiss
     @ObservedRealmObject var dDay: DDay
+    @StateObject private var viewModel = EditDDayViewModel()
     
     @State var type: DDayType
     @State var title: String
@@ -27,7 +27,6 @@ struct EditDDayView: View {
     @State private var isPresentedErrorAlert = false
     @State private var alertMessage = ""
     
-    @Environment(\.dismiss) private var dismiss
     
     init(dDay: DDay) {
         _dDay = ObservedRealmObject(wrappedValue: dDay)

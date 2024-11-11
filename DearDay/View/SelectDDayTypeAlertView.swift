@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct SelectDDayTypeAlertView: View {
-    
     @Binding var isPresentedSelectDDayTypeAlertView: Bool
     @Binding var selectedDDayType: DDayType
     @Binding var navigateToAddDDayView: Bool

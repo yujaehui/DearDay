@@ -10,6 +10,7 @@ import Foundation
 final class APIService {
     
     func fetchSolarDate(lunarDate: Date) async -> Date? {
+        print(#function)
         let calendar = Calendar.current
         let year = calendar.component(.year, from: lunarDate)
         let month = calendar.component(.month, from: lunarDate)
@@ -29,6 +30,7 @@ final class APIService {
     }
     
     func fetchSolarDate(year: Int, month: Int, day: Int) async -> Date? {
+        print(#function)
         let calendar = Calendar.current
         
         do {
@@ -45,6 +47,7 @@ final class APIService {
     }
     
     private func fetchSolarDateItems(lunYear: Int, lunMonth: Int, lunDay: Int) async throws -> [SolarDateItem] {
+        print(#function)
         let serviceKey = APIKey.key
         let urlString = String(format: "http://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService/getSolCalInfo?lunYear=%d&lunMonth=%02d&lunDay=%02d&ServiceKey=%@", lunYear, lunMonth, lunDay, serviceKey)
         

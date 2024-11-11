@@ -10,8 +10,9 @@ import RealmSwift
 
 struct DDayCardView: View {
     @ObservedRealmObject var dDay: DDay
-    @StateObject private var viewModel = DDayViewModel()
-    
+    @StateObject private var viewModel = DDayCardViewModel()
+    @Binding var dDayText: String
+
     var body: some View {
         HStack(spacing: 20) {
             Text(dDay.title)
@@ -21,7 +22,7 @@ struct DDayCardView: View {
             
             Spacer()
             VStack(alignment: .trailing) {
-                Text(viewModel.output.dDayText)
+                Text(dDayText)
                     .foregroundColor(.gray)
                     .font(.title3)
                     .fontWeight(.bold)
@@ -33,6 +34,13 @@ struct DDayCardView: View {
         .padding(8)
         .task {
             viewModel.action(.loadDDay(dDay))
+            
+            viewModel.$output
+                .map(\.dDayText)
+                .sink { updatedText in
+                    dDayText = updatedText // @Binding으로 전달된 dDayText를 직접 업데이트
+                }
+                .store(in: &viewModel.cancellables)
         }
     }
 }
