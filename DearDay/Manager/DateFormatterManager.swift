@@ -42,7 +42,6 @@ final class DateFormatterManager {
             }
         }
         
-        
         return "N/A"
     }
 }

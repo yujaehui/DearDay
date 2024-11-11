@@ -47,7 +47,3 @@ struct DDayImageCardView: View {
         }
     }
 }
-
-#Preview {
-    DDayImageCardView(dDay: DDay(type: .numberOfDays, title: "test", date: Date(), isLunarDate: true, startFromDayOne: false, repeatType: .year))
-}

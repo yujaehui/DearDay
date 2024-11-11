@@ -166,10 +166,10 @@
 			children = (
 				09F38C892CBCE80900F824D7 /* DDayView.swift */,
 				09F38C8B2CBCEA7F00F824D7 /* DDayCardView.swift */,
+				095B58DC2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift */,
 				09F38C8D2CBCEFC000F824D7 /* DDayDetailView.swift */,
 				09F38CAB2CBFB1C000F824D7 /* DDayImageCardView.swift */,
 				09F38C9F2CBE5FAE00F824D7 /* AnniversaryView.swift */,
-				095B58DC2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift */,
 				095B58DA2CD2346600EC3531 /* AddDDayView.swift */,
 				095B58F22CD8AEBB00EC3531 /* EditDDayView.swift */,
 			);
