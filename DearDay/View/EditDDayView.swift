@@ -149,7 +149,8 @@ struct EditDDayView: View {
                                 type: type,
                                 title: title,
                                 date: selectedDate,
-                                isLunarDate: isLunarDate,
+                                isLunarDate: isLunarDate, 
+                                convertedSolarDateFromLunar: viewModel.output.solarDate,
                                 startFromDayOne: startFromDayOne,
                                 repeatType: repeatType
                             )

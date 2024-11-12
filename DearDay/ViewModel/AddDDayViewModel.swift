@@ -70,7 +70,11 @@ extension AddDDayViewModel: ViewModelType {
                 if let image = image {
                     ImageDocumentManager.shared.saveImageToDocument(image: image, fileName: "\(dDay.pk)")
                 }
+                
                 self.repository.createItem(dDay)
+                
+                NotificationManager.shared.scheduleNotification(for: dDay)
+                
                 self.output.addCompleted.send() // 추가 완료 이벤트 전송
             }
             .store(in: &cancellables)

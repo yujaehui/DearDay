@@ -50,7 +50,11 @@ extension DDayDetailViewModel: ViewModelType {
             .sink { [weak self] dDay in
                 guard let self = self else { return }
                 ImageDocumentManager.shared.removeImageFromDocument(fileName: "\(dDay.pk)")
+                
                 self.repository.deleteItem(dDay)
+                
+                NotificationManager.shared.removeNotification(for: dDay)
+                
                 self.output.deleteCompleted.send() // 삭제 완료 이벤트 전송
             }
             .store(in: &cancellables)

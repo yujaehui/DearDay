@@ -77,6 +77,10 @@ extension EditDDayViewModel: ViewModelType {
                 }
                 
                 self.repository.updateItem(dDay, title: newDDay.title, date: newDDay.date, isLunarDate: newDDay.isLunarDate, startFromDayOne: newDDay.startFromDayOne, repeatType: newDDay.repeatType)
+                
+                NotificationManager.shared.removeNotification(for: dDay)
+                NotificationManager.shared.scheduleNotification(for: dDay)
+                
                 self.output.editCompleted.send() // 추가 완료 이벤트 전송
             }
             .store(in: &cancellables)

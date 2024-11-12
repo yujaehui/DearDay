@@ -8,8 +8,19 @@
 import SwiftUI
 
 struct ContentView: View {
+    @AppStorage("isRequested") private var isRequested: Bool = false
+
     var body: some View {
         DDayView()
+            .onAppear {
+                if !isRequested {
+                    NotificationManager.shared.requestAuthorization { granted in
+                        if granted {
+                            isRequested = true
+                        }
+                    }
+                }
+            }
     }
 }
 

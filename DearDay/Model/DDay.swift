@@ -25,15 +25,17 @@ final class DDay: Object, ObjectKeyIdentifiable {
     @Persisted var title: String
     @Persisted var date: Date
     @Persisted var isLunarDate: Bool
+    @Persisted var convertedSolarDateFromLunar: Date?
     @Persisted var startFromDayOne: Bool
     @Persisted var repeatType: RepeatType = .none
         
-    convenience init(type: DDayType, title: String, date: Date, isLunarDate: Bool, startFromDayOne: Bool, repeatType: RepeatType) {
+    convenience init(type: DDayType, title: String, date: Date, isLunarDate: Bool, convertedSolarDateFromLunar: Date?, startFromDayOne: Bool, repeatType: RepeatType) {
         self.init()
         self.type = type
         self.title = title
         self.date = date
         self.isLunarDate = isLunarDate
+        self.convertedSolarDateFromLunar = convertedSolarDateFromLunar
         self.startFromDayOne = type == .dDay ? false : true
         self.repeatType = repeatType
     }
