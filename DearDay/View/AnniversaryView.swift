@@ -11,20 +11,17 @@ import RealmSwift
 struct AnniversaryView: View {
     @ObservedRealmObject var dDay: DDay
     
-    var maxAnniversaries: Int = 36400
-    var maxYears: Int = 100
-    
     var anniversaryIntervals: [Int] {
         var intervals = [1, 10, 50]
-        intervals.append(contentsOf: stride(from: 100, through: maxAnniversaries, by: 100))
+        intervals.append(contentsOf: stride(from: 100, through: 36400, by: 100))
         return intervals
     }
     
-    var anniversaryYears: [Int] {
+    var anniversaryYearIntervals: [Int] {
         var yearIntervals: [Int] = []
         let calendar = Calendar.current
         
-        for year in 1...maxYears {
+        for year in 1...100 {
             let dateForYear = calendar.date(byAdding: .year, value: year, to: dDay.date)!
             
             if let daysDifference = calendar.dateComponents([.day], from: dDay.date, to: dateForYear).day {
@@ -39,6 +36,7 @@ struct AnniversaryView: View {
         var dates: [(days: Int, date: Date, isYear: Bool)] = []
         let calendar = Calendar.current
         
+        // 일 단위 기념일 목록 추가
         for days in anniversaryIntervals {
             let offset = dDay.startFromDayOne ? days - 1 : days
             if let anniversary = calendar.date(byAdding: .day, value: offset, to: dDay.date) {
@@ -46,13 +44,15 @@ struct AnniversaryView: View {
             }
         }
         
-        for yearDays in anniversaryYears {
-            let offset = dDay.startFromDayOne ? yearDays - 1 : yearDays
+        // 연 단위 기념일 목록 추가
+        for yearDays in anniversaryYearIntervals {
+            let offset = yearDays // 연 단위를 계산할 때는 시작일을 1일로 생각하는 것을 고려하지 않음
             if let anniversary = calendar.date(byAdding: .day, value: offset, to: dDay.date) {
                 dates.append((yearDays, calendar.startOfDay(for: anniversary), true))
             }
         }
         
+        // Today 계산을 위한 오늘 날짜 추가 (오늘 = 0)
         dates.append((0, calendar.startOfDay(for: Date()), false))
         
         let uniqueDates = Dictionary(grouping: dates, by: { $0.date })

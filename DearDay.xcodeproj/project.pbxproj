@@ -23,6 +23,7 @@
 		095B59032CE2100100EC3531 /* Results+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B59022CE2100100EC3531 /* Results+Extension.swift */; };
 		095B59052CE2100900EC3531 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B59042CE2100900EC3531 /* String+Extension.swift */; };
 		095B59072CE21B2A00EC3531 /* DDayCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B59062CE21B2A00EC3531 /* DDayCardViewModel.swift */; };
+		095B59092CE3214E00EC3531 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B59082CE3214E00EC3531 /* NotificationManager.swift */; };
 		09F38C7C2CBCE7D500F824D7 /* DearDayApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C7B2CBCE7D500F824D7 /* DearDayApp.swift */; };
 		09F38C7E2CBCE7D500F824D7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C7D2CBCE7D500F824D7 /* ContentView.swift */; };
 		09F38C802CBCE7D500F824D7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F38C7F2CBCE7D500F824D7 /* Assets.xcassets */; };
@@ -55,6 +56,7 @@
 		095B59022CE2100100EC3531 /* Results+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Results+Extension.swift"; sourceTree = "<group>"; };
 		095B59042CE2100900EC3531 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		095B59062CE21B2A00EC3531 /* DDayCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDayCardViewModel.swift; sourceTree = "<group>"; };
+		095B59082CE3214E00EC3531 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		09F38C782CBCE7D500F824D7 /* DearDay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DearDay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09F38C7B2CBCE7D500F824D7 /* DearDayApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DearDayApp.swift; sourceTree = "<group>"; };
 		09F38C7D2CBCE7D500F824D7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 			children = (
 				09F38C992CBE3EC400F824D7 /* DateFormatterManager.swift */,
 				095B58EA2CD35E3F00EC3531 /* ImageDocumentManager.swift */,
+				095B59082CE3214E00EC3531 /* NotificationManager.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -303,6 +306,7 @@
 				095B58DD2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift in Sources */,
 				095B58ED2CD3856600EC3531 /* DDayDetailViewModel.swift in Sources */,
 				09F38CB12CBFBA7B00F824D7 /* APIKey.swift in Sources */,
+				095B59092CE3214E00EC3531 /* NotificationManager.swift in Sources */,
 				09F38C7C2CBCE7D500F824D7 /* DearDayApp.swift in Sources */,
 				095B58E52CD3556000EC3531 /* DDay.swift in Sources */,
 				09F38CA02CBE5FAE00F824D7 /* AnniversaryView.swift in Sources */,
