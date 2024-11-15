@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import WidgetKit
 
 @MainActor
 final class DDayDetailViewModel {
@@ -54,6 +55,8 @@ extension DDayDetailViewModel: ViewModelType {
                 self.repository.deleteItem(dDay)
                 
                 NotificationManager.shared.removeNotification(for: dDay)
+                
+                WidgetCenter.shared.reloadAllTimelines()
                 
                 self.output.deleteCompleted.send() // 삭제 완료 이벤트 전송
             }

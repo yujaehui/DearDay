@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import WidgetKit
 
 @MainActor
 class AddDDayViewModel: ObservableObject {
@@ -74,6 +75,8 @@ extension AddDDayViewModel: ViewModelType {
                 self.repository.createItem(dDay)
                 
                 NotificationManager.shared.scheduleNotification(for: dDay)
+                
+                WidgetCenter.shared.reloadAllTimelines()
                 
                 self.output.addCompleted.send() // 추가 완료 이벤트 전송
             }

@@ -9,6 +9,10 @@ import SwiftUI
 
 @main
 struct DearDayApp: App {
+    init() {
+        RealmConfiguration.shared.configureRealm()
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

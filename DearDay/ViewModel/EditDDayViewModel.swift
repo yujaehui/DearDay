@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import WidgetKit
 
 @MainActor
 class EditDDayViewModel {
@@ -81,7 +82,9 @@ extension EditDDayViewModel: ViewModelType {
                 NotificationManager.shared.removeNotification(for: dDay)
                 NotificationManager.shared.scheduleNotification(for: dDay)
                 
-                self.output.editCompleted.send() // 추가 완료 이벤트 전송
+                WidgetCenter.shared.reloadAllTimelines()
+                
+                self.output.editCompleted.send() // 수정 완료 이벤트 전송
             }
             .store(in: &cancellables)
     }
