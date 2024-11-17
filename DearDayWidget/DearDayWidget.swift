@@ -25,7 +25,9 @@ struct Provider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<DDayEntry>) -> Void) {
         let currentDate = Date()
         let entry = fetchClosestDDayEntry()
-        let nextUpdate = Calendar.current.date(byAdding: .hour, value: 6, to: currentDate)!
+        
+        var nextUpdate = Calendar.current.startOfDay(for: currentDate)
+        nextUpdate = Calendar.current.date(byAdding: .day, value: 1, to: nextUpdate)!
         
         let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
         completion(timeline)
