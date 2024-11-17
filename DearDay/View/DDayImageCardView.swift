@@ -18,7 +18,7 @@ struct DDayImageCardView: View {
                 .lineLimit(1)
                 .foregroundColor(.gray)
                 .font(.title3)
-            if let image = ImageDocumentManager.shared.loadImageToDocument(fileName: "\(dDay.pk)") {
+            if let image = ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(dDay.pk)") {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()

@@ -9,22 +9,26 @@ import WidgetKit
 import SwiftUI
 import RealmSwift
 
+
+// MARK: - Provider
 struct Provider: TimelineProvider {
     @ObservedResults(DDay.self) var dDays
     private var apiService = APIService()
     
     func placeholder(in context: Context) -> DDayEntry {
-        DDayEntry(title: "Placeholder D-Day", date: Date(), dDayText: "D-DAY")
+        DDayEntry(dDays: [DDayEntryItem(
+            dDay: DDay(type: .dDay, title: "Placeholder D-Day", date: Date(), isLunarDate: false, convertedSolarDateFromLunar: nil, startFromDayOne: false, repeatType: .none),
+            dDayText: "")])
     }
-
+    
     func getSnapshot(in context: Context, completion: @escaping (DDayEntry) -> Void) {
-        let entry = fetchClosestDDayEntry()
+        let entry = DDayEntry(dDays: fetchDDayEntries())
         completion(entry)
     }
-
+    
     func getTimeline(in context: Context, completion: @escaping (Timeline<DDayEntry>) -> Void) {
         let currentDate = Date()
-        let entry = fetchClosestDDayEntry()
+        let entry = DDayEntry(dDays: fetchDDayEntries())
         
         var nextUpdate = Calendar.current.startOfDay(for: currentDate)
         nextUpdate = Calendar.current.date(byAdding: .day, value: 1, to: nextUpdate)!
@@ -32,17 +36,26 @@ struct Provider: TimelineProvider {
         let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
         completion(timeline)
     }
+}
 
-    private func fetchClosestDDayEntry() -> DDayEntry {
-        RealmConfiguration.shared.configureRealm()
-        
-        guard let firstDDay = dDays.first else {
-            return DDayEntry(title: "No Upcoming D-Days", date: Date(), dDayText: "")
+extension Provider {
+    private func fetchDDayEntries() -> [DDayEntryItem] {
+        guard !dDays.isEmpty else {
+            return [DDayEntryItem(
+                dDay: DDay(type: .dDay, title: "No Upcoming D-Days", date: Date(), isLunarDate: false, convertedSolarDateFromLunar: nil, startFromDayOne: false, repeatType: .none),
+                dDayText: "")]
         }
         
-        let dDayText = calculateDDaySync(from: firstDDay.date, type: firstDDay.type, isLunar: firstDDay.isLunarDate, startFromDayOne: firstDDay.startFromDayOne, repeatType: firstDDay.repeatType)
-    
-        return DDayEntry(title: firstDDay.title, date: firstDDay.date, dDayText: dDayText)
+        return dDays.map { dDay in
+            let dDayText = calculateDDaySync(
+                from: dDay.date,
+                type: dDay.type,
+                isLunar: dDay.isLunarDate,
+                startFromDayOne: dDay.startFromDayOne,
+                repeatType: dDay.repeatType
+            )
+            return DDayEntryItem(dDay: dDay, dDayText: dDayText)
+        }
     }
     
     private func calculateDDaySync(from date: Date, type: DDayType, isLunar: Bool, startFromDayOne: Bool, repeatType: RepeatType) -> String {
@@ -63,7 +76,7 @@ struct Provider: TimelineProvider {
         
         return DateFormatterManager.shared.calculateDDayString(from: adjustedDate, type: type, startFromDayOne: startFromDayOne, calendar: calendar)
     }
-
+    
     private func fetchClosestSolarDateSync(from date: Date, repeatType: RepeatType) -> Date? {
         let calendar = Calendar.current
         let currentYear = calendar.component(.year, from: Date())
@@ -105,16 +118,23 @@ struct Provider: TimelineProvider {
     }
 }
 
+// MARK: - Entry
 struct DDayEntry: TimelineEntry {
-    let title: String
-    let date: Date
+    let date = Date()
+    let dDays: [DDayEntryItem]
+}
+
+struct DDayEntryItem: Identifiable {
+    let id = UUID()
+    let dDay: DDay
     let dDayText: String
 }
 
+// MARK: - EntryView
 struct DearDayWidgetEntryView: View {
     @Environment(\.widgetFamily) var widgetFamily
     var entry: Provider.Entry
-
+    
     var body: some View {
         switch widgetFamily {
         case .accessoryCircular:
@@ -125,16 +145,49 @@ struct DearDayWidgetEntryView: View {
             AccessoryInlineView(entry: entry)
         case .systemMedium:
             MediumWidgetView(entry: entry)
+        case .systemLarge:
+            LargeWidgetView(entry: entry)
         default:
-            VStack {
-                Text(entry.title)
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                Text(entry.date, style: .date)
+            VStack(spacing: 10) {
+                Text(entry.dDays[0].dDayText)
+                    .foregroundColor(.gray)
+                    .font(.title)
+                    .fontWeight(.bold)
+                Text(entry.dDays[0].dDay.title)
+                    .foregroundColor(.gray)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+                Text(DateFormatterManager.shared.formatDate(entry.dDays[0].dDay.date))
+                    .foregroundColor(.gray.opacity(0.8))
+                    .font(.caption)
+            }
+        }
+    }
+}
+
+struct DearDayWidgetListVersionEntryView: View {
+    @Environment(\.widgetFamily) var widgetFamily
+    var entry: Provider.Entry
+    
+    var body: some View {
+        switch widgetFamily {
+        case .systemMedium:
+            ListMediumWidgetView(entry: entry)
+        case .systemLarge:
+            ListLargeWidgetView(entry: entry)
+        default:
+            VStack(spacing: 10) {
+                Text(entry.dDays[0].dDayText)
+                    .foregroundColor(.gray)
+                    .font(.title)
+                    .fontWeight(.bold)
+                Text(entry.dDays[0].dDay.title)
+                    .foregroundColor(.gray)
+                    .font(.caption)
+                    .lineLimit(1)
+                Text(DateFormatterManager.shared.formatDate(entry.dDays[0].dDay.date))
+                    .foregroundColor(.gray.opacity(0.8))
+                    .font(.caption)
             }
         }
     }
@@ -142,68 +195,186 @@ struct DearDayWidgetEntryView: View {
 
 struct AccessoryCircularView: View {
     var entry: Provider.Entry
-
+    
     var body: some View {
         ZStack {
-            Circle()
-                .stroke(lineWidth: 1)
-            Text(entry.title)
-                .font(.caption2)
+            AccessoryWidgetBackground()
+            Text(entry.dDays[0].dDayText)
         }
     }
 }
 
 struct AccessoryRectangularView: View {
     var entry: Provider.Entry
-
+    
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(entry.title)
-                .font(.caption)
-                .bold()
-            Text(entry.dDayText)
-                .font(.caption2)
+        VStack(spacing: 5) {
+            Text(entry.dDays[0].dDay.title)
+            Text(entry.dDays[0].dDayText)
+                .font(.system(size: 25, weight: .bold))
         }
     }
 }
 
 struct AccessoryInlineView: View {
     var entry: Provider.Entry
-
+    
     var body: some View {
-        Text("\(entry.title): \(entry.dDayText)")
+        Text("\(entry.dDays[0].dDay.title) \(entry.dDays[0].dDayText)")
     }
 }
 
 struct MediumWidgetView: View {
     var entry: Provider.Entry
-
+    
     var body: some View {
-        VStack {
-            Text(entry.title)
-                .font(.headline)
-                .foregroundColor(.primary)
-            Text(entry.dDayText)
-                .font(.title)
-                .bold()
-                .foregroundColor(.accentColor)
-            Text(entry.date, style: .date)
-                .font(.caption)
-                .foregroundColor(.secondary)
+        VStack(alignment: .leading, spacing: 10) {
+            Text(entry.dDays[0].dDay.title)
+                .lineLimit(1)
+                .foregroundColor(.gray)
+                .font(.title3)
+            HStack {
+                VStack(alignment: .leading) {
+                    Text("\(DateFormatterManager.shared.formatDate(entry.dDays[0].dDay.date))\(entry.dDays[0].dDay.isLunarDate ? " (음력)" : "")")
+                        .foregroundColor(.gray.opacity(0.8))
+                        .font(.callout)
+                    if entry.dDays[0].dDay.repeatType != .none {
+                        Text("[\(entry.dDays[0].dDay.repeatType.rawValue) 반복]")
+                            .foregroundColor(.gray.opacity(0.8))
+                            .font(.caption)
+                    }
+                }
+                Spacer()
+                Text(entry.dDays[0].dDayText)
+                    .foregroundColor(.gray)
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+            }
         }
         .padding()
     }
 }
 
+struct LargeWidgetView: View {
+    var entry: Provider.Entry
+    
+    var body: some View {
+        VStack {
+            if let image = ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(entry.dDays[0].dDay.pk)") {
+                GeometryReader { geometry in
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .clipped()
+                }
+            }
+            
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(entry.dDays[0].dDay.title)
+                        .lineLimit(1)
+                        .foregroundColor(.gray)
+                        .font(.title3)
+                    Text("\(DateFormatterManager.shared.formatDate(entry.dDays[0].dDay.date))\(entry.dDays[0].dDay.isLunarDate ? " (음력)" : "")")
+                        .foregroundColor(.gray.opacity(0.8))
+                        .font(.callout)
+                    if entry.dDays[0].dDay.repeatType != .none {
+                        Text("[\(entry.dDays[0].dDay.repeatType.rawValue) 반복]")
+                            .foregroundColor(.gray.opacity(0.8))
+                            .font(.caption)
+                    }
+                }
+                Spacer()
+                Text(entry.dDays[0].dDayText)
+                    .foregroundColor(.gray)
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+            }
+            .padding()
+        }
+    }
+}
+
+
+struct ListMediumWidgetView: View {
+    var entry: Provider.Entry
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            ForEach(entry.dDays.prefix(3)) { item in
+                HStack(spacing: 10) {
+                    Text(item.dDay.title)
+                        .foregroundStyle(.gray)
+                        .font(.callout)
+                        .lineLimit(1)
+                    Spacer()
+                    Text(item.dDayText)
+                        .foregroundStyle(.gray)
+                        .font(.title3)
+                        .fontWeight(.bold)
+                }
+                Divider()
+            }
+        }
+        .padding()
+    }
+}
+
+struct ListLargeWidgetView: View {
+    var entry: Provider.Entry
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            ForEach(entry.dDays.prefix(5)) { item in
+                HStack(spacing: 10) {
+                    Text(item.dDay.title)
+                        .foregroundStyle(.gray)
+                        .font(.callout)
+                        .lineLimit(1)
+                    Spacer()
+                    VStack(alignment: .trailing) {
+                        Text(item.dDayText)
+                            .foregroundColor(.gray)
+                            .font(.title3)
+                            .fontWeight(.bold)
+                        Text("\(DateFormatterManager.shared.formatDate(item.dDay.date))\(item.dDay.isLunarDate ? " (음력)" : "")")
+                            .foregroundColor(.gray.opacity(0.8))
+                            .font(.caption)
+                    }
+                }
+                Divider()
+            }
+        }
+        .padding()
+    }
+}
+
+// MARK: - Widget
 struct DearDayWidget: Widget {
     let kind: String = "DearDayWidget"
-
+    
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             DearDayWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Dear Day Widget")
-        .description("Shows the closest D-Day.")
-        .supportedFamilies([.systemSmall, .systemMedium, .accessoryCircular, .accessoryRectangular, .accessoryInline])
+        .configurationDisplayName("Single D-Day Widget")
+        .description("Displays a selected D-Day.")
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .accessoryCircular, .accessoryRectangular, .accessoryInline])
+        .contentMarginsDisabled()
     }
 }
+
+struct ListDearDayWidget: Widget {
+    let kind: String = "ListDearDayWidget"
+    
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+            DearDayWidgetListVersionEntryView(entry: entry)
+        }
+        .configurationDisplayName("D-Day List Widget")
+        .description("Displays a list of D-Days.")
+        .supportedFamilies([.systemMedium, .systemLarge])
+    }
+}
+

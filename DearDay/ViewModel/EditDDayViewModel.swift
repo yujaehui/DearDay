@@ -69,12 +69,12 @@ extension EditDDayViewModel: ViewModelType {
             .sink { [weak self] dDay, newDDay, image in
                 guard let self = self else { return }
                 // 1. 이전 이미지가 있다면 제거
-                if ImageDocumentManager.shared.loadImageToDocument(fileName: "\(newDDay.pk)") != nil {
-                    ImageDocumentManager.shared.removeImageFromDocument(fileName: "\(newDDay.pk)")
+                if ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(dDay.pk)") != nil {
+                    ImageDocumentManager.shared.removeImageFromDocument(fileName: "\(dDay.pk)")
                 }
                 // 2. 현재 이미지가 있다면 추가
                 if let image = image {
-                    ImageDocumentManager.shared.saveImageToDocument(image: image, fileName: "\(newDDay.pk)")
+                    ImageDocumentManager.shared.saveImageToDocument(image: image, fileName: "\(dDay.pk)")
                 }
                 
                 self.repository.updateItem(dDay, title: newDDay.title, date: newDDay.date, isLunarDate: newDDay.isLunarDate, startFromDayOne: newDDay.startFromDayOne, repeatType: newDDay.repeatType)

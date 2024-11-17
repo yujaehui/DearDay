@@ -10,7 +10,12 @@ import SwiftUI
 
 @main
 struct DearDayWidgetBundle: WidgetBundle {
+    init() {
+        RealmConfiguration.shared.configureRealm()
+    }
+    
     var body: some Widget {
         DearDayWidget()
+        ListDearDayWidget()
     }
 }

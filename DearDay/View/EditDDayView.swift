@@ -37,7 +37,7 @@ struct EditDDayView: View {
         _startFromDayOne = State(initialValue: dDay.startFromDayOne)
         _isRepeatOn = State(initialValue: dDay.repeatType == .none ? false : true)
         _repeatType = State(initialValue: dDay.repeatType)
-        _selectedImage = State(initialValue: ImageDocumentManager.shared.loadImageToDocument(fileName: "\(dDay.pk)"))
+        _selectedImage = State(initialValue: ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(dDay.pk)"))
     }
     
     var body: some View {
@@ -109,24 +109,23 @@ struct EditDDayView: View {
                                 .font(.title3)
                         }
                         .foregroundStyle(.black)
+                        .padding(.bottom, 5) // 버튼과 이미지 간의 간격 추가
                     }
                     
                     if selectedImage != nil {
-                        VStack {
-                            Image(uiImage: selectedImage!)
-                                .resizable()
-                                .scaledToFit()
-                            
-                            Button(action: {
-                                selectedImage = nil // 이미지 삭제
-                            }) {
-                                HStack {
-                                    Image(systemName: "trash")
-                                    Text("이미지 삭제")
-                                }
-                                .foregroundColor(.red)
+                        Image(uiImage: selectedImage!)
+                            .resizable()
+                            .scaledToFit()
+                        
+                        Button(action: {
+                            selectedImage = nil // 이미지 삭제
+                        }) {
+                            HStack {
+                                Image(systemName: "trash")
+                                Text("이미지 삭제")
                             }
-                            .padding(.top, 5)
+                            .foregroundColor(.red)
+                            .frame(maxWidth: .infinity)
                         }
                     }
                 }
@@ -149,7 +148,7 @@ struct EditDDayView: View {
                                 type: type,
                                 title: title,
                                 date: selectedDate,
-                                isLunarDate: isLunarDate, 
+                                isLunarDate: isLunarDate,
                                 convertedSolarDateFromLunar: viewModel.output.solarDate,
                                 startFromDayOne: startFromDayOne,
                                 repeatType: repeatType

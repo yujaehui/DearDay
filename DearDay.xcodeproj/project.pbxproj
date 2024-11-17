@@ -42,6 +42,7 @@
 		0966B1682CE7373600C38430 /* AppGroupID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0966B1672CE7373600C38430 /* AppGroupID.swift */; };
 		0966B1692CE7378000C38430 /* AppGroupID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0966B1672CE7373600C38430 /* AppGroupID.swift */; };
 		0966B16A2CE7393B00C38430 /* DateFormatterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C992CBE3EC400F824D7 /* DateFormatterManager.swift */; };
+		0966B16B2CE9CE5500C38430 /* ImageDocumentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58EA2CD35E3F00EC3531 /* ImageDocumentManager.swift */; };
 		09F38C7C2CBCE7D500F824D7 /* DearDayApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C7B2CBCE7D500F824D7 /* DearDayApp.swift */; };
 		09F38C7E2CBCE7D500F824D7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C7D2CBCE7D500F824D7 /* ContentView.swift */; };
 		09F38C802CBCE7D500F824D7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F38C7F2CBCE7D500F824D7 /* Assets.xcassets */; };
@@ -420,6 +421,7 @@
 			files = (
 				0966B16A2CE7393B00C38430 /* DateFormatterManager.swift in Sources */,
 				0966B1652CE7344600C38430 /* SolarDateXMLParser.swift in Sources */,
+				0966B16B2CE9CE5500C38430 /* ImageDocumentManager.swift in Sources */,
 				0966B1452CE71A8700C38430 /* DearDayWidget.swift in Sources */,
 				0966B1692CE7378000C38430 /* AppGroupID.swift in Sources */,
 				0966B1642CE7344400C38430 /* APIService.swift in Sources */,

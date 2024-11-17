@@ -13,9 +13,9 @@ final class ImageDocumentManager {
     private init() {}
     
     func saveImageToDocument(image: UIImage, fileName: String) {
-        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        guard let documentDirectory = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroupID.id) else { return }
         let fileURL = documentDirectory.appendingPathComponent("\(fileName).jpg")
-        guard let data = image.jpegData(compressionQuality: 0.5) else { return }
+        guard let data = image.jpegData(compressionQuality: 1) else { return }
         do {
             try data.write(to: fileURL)
         } catch {
@@ -23,8 +23,8 @@ final class ImageDocumentManager {
         }
     }
     
-    func loadImageToDocument(fileName: String) -> UIImage? {
-        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+    func loadImageFromDocument(fileName: String) -> UIImage? {
+        guard let documentDirectory = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroupID.id) else { return nil }
         let fileURL = documentDirectory.appendingPathComponent("\(fileName).jpg")
         if FileManager.default.fileExists(atPath: fileURL.path()) {
             return UIImage(contentsOfFile: fileURL.path())
@@ -34,7 +34,7 @@ final class ImageDocumentManager {
     }
     
     func removeImageFromDocument(fileName: String) {
-        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        guard let documentDirectory = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroupID.id) else { return }
         let fileURL = documentDirectory.appendingPathComponent("\(fileName).jpg")
         if FileManager.default.fileExists(atPath: fileURL.path()) {
             do {
