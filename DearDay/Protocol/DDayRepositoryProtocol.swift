@@ -11,6 +11,6 @@ import RealmSwift
 protocol DDayRepositoryProtocol {
     func fetchItem() -> [DDay]
     func createItem(_ item: DDay)
-    func updateItem(_ item: DDay, title: String, date: Date, isLunarDate: Bool, convertedSolarDateFromLunar: Date?, startFromDayOne: Bool, isRepeatOn: Bool, repeatType: RepeatType)
+    func updateItem(_ originalItem: DDay, updatedItem: DDay)
     func deleteItem(_ item: DDay)
 }

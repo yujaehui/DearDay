@@ -30,21 +30,21 @@ final class DDayRepository: DDayRepositoryProtocol {
         }
     }
     
-    func updateItem(_ item: DDay, title: String, date: Date, isLunarDate: Bool, convertedSolarDateFromLunar: Date?, startFromDayOne: Bool, isRepeatOn: Bool, repeatType: RepeatType) {
-        guard let item = realm.object(ofType: DDay.self, forPrimaryKey: item.pk) else {
+    func updateItem(_ originalItem: DDay, updatedItem: DDay) {
+        guard let originalItem = realm.object(ofType: DDay.self, forPrimaryKey: originalItem.pk) else {
             print("수정하려는 객체를 찾을 수 없습니다.")
             return
         }
         
         do {
             try realm.write {
-                item.title = title
-                item.date = date
-                item.isLunarDate = isLunarDate
-                item.convertedSolarDateFromLunar = convertedSolarDateFromLunar
-                item.startFromDayOne = startFromDayOne
-                item.isRepeatOn = isRepeatOn
-                item.repeatType = repeatType
+                originalItem.title = updatedItem.title
+                originalItem.date = updatedItem.date
+                originalItem.isLunarDate = updatedItem.isLunarDate
+                originalItem.convertedSolarDateFromLunar = updatedItem.convertedSolarDateFromLunar
+                originalItem.startFromDayOne = updatedItem.startFromDayOne
+                originalItem.isRepeatOn = updatedItem.isRepeatOn
+                originalItem.repeatType = updatedItem.repeatType
 
             }
         } catch {

@@ -24,14 +24,11 @@ enum SortOption: String, CaseIterable, Identifiable {
 
 @MainActor
 final class DDayViewModel: ObservableObject {
+    // MARK: - Published Properties
     @Published var dDayItems: [DDayItem] = []
     @Published var dDayImage: [String: UIImage?] = [:]
     @Published var dDayText: [String: String] = [:]
     @Published var solarDate: Date?
-    
-    @Published private(set) var sortedAndGroupedDDayItems: [(key: DDayType, value: [DDayItem])] = []
-    @Published private(set) var sortedDDayItems: [DDayItem] = []
-    
     @Published var isGrouped: Bool = UserDefaults.standard.bool(forKey: "isGrouped") {
         didSet {
             UserDefaults.standard.set(isGrouped, forKey: "isGrouped")
@@ -42,30 +39,89 @@ final class DDayViewModel: ObservableObject {
             UserDefaults.standard.set(selectedSortOption.rawValue, forKey: "selectedSortOption")
         }
     }
+    
+    @Published private(set) var sortedAndGroupedDDayItems: [(key: DDayType, value: [DDayItem])] = []
+    @Published private(set) var sortedDDayItems: [DDayItem] = []
 
+    // MARK: - Dependencies
     private let repository: DDayRepositoryProtocol
     private let apiService: APIServiceProtocol
     
+    // MARK: - Initialization
     init(repository: DDayRepositoryProtocol, apiService: APIServiceProtocol) {
         self.repository = repository
         self.apiService = apiService
     }
     
-    func loadAllDDayImage() {
-        dDayItems.forEach { loadDDayImage(dDayItem: $0) }
+    // MARK: - Public Methods
+    func updateLunarDate(lunarDate: Date) {
+        Task { solarDate = await self.apiService.fetchSolarDate(lunarDate: lunarDate) }
     }
     
-    private func loadDDayImage(dDayItem: DDayItem) {
-        dDayImage[dDayItem.pk] = ImageDocumentManager.shared.loadImageFromDocument(fileName: dDayItem.pk)
+    func fetchDDay() {
+        dDayItems = repository.fetchItem().map { DDayItem(from: $0) }
+        Task { await fetchAllDDayData() }
     }
     
-    func loadAllDDayText() {
-        dDayItems.forEach { loadDDayText(dDayItem: $0) }
+    func addDDay(dDay: DDay, image: UIImage?) {
+        NotificationManager.shared.scheduleNotification(for: dDay)          // 알림 추가
+        saveImageIfNeeded(for: dDay, image: image)                          // 이미지 추가
+        self.repository.createItem(dDay)                                    // 데이터베이스 추가
+        WidgetCenter.shared.reloadAllTimelines()                            // 위젯 동기화
+        
+        fetchDDay()
     }
     
-    private func loadDDayText(dDayItem: DDayItem) {
-        Task {
-            dDayText[dDayItem.pk] = await self.calculateDDay(from: dDayItem.date, type: dDayItem.type, isLunar: dDayItem.isLunarDate, startFromDayOne: dDayItem.startFromDayOne, repeatType: dDayItem.repeatType)
+    func editDDay(dDayItem: DDayItem, updatedDDay: DDay, image: UIImage?) {
+        guard let dDay = repository.fetchItem().first(where: { $0.pk.stringValue == dDayItem.pk }) else { return }
+        
+        NotificationManager.shared.removeNotification(for: dDay)            // 기존 알림 제거
+        NotificationManager.shared.scheduleNotification(for: updatedDDay)   // 새로운 알림 추가
+        removeExistingImage(for: dDay)                                      // 기존 이미지 제거
+        saveImageIfNeeded(for: dDay, image: image)                          // 새로운 이미지 추가
+        self.repository.updateItem(dDay, updatedItem: updatedDDay)          // 데이터베이스 변경
+        WidgetCenter.shared.reloadAllTimelines()                            // 위젯 동기화
+        
+        fetchDDay()
+    }
+    
+    func deleteDDay(dDayItem: DDayItem) {
+        guard let dDay = repository.fetchItem().first(where: { $0.pk.stringValue == dDayItem.pk }) else { return }
+
+        NotificationManager.shared.removeNotification(for: dDay)            // 알림 제거
+        removeExistingImage(for: dDay)                                      // 이미지 제거
+        self.repository.deleteItem(dDay)                                    // 데이터베이스 제거
+        WidgetCenter.shared.reloadAllTimelines()                            // 위젯 동기화
+        
+        fetchDDay()
+    }
+    
+    func updateSortedAndGroupedDDays() {
+        if isGrouped {
+            sortedAndGroupedDDayItems = groupAndSortDDays(dDayItems, by: selectedSortOption)
+        } else {
+            sortedDDayItems = sortDDays(dDayItems, by: selectedSortOption)
+        }
+    }
+    
+    // MARK: - Private Methods
+    private func fetchAllDDayData() async {
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask { await self.loadAllImages() }
+            group.addTask { await self.loadAllTexts() }
+        }
+        updateSortedAndGroupedDDays()
+    }
+    
+    private func loadAllImages() {
+        for dDayItem in dDayItems {
+            dDayImage[dDayItem.pk] = ImageDocumentManager.shared.loadImageFromDocument(fileName: dDayItem.pk)
+        }
+    }
+    
+    private func loadAllTexts() async {
+        for dDayItem in dDayItems {
+            dDayText[dDayItem.pk] = await calculateDDay(from: dDayItem.date, type: dDayItem.type, isLunar: dDayItem.isLunarDate, startFromDayOne: dDayItem.startFromDayOne, repeatType: dDayItem.repeatType)
         }
     }
     
@@ -129,84 +185,7 @@ final class DDayViewModel: ObservableObject {
         return adjustedDate
     }
     
-    func updateLunarDate(lunarDate: Date) {
-        Task {
-            solarDate = await self.apiService.fetchSolarDate(lunarDate: lunarDate)
-        }
-    }
-    
-    func fetchDDay() {
-        let realmDDays = repository.fetchItem()
-        dDayItems = realmDDays.map { DDayItem(from: $0) }
-        
-        loadAllDDayImage()
-        loadAllDDayText()
-       
-        DispatchQueue.main.async {
-            self.updateSortedAndGroupedDDays()
-        }
-    }
-    
-    func addDDay(dDay: DDay, image: UIImage?) {
-        NotificationManager.shared.scheduleNotification(for: dDay)
-
-        if let image = image {
-            ImageDocumentManager.shared.saveImageToDocument(image: image, fileName: dDay.pk.stringValue)
-        }
-        
-        self.repository.createItem(dDay)
-        
-        WidgetCenter.shared.reloadAllTimelines()
-        
-        fetchDDay()
-    }
-    
-    func editDDay(dDayItem: DDayItem, newDDay: DDay, image: UIImage?) {
-        guard let dDay = repository.fetchItem().first(where: { $0.pk.stringValue == dDayItem.pk }) else { return }
-        
-        NotificationManager.shared.removeNotification(for: dDay)
-        NotificationManager.shared.scheduleNotification(for: newDDay)
-        
-        if ImageDocumentManager.shared.loadImageFromDocument(fileName: dDay.pk.stringValue) != nil {
-            ImageDocumentManager.shared.removeImageFromDocument(fileName: dDay.pk.stringValue)
-        } // 기존 이미지가 있다면 제거
-        
-        if let image = image {
-            ImageDocumentManager.shared.saveImageToDocument(image: image, fileName: dDay.pk.stringValue)
-        } // 새로운 이미지가 있다면 추가
-        
-        self.repository.updateItem(dDay, title: newDDay.title, date: newDDay.date, isLunarDate: newDDay.isLunarDate, convertedSolarDateFromLunar: newDDay.convertedSolarDateFromLunar, startFromDayOne: newDDay.startFromDayOne, isRepeatOn: newDDay.isRepeatOn, repeatType: newDDay.repeatType)
-        
-        WidgetCenter.shared.reloadAllTimelines()
-        
-        fetchDDay()
-    }
-    
-    func deleteDDay(dDayItem: DDayItem) {
-        guard let dDay = repository.fetchItem().first(where: { $0.pk.stringValue == dDayItem.pk }) else { return }
-
-        NotificationManager.shared.removeNotification(for: dDay)
-                
-        if ImageDocumentManager.shared.loadImageFromDocument(fileName: dDay.pk.stringValue) != nil {
-            ImageDocumentManager.shared.removeImageFromDocument(fileName: dDay.pk.stringValue)
-        } // 기존 이미지가 있다면 제거
-        
-        self.repository.deleteItem(dDay)
-        
-        WidgetCenter.shared.reloadAllTimelines()
-        
-        fetchDDay()
-    }
-    
-    func updateSortedAndGroupedDDays() {
-        if isGrouped {
-            sortedAndGroupedDDayItems = groupAndSortDDays(dDayItems, by: selectedSortOption)
-        } else {
-            sortedDDayItems = sortDDays(dDayItems, by: selectedSortOption)
-        }
-    }
-    
-    func sortDDays(_ dDays: [DDayItem], by option: SortOption) -> [DDayItem] {
+    private func sortDDays(_ dDays: [DDayItem], by option: SortOption) -> [DDayItem] {
         switch option {
         case .creationDate:
             return dDays
@@ -219,14 +198,23 @@ final class DDayViewModel: ObservableObject {
         }
     }
     
-    func groupAndSortDDays(_ dDays: [DDayItem], by option: SortOption) -> [(key: DDayType, value: [DDayItem])] {
+    private func groupAndSortDDays(_ dDays: [DDayItem], by option: SortOption) -> [(key: DDayType, value: [DDayItem])] {
         let grouped = Dictionary(grouping: dDays, by: { $0.type })
-        return grouped.mapValues { sortDDays($0, by: option) }
+        return grouped
+            .mapValues { sortDDays($0, by: option) }
             .sorted { $0.key.rawValue < $1.key.rawValue }
     }
     
     private func compareDDayTexts(_ text1: String, _ text2: String) -> Bool {
-        print(text1, text2)
         return (text1.sortPriority, text1.absoluteValue, text1) < (text2.sortPriority, text2.absoluteValue, text2)
+    }
+    
+    private func saveImageIfNeeded(for dDay: DDay, image: UIImage?) {
+        guard let image = image else { return }
+        ImageDocumentManager.shared.saveImageToDocument(image: image, fileName: dDay.pk.stringValue)
+    }
+
+    private func removeExistingImage(for dDay: DDay) {
+        ImageDocumentManager.shared.removeImageFromDocument(fileName: dDay.pk.stringValue)
     }
 }

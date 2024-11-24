@@ -151,7 +151,7 @@ struct EditDDayView: View {
                             alertMessage = "해당 날짜는 음양력 계산이 불가능합니다."
                             isPresentedErrorAlert = true
                         } else {
-                            let newDDay = DDay(
+                            let updatedDDay = DDay(
                                 type: type,
                                 title: title,
                                 date: selectedDate,
@@ -161,7 +161,7 @@ struct EditDDayView: View {
                                 isRepeatOn: isRepeatOn,
                                 repeatType: repeatType
                             )
-                            viewModel.editDDay(dDayItem: dDayItem, newDDay: newDDay, image: selectedImage)
+                            viewModel.editDDay(dDayItem: dDayItem, updatedDDay: updatedDDay, image: selectedImage)
                             dismiss()
                             
                         }
