@@ -20,7 +20,11 @@ struct DDayDetailView: View {
         
     var body: some View {
         NavigationStack {
-            DDayImageCardView(dDayItem: dDayItem, dDayText: viewModel.dDayText[dDayItem.pk] ?? "Loading...")
+            DDayImageCardView(
+                dDayItem: dDayItem,
+                dDayText: viewModel.dDayText[dDayItem.pk] ?? "Loading...",
+                dDayImage: viewModel.dDayImage[dDayItem.pk] ?? nil
+            )
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         DDayDetailMenu(isPresentedEditDDayView: $isPresentedEditDDayView, isPresentedDeleteAlert: $isPresentedDeleteAlert)

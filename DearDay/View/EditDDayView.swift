@@ -38,7 +38,7 @@ struct EditDDayView: View {
         _startFromDayOne = State(initialValue: dDayItem.startFromDayOne)
         _isRepeatOn = State(initialValue: dDayItem.repeatType == .none ? false : true)
         _repeatType = State(initialValue: dDayItem.repeatType)
-        _selectedImage = State(initialValue: ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(dDayItem.pk)"))
+        _selectedImage = State(initialValue: viewModel.dDayImage[dDayItem.pk] ?? nil)
     }
     
     var body: some View {

@@ -19,7 +19,7 @@ struct DDayView: View {
             ZStack {
                 List {
                     if viewModel.isGrouped {
-                        ForEach(viewModel.sortedAndGroupedDDays, id: \.key) { group in
+                        ForEach(viewModel.sortedAndGroupedDDayItems, id: \.key) { group in
                             Section(header: Text(group.key.rawValue)) {
                                 ForEach(group.value, id: \.pk) { dDayItem in
                                     NavigationLink(destination: DDayDetailView(dDayItem: dDayItem, viewModel: viewModel)) {
@@ -29,7 +29,7 @@ struct DDayView: View {
                             }
                         }
                     } else {
-                        ForEach(viewModel.sortedDDays, id: \.pk) { dDayItem in
+                        ForEach(viewModel.sortedDDayItems, id: \.pk) { dDayItem in
                             NavigationLink(destination: DDayDetailView(dDayItem: dDayItem, viewModel: viewModel)) {
                                 DDayCardView(dDayItem: dDayItem, dDayText: viewModel.dDayText[dDayItem.pk] ?? "")
                             }

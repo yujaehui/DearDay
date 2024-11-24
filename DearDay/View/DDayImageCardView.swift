@@ -11,6 +11,7 @@ import RealmSwift
 struct DDayImageCardView: View {
     var dDayItem: DDayItem
     var dDayText: String
+    var dDayImage: UIImage?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -18,7 +19,7 @@ struct DDayImageCardView: View {
                 .lineLimit(1)
                 .foregroundColor(.gray)
                 .font(.title3)
-            if let image = ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(dDayItem.pk)") {
+            if let image = dDayImage {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()

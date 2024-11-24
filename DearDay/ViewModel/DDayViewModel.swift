@@ -24,13 +24,13 @@ enum SortOption: String, CaseIterable, Identifiable {
 
 @MainActor
 final class DDayViewModel: ObservableObject {
-    //@Published var dDays: [DDay] = []
     @Published var dDayItems: [DDayItem] = []
+    @Published var dDayImage: [String: UIImage?] = [:]
     @Published var dDayText: [String: String] = [:]
     @Published var solarDate: Date?
     
-    @Published private(set) var sortedAndGroupedDDays: [(key: DDayType, value: [DDayItem])] = []
-    @Published private(set) var sortedDDays: [DDayItem] = []
+    @Published private(set) var sortedAndGroupedDDayItems: [(key: DDayType, value: [DDayItem])] = []
+    @Published private(set) var sortedDDayItems: [DDayItem] = []
     
     @Published var isGrouped: Bool = UserDefaults.standard.bool(forKey: "isGrouped") {
         didSet {
@@ -51,14 +51,22 @@ final class DDayViewModel: ObservableObject {
         self.apiService = apiService
     }
     
-    func loadDDayText(dDayItem: DDayItem) {
-        Task {
-            dDayText[dDayItem.pk] = await self.calculateDDay(from: dDayItem.date, type: dDayItem.type, isLunar: dDayItem.isLunarDate, startFromDayOne: dDayItem.startFromDayOne, repeatType: dDayItem.repeatType)
-        }
+    func loadAllDDayImage() {
+        dDayItems.forEach { loadDDayImage(dDayItem: $0) }
+    }
+    
+    private func loadDDayImage(dDayItem: DDayItem) {
+        dDayImage[dDayItem.pk] = ImageDocumentManager.shared.loadImageFromDocument(fileName: dDayItem.pk)
     }
     
     func loadAllDDayText() {
         dDayItems.forEach { loadDDayText(dDayItem: $0) }
+    }
+    
+    private func loadDDayText(dDayItem: DDayItem) {
+        Task {
+            dDayText[dDayItem.pk] = await self.calculateDDay(from: dDayItem.date, type: dDayItem.type, isLunar: dDayItem.isLunarDate, startFromDayOne: dDayItem.startFromDayOne, repeatType: dDayItem.repeatType)
+        }
     }
     
     private func calculateDDay(from date: Date, type: DDayType, isLunar: Bool, startFromDayOne: Bool, repeatType: RepeatType) async -> String {
@@ -130,15 +138,20 @@ final class DDayViewModel: ObservableObject {
     func fetchDDay() {
         let realmDDays = repository.fetchItem()
         dDayItems = realmDDays.map { DDayItem(from: $0) }
+        
+        loadAllDDayImage()
         loadAllDDayText()
-        updateSortedAndGroupedDDays()        
+       
+        DispatchQueue.main.async {
+            self.updateSortedAndGroupedDDays()
+        }
     }
     
     func addDDay(dDay: DDay, image: UIImage?) {
         NotificationManager.shared.scheduleNotification(for: dDay)
 
         if let image = image {
-            ImageDocumentManager.shared.saveImageToDocument(image: image, fileName: "\(dDay.pk)")
+            ImageDocumentManager.shared.saveImageToDocument(image: image, fileName: dDay.pk.stringValue)
         }
         
         self.repository.createItem(dDay)
@@ -154,13 +167,13 @@ final class DDayViewModel: ObservableObject {
         NotificationManager.shared.removeNotification(for: dDay)
         NotificationManager.shared.scheduleNotification(for: newDDay)
         
-        if ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(dDay.pk)") != nil {
-            ImageDocumentManager.shared.removeImageFromDocument(fileName: "\(dDay.pk)")
-        }
+        if ImageDocumentManager.shared.loadImageFromDocument(fileName: dDay.pk.stringValue) != nil {
+            ImageDocumentManager.shared.removeImageFromDocument(fileName: dDay.pk.stringValue)
+        } // 기존 이미지가 있다면 제거
         
         if let image = image {
-            ImageDocumentManager.shared.saveImageToDocument(image: image, fileName: "\(newDDay.pk)")
-        }
+            ImageDocumentManager.shared.saveImageToDocument(image: image, fileName: dDay.pk.stringValue)
+        } // 새로운 이미지가 있다면 추가
         
         self.repository.updateItem(dDay, title: newDDay.title, date: newDDay.date, isLunarDate: newDDay.isLunarDate, convertedSolarDateFromLunar: newDDay.convertedSolarDateFromLunar, startFromDayOne: newDDay.startFromDayOne, isRepeatOn: newDDay.isRepeatOn, repeatType: newDDay.repeatType)
         
@@ -174,9 +187,9 @@ final class DDayViewModel: ObservableObject {
 
         NotificationManager.shared.removeNotification(for: dDay)
                 
-        if ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(dDay.pk)") != nil {
-            ImageDocumentManager.shared.removeImageFromDocument(fileName: "\(dDay.pk)")
-        }
+        if ImageDocumentManager.shared.loadImageFromDocument(fileName: dDay.pk.stringValue) != nil {
+            ImageDocumentManager.shared.removeImageFromDocument(fileName: dDay.pk.stringValue)
+        } // 기존 이미지가 있다면 제거
         
         self.repository.deleteItem(dDay)
         
@@ -187,9 +200,9 @@ final class DDayViewModel: ObservableObject {
     
     func updateSortedAndGroupedDDays() {
         if isGrouped {
-            sortedAndGroupedDDays = groupAndSortDDays(dDayItems, by: selectedSortOption)
+            sortedAndGroupedDDayItems = groupAndSortDDays(dDayItems, by: selectedSortOption)
         } else {
-            sortedDDays = sortDDays(dDayItems, by: selectedSortOption)
+            sortedDDayItems = sortDDays(dDayItems, by: selectedSortOption)
         }
     }
     
@@ -213,7 +226,7 @@ final class DDayViewModel: ObservableObject {
     }
     
     private func compareDDayTexts(_ text1: String, _ text2: String) -> Bool {
-        (text1.sortPriority, text1.absoluteValue, text1) <
-        (text2.sortPriority, text2.absoluteValue, text2)
+        print(text1, text2)
+        return (text1.sortPriority, text1.absoluteValue, text1) < (text2.sortPriority, text2.absoluteValue, text2)
     }
 }
