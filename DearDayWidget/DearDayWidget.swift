@@ -17,7 +17,7 @@ struct Provider: TimelineProvider {
     
     func placeholder(in context: Context) -> DDayEntry {
         DDayEntry(dDays: [DDayEntryItem(
-            dDay: DDay(type: .dDay, title: "Placeholder D-Day", date: Date(), isLunarDate: false, convertedSolarDateFromLunar: nil, startFromDayOne: false, repeatType: .none),
+            dDay: DDay(type: .dDay, title: "Placeholder D-Day", date: Date(), isLunarDate: false, convertedSolarDateFromLunar: nil, startFromDayOne: false, isRepeatOn: false, repeatType: .none),
             dDayText: "")])
     }
     
@@ -42,7 +42,7 @@ extension Provider {
     private func fetchDDayEntries() -> [DDayEntryItem] {
         guard !dDays.isEmpty else {
             return [DDayEntryItem(
-                dDay: DDay(type: .dDay, title: "No Upcoming D-Days", date: Date(), isLunarDate: false, convertedSolarDateFromLunar: nil, startFromDayOne: false, repeatType: .none),
+                dDay: DDay(type: .dDay, title: "No Upcoming D-Days", date: Date(), isLunarDate: false, convertedSolarDateFromLunar: nil, startFromDayOne: false, isRepeatOn: false, repeatType: .none),
                 dDayText: "")]
         }
         
@@ -71,7 +71,7 @@ extension Provider {
         }
         
         if !isLunar && adjustedDate < Date() {
-            adjustedDate = adjustForRepeatingDateIfNeeded(date: adjustedDate, repeatType: repeatType, calendar: calendar)
+            adjustedDate = adjustDateForRepeatType(date: adjustedDate, repeatType: repeatType, calendar: calendar)
         }
         
         return DateFormatterManager.shared.calculateDDayString(from: adjustedDate, type: type, startFromDayOne: startFromDayOne, calendar: calendar)
@@ -96,7 +96,7 @@ extension Provider {
         }
     }
     
-    private func adjustForRepeatingDateIfNeeded(date: Date, repeatType: RepeatType, calendar: Calendar) -> Date {
+    private func adjustDateForRepeatType(date: Date, repeatType: RepeatType, calendar: Calendar) -> Date {
         var adjustedDate = date
         
         switch repeatType {

@@ -7,32 +7,80 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C3B62A73-AB67-4744-A8AE-E3269EAA45BF"
+            uuid = "178B5D0D-E6ED-42F1-B5D9-E9655F2546C7"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "DearDay/ViewModel/DDayDetailViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "123"
+            endingLineNumber = "123"
+            landmarkName = "unknown"
+            landmarkType = "0">
+            <Locations>
+               <Location
+                  uuid = "178B5D0D-E6ED-42F1-B5D9-E9655F2546C7 - e9b4f9309f9d70c6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DearDay.DDayDetailViewModel.deleteDDay(dDay: DearDay.DDay) -&gt; ()"
+                  moduleName = "DearDay"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/j/Desktop/DearDay/DearDay/ViewModel/DDayDetailViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "123"
+                  endingLineNumber = "123"
+                  offsetFromSymbolStart = "76">
+               </Location>
+               <Location
+                  uuid = "178B5D0D-E6ED-42F1-B5D9-E9655F2546C7 - e9b4f9309f9d70c6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "DearDay.DDayDetailViewModel.deleteDDay(dDay: DearDay.DDay) -&gt; ()"
+                  moduleName = "DearDay"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/j/Desktop/DearDay/DearDay/ViewModel/DDayDetailViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "123"
+                  endingLineNumber = "123"
+                  offsetFromSymbolStart = "328">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8DEB4399-FA2F-4018-8F55-847988C1423C"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "DearDay/ViewModel/EditDDayViewModel.swift"
+            filePath = "DearDay/Manager/NotificationManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "77"
-            endingLineNumber = "77"
-            landmarkName = "transform()"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
+            landmarkName = "removeNotification(for:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E1712DBC-AB3E-4474-A723-FD126556C26A"
+            uuid = "65E5753D-E5CD-499A-8627-C8E72EE68726"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "DearDay/ViewModel/EditDDayViewModel.swift"
+            filePath = "DearDay/ViewModel/DDayViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "76"
-            endingLineNumber = "76"
-            landmarkName = "transform()"
+            startingLineNumber = "56"
+            endingLineNumber = "56"
+            landmarkName = "loadDDayText(dDayItem:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

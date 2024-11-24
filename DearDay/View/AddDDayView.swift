@@ -10,7 +10,7 @@ import PhotosUI
 
 struct AddDDayView: View {
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var viewModel = AddDDayViewModel()
+    @EnvironmentObject var viewModel: DDayViewModel
     
     @State var type: DDayType = .dDay
     @State var title: String = ""
@@ -39,7 +39,7 @@ struct AddDDayView: View {
                         .frame(maxWidth: .infinity)
                         .multilineTextAlignment(.center)
                     if isLunarDate {
-                        if let solarDate = viewModel.output.solarDate {
+                        if let solarDate = viewModel.solarDate {
                             Text("\(DateFormatterManager.shared.formatDate(solarDate))\(" (양력)")")
                                 .foregroundStyle(.gray)
                                 .frame(maxWidth: .infinity)
@@ -58,7 +58,7 @@ struct AddDDayView: View {
                     .labelsHidden()
                     .onChange(of: selectedDate) { newDate in
                         if isLunarDate {
-                            viewModel.action(.updateLunarDate(newDate))
+                            viewModel.updateLunarDate(lunarDate: newDate)
                         }
                     }
                 }
@@ -68,8 +68,8 @@ struct AddDDayView: View {
                 Section {
                     Toggle("음력", isOn: $isLunarDate)
                         .onChange(of: isLunarDate) { newValue in
-                            if newValue {
-                                viewModel.action(.updateLunarDate(selectedDate))
+                            if newValue == true {
+                                viewModel.updateLunarDate(lunarDate: selectedDate)
                             }
                         }
 
@@ -132,7 +132,7 @@ struct AddDDayView: View {
                         if title.isEmpty {
                             alertMessage = "제목을 입력하세요."
                             isPresentedErrorAlert = true
-                        } else if isLunarDate && viewModel.output.solarDate == nil {
+                        } else if isLunarDate && viewModel.solarDate == nil {
                             alertMessage = "해당 날짜는 음양력 계산이 불가능합니다."
                             isPresentedErrorAlert = true
                         } else {
@@ -141,11 +141,13 @@ struct AddDDayView: View {
                                 title: title,
                                 date: selectedDate,
                                 isLunarDate: isLunarDate,
-                                convertedSolarDateFromLunar: viewModel.output.solarDate,
+                                convertedSolarDateFromLunar: viewModel.solarDate,
                                 startFromDayOne: startFromDayOne,
+                                isRepeatOn: isRepeatOn,
                                 repeatType: repeatType
                             )
-                            viewModel.action(.addDDay(dDay, selectedImage))
+                            viewModel.addDDay(dDay: dDay, image: selectedImage)
+                            dismiss()
                             
                         }
                     } label: {
@@ -156,9 +158,6 @@ struct AddDDayView: View {
                         Alert(title: Text("오류"), message: Text(alertMessage), dismissButton: .default(Text("확인")))
                     }
                 }
-            }
-            .onReceive(viewModel.output.addCompleted) {
-                dismiss()
             }
         }
     }

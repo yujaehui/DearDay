@@ -89,11 +89,7 @@ final class NotificationManager {
     }
     
     private func notificationIdentifiers(for dDay: DDay) -> [String] {
-        if dDay.type == .dDay {
-            return [dDay.pk.stringValue]
-        } else {
-            return ["\(dDay.pk.stringValue)-100", "\(dDay.pk.stringValue)-year"]
-        }
+        return [dDay.pk.stringValue, "\(dDay.pk.stringValue)-100", "\(dDay.pk.stringValue)-year"]
     }
     
     private func logPendingNotifications() {

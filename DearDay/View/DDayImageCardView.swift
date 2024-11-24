@@ -8,42 +8,45 @@
 import SwiftUI
 import RealmSwift
 
-struct DDayImageCardView: View {    
-    @ObservedRealmObject var dDay: DDay
-    @StateObject private var viewModel: DDayCardViewModel = DDayCardViewModel()
+struct DDayImageCardView: View {
+    var dDayItem: DDayItem
+    var dDayText: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text(dDay.title)
+            Text(dDayItem.title)
                 .lineLimit(1)
                 .foregroundColor(.gray)
                 .font(.title3)
-            if let image = ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(dDay.pk)") {
+            if let image = ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(dDayItem.pk)") {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
             }
             HStack {
                 VStack(alignment: .leading) {
-                    Text("\(DateFormatterManager.shared.formatDate(dDay.date))\(dDay.isLunarDate ? " (음력)" : "")")
+                    Text("\(DateFormatterManager.shared.formatDate(dDayItem.date))\(dDayItem.isLunarDate ? " (음력)" : "")")
                         .foregroundColor(.gray.opacity(0.8))
                         .font(.callout)
-                    if dDay.repeatType != .none {
-                        Text("[\(dDay.repeatType.rawValue) 반복]")
+                    if dDayItem.repeatType != .none {
+                        Text("[\(dDayItem.repeatType.rawValue) 반복]")
                             .foregroundColor(.gray.opacity(0.8))
                             .font(.caption)
                     }
                 }
                 Spacer()
-                Text(viewModel.output.dDayText)
+                Text(dDayText)
                     .foregroundColor(.gray)
                     .font(.largeTitle)
                     .fontWeight(.bold)
             }
         }
         .padding()
-        .task {
-            viewModel.action(.loadDDay(dDay))
+        .onAppear {
+            print("DDayImageCardView appeared: \(dDayItem.title)")
+        }
+        .onDisappear {
+            print("DDayImageCardView disappeared: \(dDayItem.title)")
         }
     }
 }

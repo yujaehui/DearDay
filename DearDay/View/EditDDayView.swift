@@ -10,9 +10,8 @@ import PhotosUI
 import RealmSwift
 
 struct EditDDayView: View {
-    @Environment(\.dismiss) private var dismiss
-    @ObservedRealmObject var dDay: DDay
-    @StateObject private var viewModel = EditDDayViewModel()
+    let dDayItem: DDayItem
+    @ObservedObject var viewModel: DDayViewModel
     
     @State var type: DDayType
     @State var title: String
@@ -27,17 +26,19 @@ struct EditDDayView: View {
     @State private var isPresentedErrorAlert = false
     @State private var alertMessage = ""
     
+    @Environment(\.dismiss) private var dismiss
     
-    init(dDay: DDay) {
-        _dDay = ObservedRealmObject(wrappedValue: dDay)
-        _type = State(initialValue: dDay.type)
-        _title = State(initialValue: dDay.title)
-        _selectedDate = State(initialValue: dDay.date)
-        _isLunarDate = State(initialValue: dDay.isLunarDate)
-        _startFromDayOne = State(initialValue: dDay.startFromDayOne)
-        _isRepeatOn = State(initialValue: dDay.repeatType == .none ? false : true)
-        _repeatType = State(initialValue: dDay.repeatType)
-        _selectedImage = State(initialValue: ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(dDay.pk)"))
+    init(dDayItem: DDayItem, viewModel: DDayViewModel) {
+        self.dDayItem = dDayItem
+        self.viewModel = viewModel
+        _type = State(initialValue: dDayItem.type)
+        _title = State(initialValue: dDayItem.title)
+        _selectedDate = State(initialValue: dDayItem.date)
+        _isLunarDate = State(initialValue: dDayItem.isLunarDate)
+        _startFromDayOne = State(initialValue: dDayItem.startFromDayOne)
+        _isRepeatOn = State(initialValue: dDayItem.repeatType == .none ? false : true)
+        _repeatType = State(initialValue: dDayItem.repeatType)
+        _selectedImage = State(initialValue: ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(dDayItem.pk)"))
     }
     
     var body: some View {
@@ -54,7 +55,7 @@ struct EditDDayView: View {
                         .frame(maxWidth: .infinity)
                         .multilineTextAlignment(.center)
                     if isLunarDate {
-                        if let solarDate = viewModel.output.solarDate {
+                        if let solarDate = viewModel.solarDate {
                             Text("\(DateFormatterManager.shared.formatDate(solarDate))\(" (양력)")")
                                 .foregroundStyle(.gray)
                                 .frame(maxWidth: .infinity)
@@ -73,7 +74,7 @@ struct EditDDayView: View {
                     .labelsHidden()
                     .onChange(of: selectedDate) { newDate in
                         if isLunarDate {
-                            viewModel.action(.updateLunarDate(newDate))
+                            viewModel.updateLunarDate(lunarDate: selectedDate)
                         }
                     }
                 }
@@ -82,6 +83,12 @@ struct EditDDayView: View {
                 
                 Section {
                     Toggle("음력", isOn: $isLunarDate)
+                        .onChange(of: isLunarDate) { newValue in
+                            if newValue == true {
+                                viewModel.updateLunarDate(lunarDate: selectedDate)
+                            }
+                        }
+
                     
                     if type == .dDay {
                         Toggle("반복", isOn: $isRepeatOn)
@@ -140,7 +147,7 @@ struct EditDDayView: View {
                         if title.isEmpty {
                             alertMessage = "제목을 입력하세요."
                             isPresentedErrorAlert = true
-                        } else if isLunarDate && viewModel.output.solarDate == nil {
+                        } else if isLunarDate && viewModel.solarDate == nil {
                             alertMessage = "해당 날짜는 음양력 계산이 불가능합니다."
                             isPresentedErrorAlert = true
                         } else {
@@ -149,11 +156,13 @@ struct EditDDayView: View {
                                 title: title,
                                 date: selectedDate,
                                 isLunarDate: isLunarDate,
-                                convertedSolarDateFromLunar: viewModel.output.solarDate,
+                                convertedSolarDateFromLunar: viewModel.solarDate,
                                 startFromDayOne: startFromDayOne,
+                                isRepeatOn: isRepeatOn,
                                 repeatType: repeatType
                             )
-                            viewModel.action(.editDDay(dDay, newDDay, selectedImage))
+                            viewModel.editDDay(dDayItem: dDayItem, newDDay: newDDay, image: selectedImage)
+                            dismiss()
                             
                         }
                     } label: {
@@ -165,13 +174,11 @@ struct EditDDayView: View {
                     }
                 }
             }
-            .onReceive(viewModel.output.editCompleted) {
-                dismiss()
+            .task {
+                if isLunarDate {
+                    viewModel.updateLunarDate(lunarDate: selectedDate)
+                }
             }
         }
     }
 }
-
-//#Preview {
-//    EditDDayView()
-//}

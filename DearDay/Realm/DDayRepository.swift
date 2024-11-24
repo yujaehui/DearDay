@@ -8,16 +8,16 @@
 import Foundation
 import RealmSwift
 
-final class DDayRepository {
+final class DDayRepository: DDayRepositoryProtocol {
     private let realm: Realm
     
     init() {
         realm = try! Realm()
     }
     
-    func fetchItem() -> Results<DDay> {
-        let results = realm.objects(DDay.self)
-        return results
+    func fetchItem() -> [DDay] {
+        let realm = try! Realm()
+        return Array(realm.objects(DDay.self))
     }
     
     func createItem(_ item: DDay) {
@@ -30,7 +30,7 @@ final class DDayRepository {
         }
     }
     
-    func updateItem(_ item: DDay, title: String, date: Date, isLunarDate: Bool, startFromDayOne: Bool, repeatType: RepeatType) {
+    func updateItem(_ item: DDay, title: String, date: Date, isLunarDate: Bool, convertedSolarDateFromLunar: Date?, startFromDayOne: Bool, isRepeatOn: Bool, repeatType: RepeatType) {
         guard let item = realm.object(ofType: DDay.self, forPrimaryKey: item.pk) else {
             print("수정하려는 객체를 찾을 수 없습니다.")
             return
@@ -41,7 +41,9 @@ final class DDayRepository {
                 item.title = title
                 item.date = date
                 item.isLunarDate = isLunarDate
+                item.convertedSolarDateFromLunar = convertedSolarDateFromLunar
                 item.startFromDayOne = startFromDayOne
+                item.isRepeatOn = isRepeatOn
                 item.repeatType = repeatType
 
             }

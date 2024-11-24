@@ -14,4 +14,9 @@ extension String {
         if self.hasPrefix("+") { return 2 }
         return 3
     }
+    
+    var absoluteValue: Int {
+        let numberString = self.trimmingCharacters(in: CharacterSet(charactersIn: "+-"))
+        return Int(numberString) ?? Int.max
+    }
 }

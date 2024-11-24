@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class APIService {
+final class APIService: APIServiceProtocol {
     
     func fetchSolarDate(lunarDate: Date) async -> Date? {
         let calendar = Calendar.current
