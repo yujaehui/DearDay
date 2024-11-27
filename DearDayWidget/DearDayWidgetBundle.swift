@@ -16,6 +16,5 @@ struct DearDayWidgetBundle: WidgetBundle {
     
     var body: some Widget {
         DearDayWidget()
-        ListDearDayWidget()
     }
 }

@@ -7,6 +7,28 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		093160CD2CF6E6650074CDB7 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0966B13D2CE71A8700C38430 /* WidgetKit.framework */; };
+		093160CE2CF6E6650074CDB7 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0966B13F2CE71A8700C38430 /* SwiftUI.framework */; };
+		093160D12CF6E6650074CDB7 /* DearDayListWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093160D02CF6E6650074CDB7 /* DearDayListWidgetBundle.swift */; };
+		093160D32CF6E6650074CDB7 /* DearDayListWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093160D22CF6E6650074CDB7 /* DearDayListWidget.swift */; };
+		093160D52CF6E6650074CDB7 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093160D42CF6E6650074CDB7 /* AppIntent.swift */; };
+		093160D72CF6E6650074CDB7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 093160D62CF6E6650074CDB7 /* Assets.xcassets */; };
+		093160DB2CF6E6650074CDB7 /* DearDayListWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 093160CC2CF6E6650074CDB7 /* DearDayListWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		093160E02CF6E6840074CDB7 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 093160DF2CF6E6840074CDB7 /* Realm */; };
+		093160E22CF6E6840074CDB7 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 093160E12CF6E6840074CDB7 /* RealmSwift */; };
+		093160E42CF6E72C0074CDB7 /* DateFormatterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C992CBE3EC400F824D7 /* DateFormatterManager.swift */; };
+		093160E52CF6E72F0074CDB7 /* ImageDocumentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58EA2CD35E3F00EC3531 /* ImageDocumentManager.swift */; };
+		093160E62CF6E7310074CDB7 /* AppGroupID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0966B1672CE7373600C38430 /* AppGroupID.swift */; };
+		093160E72CF6E7340074CDB7 /* RealmConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0966B15D2CE72EA900C38430 /* RealmConfiguration.swift */; };
+		093160E82CF6E7360074CDB7 /* DDayRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58E62CD35A0C00EC3531 /* DDayRepository.swift */; };
+		093160E92CF6E7380074CDB7 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38CB02CBFBA7B00F824D7 /* APIKey.swift */; };
+		093160EA2CF6E73A0074CDB7 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38CB62CBFC20600F824D7 /* APIService.swift */; };
+		093160EB2CF6E73C0074CDB7 /* SolarDataItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38CB22CBFBF2700F824D7 /* SolarDataItem.swift */; };
+		093160EC2CF6E73E0074CDB7 /* SolarDateXMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38CB42CBFBF3500F824D7 /* SolarDateXMLParser.swift */; };
+		093160ED2CF6E7410074CDB7 /* DDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58E42CD3556000EC3531 /* DDay.swift */; };
+		093160EE2CF6E7450074CDB7 /* DDayRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0966B1752CEF5E9300C38430 /* DDayRepositoryProtocol.swift */; };
+		093160EF2CF6E7470074CDB7 /* APIServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0966B1772CEF5E9F00C38430 /* APIServiceProtocol.swift */; };
+		093160F12CF6E94A0074CDB7 /* AppIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093160F02CF6E94A0074CDB7 /* AppIntent.swift */; };
 		095B58DB2CD2346600EC3531 /* AddDDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58DA2CD2346600EC3531 /* AddDDayView.swift */; };
 		095B58DD2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58DC2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift */; };
 		095B58E12CD3550000EC3531 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 095B58E02CD3550000EC3531 /* Realm */; };
@@ -60,6 +82,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		093160D92CF6E6650074CDB7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 09F38C702CBCE7D500F824D7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 093160CB2CF6E6650074CDB7;
+			remoteInfo = DearDayListWidgetExtension;
+		};
 		0966B1492CE71A8800C38430 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 09F38C702CBCE7D500F824D7 /* Project object */;
@@ -76,6 +105,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				093160DB2CF6E6650074CDB7 /* DearDayListWidgetExtension.appex in Embed Foundation Extensions */,
 				0966B14B2CE71A8800C38430 /* DearDayWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
@@ -84,6 +114,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		093160CC2CF6E6650074CDB7 /* DearDayListWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DearDayListWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		093160D02CF6E6650074CDB7 /* DearDayListWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DearDayListWidgetBundle.swift; sourceTree = "<group>"; };
+		093160D22CF6E6650074CDB7 /* DearDayListWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DearDayListWidget.swift; sourceTree = "<group>"; };
+		093160D42CF6E6650074CDB7 /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
+		093160D62CF6E6650074CDB7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		093160D82CF6E6650074CDB7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		093160E32CF6E68F0074CDB7 /* DearDayListWidgetExtensionRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DearDayListWidgetExtensionRelease.entitlements; sourceTree = "<group>"; };
+		093160F02CF6E94A0074CDB7 /* AppIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIntent.swift; sourceTree = "<group>"; };
 		095B58DA2CD2346600EC3531 /* AddDDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDDayView.swift; sourceTree = "<group>"; };
 		095B58DC2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectDDayTypeAlertView.swift; sourceTree = "<group>"; };
 		095B58E42CD3556000EC3531 /* DDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDay.swift; sourceTree = "<group>"; };
@@ -126,6 +164,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		093160C92CF6E6650074CDB7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				093160E22CF6E6840074CDB7 /* RealmSwift in Frameworks */,
+				093160E02CF6E6840074CDB7 /* Realm in Frameworks */,
+				093160CE2CF6E6650074CDB7 /* SwiftUI.framework in Frameworks */,
+				093160CD2CF6E6650074CDB7 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0966B1382CE71A8700C38430 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -149,6 +198,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		093160CF2CF6E6650074CDB7 /* DearDayListWidget */ = {
+			isa = PBXGroup;
+			children = (
+				093160D02CF6E6650074CDB7 /* DearDayListWidgetBundle.swift */,
+				093160D22CF6E6650074CDB7 /* DearDayListWidget.swift */,
+				093160D42CF6E6650074CDB7 /* AppIntent.swift */,
+				093160D62CF6E6650074CDB7 /* Assets.xcassets */,
+				093160D82CF6E6650074CDB7 /* Info.plist */,
+			);
+			path = DearDayListWidget;
+			sourceTree = "<group>";
+		};
 		095B58D42CD2159A00EC3531 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -198,6 +259,7 @@
 			children = (
 				0966B1422CE71A8700C38430 /* DearDayWidgetBundle.swift */,
 				0966B1442CE71A8700C38430 /* DearDayWidget.swift */,
+				093160F02CF6E94A0074CDB7 /* AppIntent.swift */,
 				0966B1462CE71A8800C38430 /* Assets.xcassets */,
 				0966B1482CE71A8800C38430 /* Info.plist */,
 			);
@@ -209,8 +271,10 @@
 			children = (
 				09F38CAD2CBFB9FF00F824D7 /* .gitignore */,
 				0966B1582CE7241200C38430 /* DearDayWidgetExtension.entitlements */,
+				093160E32CF6E68F0074CDB7 /* DearDayListWidgetExtensionRelease.entitlements */,
 				09F38C7A2CBCE7D500F824D7 /* DearDay */,
 				0966B1412CE71A8700C38430 /* DearDayWidget */,
+				093160CF2CF6E6650074CDB7 /* DearDayListWidget */,
 				0966B13C2CE71A8700C38430 /* Frameworks */,
 				09F38C792CBCE7D500F824D7 /* Products */,
 			);
@@ -221,6 +285,7 @@
 			children = (
 				09F38C782CBCE7D500F824D7 /* DearDay.app */,
 				0966B13B2CE71A8700C38430 /* DearDayWidgetExtension.appex */,
+				093160CC2CF6E6650074CDB7 /* DearDayListWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -301,6 +366,27 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		093160CB2CF6E6650074CDB7 /* DearDayListWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 093160DE2CF6E6660074CDB7 /* Build configuration list for PBXNativeTarget "DearDayListWidgetExtension" */;
+			buildPhases = (
+				093160C82CF6E6650074CDB7 /* Sources */,
+				093160C92CF6E6650074CDB7 /* Frameworks */,
+				093160CA2CF6E6650074CDB7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DearDayListWidgetExtension;
+			packageProductDependencies = (
+				093160DF2CF6E6840074CDB7 /* Realm */,
+				093160E12CF6E6840074CDB7 /* RealmSwift */,
+			);
+			productName = DearDayListWidgetExtension;
+			productReference = 093160CC2CF6E6650074CDB7 /* DearDayListWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		0966B13A2CE71A8700C38430 /* DearDayWidgetExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0966B14F2CE71A8800C38430 /* Build configuration list for PBXNativeTarget "DearDayWidgetExtension" */;
@@ -335,6 +421,7 @@
 			);
 			dependencies = (
 				0966B14A2CE71A8800C38430 /* PBXTargetDependency */,
+				093160DA2CF6E6650074CDB7 /* PBXTargetDependency */,
 			);
 			name = DearDay;
 			packageProductDependencies = (
@@ -355,6 +442,9 @@
 				LastSwiftUpdateCheck = 1510;
 				LastUpgradeCheck = 1510;
 				TargetAttributes = {
+					093160CB2CF6E6650074CDB7 = {
+						CreatedOnToolsVersion = 15.1;
+					};
 					0966B13A2CE71A8700C38430 = {
 						CreatedOnToolsVersion = 15.1;
 					};
@@ -382,11 +472,20 @@
 			targets = (
 				09F38C772CBCE7D500F824D7 /* DearDay */,
 				0966B13A2CE71A8700C38430 /* DearDayWidgetExtension */,
+				093160CB2CF6E6650074CDB7 /* DearDayListWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		093160CA2CF6E6650074CDB7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				093160D72CF6E6650074CDB7 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0966B1392CE71A8700C38430 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -408,12 +507,35 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		093160C82CF6E6650074CDB7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				093160E72CF6E7340074CDB7 /* RealmConfiguration.swift in Sources */,
+				093160ED2CF6E7410074CDB7 /* DDay.swift in Sources */,
+				093160E82CF6E7360074CDB7 /* DDayRepository.swift in Sources */,
+				093160EF2CF6E7470074CDB7 /* APIServiceProtocol.swift in Sources */,
+				093160D32CF6E6650074CDB7 /* DearDayListWidget.swift in Sources */,
+				093160D12CF6E6650074CDB7 /* DearDayListWidgetBundle.swift in Sources */,
+				093160EE2CF6E7450074CDB7 /* DDayRepositoryProtocol.swift in Sources */,
+				093160EC2CF6E73E0074CDB7 /* SolarDateXMLParser.swift in Sources */,
+				093160E62CF6E7310074CDB7 /* AppGroupID.swift in Sources */,
+				093160E42CF6E72C0074CDB7 /* DateFormatterManager.swift in Sources */,
+				093160EA2CF6E73A0074CDB7 /* APIService.swift in Sources */,
+				093160EB2CF6E73C0074CDB7 /* SolarDataItem.swift in Sources */,
+				093160E52CF6E72F0074CDB7 /* ImageDocumentManager.swift in Sources */,
+				093160E92CF6E7380074CDB7 /* APIKey.swift in Sources */,
+				093160D52CF6E6650074CDB7 /* AppIntent.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0966B1372CE71A8700C38430 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				0966B16A2CE7393B00C38430 /* DateFormatterManager.swift in Sources */,
 				0966B1652CE7344600C38430 /* SolarDateXMLParser.swift in Sources */,
+				093160F12CF6E94A0074CDB7 /* AppIntent.swift in Sources */,
 				0966B16B2CE9CE5500C38430 /* ImageDocumentManager.swift in Sources */,
 				0966B1452CE71A8700C38430 /* DearDayWidget.swift in Sources */,
 				0966B1692CE7378000C38430 /* AppGroupID.swift in Sources */,
@@ -464,6 +586,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		093160DA2CF6E6650074CDB7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 093160CB2CF6E6650074CDB7 /* DearDayListWidgetExtension */;
+			targetProxy = 093160D92CF6E6650074CDB7 /* PBXContainerItemProxy */;
+		};
 		0966B14A2CE71A8800C38430 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0966B13A2CE71A8700C38430 /* DearDayWidgetExtension */;
@@ -472,6 +599,70 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		093160DC2CF6E6660074CDB7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = DearDayListWidgetExtensionRelease.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NLBNZ4T579;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DearDayListWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DearDayListWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.j.DearDay.DearDayListWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		093160DD2CF6E6660074CDB7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = DearDayListWidgetExtensionRelease.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NLBNZ4T579;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DearDayListWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DearDayListWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.j.DearDay.DearDayListWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		0966B14D2CE71A8800C38430 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -730,6 +921,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		093160DE2CF6E6660074CDB7 /* Build configuration list for PBXNativeTarget "DearDayListWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				093160DC2CF6E6660074CDB7 /* Debug */,
+				093160DD2CF6E6660074CDB7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		0966B14F2CE71A8800C38430 /* Build configuration list for PBXNativeTarget "DearDayWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -771,6 +971,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		093160DF2CF6E6840074CDB7 /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 095B58DF2CD3550000EC3531 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		093160E12CF6E6840074CDB7 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 095B58DF2CD3550000EC3531 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
 		095B58E02CD3550000EC3531 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 095B58DF2CD3550000EC3531 /* XCRemoteSwiftPackageReference "realm-swift" */;
