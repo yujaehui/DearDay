@@ -12,13 +12,11 @@ struct DDayImageCardView: View {
     var dDayItem: DDayItem
     var dDayText: String
     var dDayImage: UIImage?
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text(dDayItem.title)
-                .lineLimit(1)
-                .foregroundColor(.gray)
-                .font(.title3)
+                .asMainTitle()
             if let image = dDayImage {
                 Image(uiImage: image)
                     .resizable()
@@ -27,27 +25,17 @@ struct DDayImageCardView: View {
             HStack {
                 VStack(alignment: .leading) {
                     Text("\(DateFormatterManager.shared.formatDate(dDayItem.date))\(dDayItem.isLunarDate ? " (음력)" : "")")
-                        .foregroundColor(.gray.opacity(0.8))
-                        .font(.callout)
+                        .asMainDate()
                     if dDayItem.repeatType != .none {
                         Text("[\(dDayItem.repeatType.rawValue) 반복]")
-                            .foregroundColor(.gray.opacity(0.8))
-                            .font(.caption)
+                        .asMainRepeatType()
                     }
                 }
                 Spacer()
                 Text(dDayText)
-                    .foregroundColor(.gray)
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .asMainDDayText()
             }
         }
         .padding()
-        .onAppear {
-            print("DDayImageCardView appeared: \(dDayItem.title)")
-        }
-        .onDisappear {
-            print("DDayImageCardView disappeared: \(dDayItem.title)")
-        }
     }
 }

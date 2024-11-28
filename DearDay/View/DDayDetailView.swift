@@ -17,7 +17,7 @@ struct DDayDetailView: View {
     @State private var isPresentedDeleteAlert = false
     
     @Environment(\.dismiss) private var dismiss
-        
+    
     var body: some View {
         NavigationStack {
             DDayImageCardView(
@@ -25,67 +25,60 @@ struct DDayDetailView: View {
                 dDayText: viewModel.dDayText[dDayItem.pk] ?? "Loading...",
                 dDayImage: viewModel.dDayImage[dDayItem.pk] ?? nil
             )
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        DDayDetailMenu(isPresentedEditDDayView: $isPresentedEditDDayView, isPresentedDeleteAlert: $isPresentedDeleteAlert)
-                        
-                    }
-                    ToolbarItem(placement: .bottomBar) {
-                        if dDayItem.type == .numberOfDays {
-                            Button {
-                                isPresentedAnniversaryView.toggle()
-                            } label: {
-                                Text("기념일 보기")
-                                    .foregroundStyle(.gray)
-                            }
-                        }
-                    }
+            .toolbar {
+                ToolbarContent()
+            }
+            .sheet(isPresented: $isPresentedAnniversaryView) {
+                AnniversaryView(dDayItem: dDayItem)
+                    .presentationDetents([.medium])
+            }
+            .sheet(isPresented: $isPresentedEditDDayView) {
+                EditDDayView(dDayItem: dDayItem, viewModel: viewModel)
+            }
+            .alert("해당 디데이를 삭제하시겠습니까?", isPresented: $isPresentedDeleteAlert) {
+                Button("취소", role: .cancel) { }
+                Button("삭제", role: .destructive) {
+                    viewModel.deleteDDay(dDayItem: dDayItem)
+                    dismiss()
                 }
-                .sheet(isPresented: $isPresentedAnniversaryView) {
-                    AnniversaryView(dDayItem: dDayItem)
-                        .presentationDetents([.medium])
-                }
-                .sheet(isPresented: $isPresentedEditDDayView) {
-                    EditDDayView(dDayItem: dDayItem, viewModel: viewModel)
-                }
-                .alert("해당 디데이를 삭제하시겠습니까?", isPresented: $isPresentedDeleteAlert) {
-                    Button("취소", role: .cancel) { }
-                    Button("삭제", role: .destructive) {
-                        viewModel.deleteDDay(dDayItem: dDayItem)
-                        DispatchQueue.main.async {
-                            dismiss()
-                        }
-                    }
-                }
-        }
-        .onAppear {
-            print("DDayDetailView appeared: \(dDayItem.title)")
-        }
-        .onDisappear {
-            print("DDayDetailView disappeared: \(dDayItem.title)")
+            }
         }
     }
 }
 
-fileprivate struct DDayDetailMenu: View {
-    @Binding var isPresentedEditDDayView: Bool
-    @Binding var isPresentedDeleteAlert: Bool
+private extension DDayDetailView {
+    @ToolbarContentBuilder
+    func ToolbarContent() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            DDayDetailMenu()
+        }
+        ToolbarItem(placement: .bottomBar) {
+            if dDayItem.type == .numberOfDays {
+                Button {
+                    isPresentedAnniversaryView.toggle()
+                } label: {
+                    Text("기념일 보기")
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+    }
     
-    var body: some View {
+    func DDayDetailMenu() -> some View {
         Menu {
             Button {
-                isPresentedEditDDayView.toggle()
+                $isPresentedEditDDayView.wrappedValue.toggle()
             } label: {
                 Label("수정", systemImage: "square.and.pencil")
             }
             Button(role: .destructive) {
-                isPresentedDeleteAlert.toggle()
+                $isPresentedDeleteAlert.wrappedValue.toggle()
             } label: {
                 Label("삭제", systemImage: "trash")
             }
         } label: {
             Image(systemName: "ellipsis")
-                .foregroundColor(.gray)
+                .foregroundColor(.secondary)
                 .rotationEffect(.degrees(90))
         }
     }

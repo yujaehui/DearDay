@@ -9,7 +9,6 @@ import SwiftUI
 import PhotosUI
 
 struct AddDDayView: View {
-    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var viewModel: DDayViewModel
     
     @State var type: DDayType = .dDay
@@ -25,100 +24,23 @@ struct AddDDayView: View {
     @State private var isPresentedErrorAlert = false
     @State private var alertMessage = ""
     
+    @Environment(\.dismiss) private var dismiss
+    
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    TextField("제목을 입력하세요", text: $title)
-                        .multilineTextAlignment(.center)
-                }
-                
-                Section {
-                    Text("\(DateFormatterManager.shared.formatDate(selectedDate))\(isLunarDate ? " (음력)" : "")")
-                        .font(.title)
-                        .frame(maxWidth: .infinity)
-                        .multilineTextAlignment(.center)
-                    if isLunarDate {
-                        if let solarDate = viewModel.solarDate {
-                            Text("\(DateFormatterManager.shared.formatDate(solarDate))\(" (양력)")")
-                                .foregroundStyle(.gray)
-                                .frame(maxWidth: .infinity)
-                                .multilineTextAlignment(.center)
-                        } else {
-                            Text("해당 날짜는 음양력 계산이 불가능합니다.")
-                                .foregroundStyle(.gray)
-                                .frame(maxWidth: .infinity)
-                                .multilineTextAlignment(.center)
-                        }
-                    }
-                    DatePicker(selection: $selectedDate, displayedComponents: .date) {
-                        Text("")
-                    }
-                    .datePickerStyle(.wheel)
-                    .labelsHidden()
-                    .onChange(of: selectedDate) { newDate in
-                        if isLunarDate {
-                            viewModel.updateLunarDate(lunarDate: newDate)
-                        }
-                    }
-                }
-                .listRowSeparatorTint(.clear)
-                .listRowBackground(Color.clear)
-                
-                Section {
-                    Toggle("음력", isOn: $isLunarDate)
-                        .onChange(of: isLunarDate) { newValue in
-                            if newValue == true {
-                                viewModel.updateLunarDate(lunarDate: selectedDate)
-                            }
-                        }
-
-                    
-                    if type == .dDay {
-                        Toggle("반복", isOn: $isRepeatOn)
-                            .onChange(of: isRepeatOn) { newValue in
-                                repeatType = newValue ? .year : .none
-                            }
-                    }
-                    
-                    if isRepeatOn {
-                        Picker("반복 조건", selection: $repeatType) {
-                            Text("매년").tag(RepeatType.year)
-                            Text("매월").tag(RepeatType.month)
-                        }
-                    }
-                }
-                
-                Section {
+                titleSection
+                dateSection
+                optionsSection
+                imageSection
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        isPresentedImagePicker = true
+                        validateAndAddDDay()
                     } label: {
-                        HStack {
-                            Text("이미지 선택")
-                            Spacer()
-                            Image(systemName: "plus")
-                                .font(.title3)
-                        }
-                        .foregroundStyle(.black)
-                    }
-                    
-                    if selectedImage != nil {
-                        VStack {
-                            Image(uiImage: selectedImage!)
-                                .resizable()
-                                .scaledToFit()
-                            
-                            Button(action: {
-                                selectedImage = nil // 이미지 삭제
-                            }) {
-                                HStack {
-                                    Image(systemName: "trash")
-                                    Text("이미지 삭제")
-                                }
-                                .foregroundColor(.red)
-                            }
-                            .padding(.top, 5)
-                        }
+                        Text("추가")
+                            .foregroundColor(.secondary)
                     }
                 }
             }
@@ -126,43 +48,138 @@ struct AddDDayView: View {
                 ImagePicker(selectedImage: $selectedImage)
                     .ignoresSafeArea()
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        if title.isEmpty {
-                            alertMessage = "제목을 입력하세요."
-                            isPresentedErrorAlert = true
-                        } else if isLunarDate && viewModel.solarDate == nil {
-                            alertMessage = "해당 날짜는 음양력 계산이 불가능합니다."
-                            isPresentedErrorAlert = true
-                        } else {
-                            let dDay = DDay(
-                                type: type,
-                                title: title,
-                                date: selectedDate,
-                                isLunarDate: isLunarDate,
-                                convertedSolarDateFromLunar: viewModel.solarDate,
-                                startFromDayOne: startFromDayOne,
-                                isRepeatOn: isRepeatOn,
-                                repeatType: repeatType
-                            )
-                            viewModel.addDDay(dDay: dDay, image: selectedImage)
-                            dismiss()
-                            
-                        }
-                    } label: {
-                        Text("추가")
-                            .foregroundColor(.gray)
-                    }
-                    .alert(isPresented: $isPresentedErrorAlert) {
-                        Alert(title: Text("오류"), message: Text(alertMessage), dismissButton: .default(Text("확인")))
-                    }
-                }
+            .alert(isPresented: $isPresentedErrorAlert) {
+                Alert(title: Text("오류"), message: Text(alertMessage), dismissButton: .default(Text("확인")))
             }
+            .background(.background)
         }
     }
 }
 
+private extension AddDDayView {
+    // MARK: - Title Section
+    var titleSection: some View {
+        Section {
+            TextField("제목을 입력하세요", text: $title)
+                .multilineTextAlignment(.center)
+        }
+    }
+    
+    // MARK: - Date Section
+    var dateSection: some View {
+        Section {
+            Text("\(DateFormatterManager.shared.formatDate(selectedDate))\(isLunarDate ? " (음력)" : "")")
+                .asFormDate()
+            
+            if isLunarDate, let solarDate = viewModel.solarDate {
+                Text("\(DateFormatterManager.shared.formatDate(solarDate))\(" (양력)")")
+                    .asFormConvertedDate()
+            } else if isLunarDate {
+                Text("해당 날짜는 음양력 계산이 불가능합니다.")
+                    .asFormConvertedDate()
+            }
+            
+            DatePicker("", selection: $selectedDate, displayedComponents: .date)
+                .datePickerStyle(.wheel)
+                .labelsHidden()
+                .onChange(of: selectedDate) { newDate in
+                    if isLunarDate {
+                        viewModel.updateLunarDate(lunarDate: newDate)
+                    }
+                }
+        }
+        .listRowSeparatorTint(.clear)
+        .listRowBackground(Color.clear)
+    }
+    
+    // MARK: - Options Section
+    var optionsSection: some View {
+        Section {
+            Toggle("음력", isOn: $isLunarDate)
+                .onChange(of: isLunarDate) { newValue in
+                    if newValue {
+                        viewModel.updateLunarDate(lunarDate: selectedDate)
+                    }
+                }
+            
+            if type == .dDay {
+                Toggle("반복", isOn: $isRepeatOn)
+                    .onChange(of: isRepeatOn) { newValue in
+                        repeatType = newValue ? .year : .none
+                    }
+            }
+            
+            if isRepeatOn {
+                Picker("반복 조건", selection: $repeatType) {
+                    Text("매년").tag(RepeatType.year)
+                    Text("매월").tag(RepeatType.month)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Image Section
+    var imageSection: some View {
+        Section {
+            Button {
+                isPresentedImagePicker = true
+            } label: {
+                HStack {
+                    Text("이미지 선택")
+                    Spacer()
+                    Image(systemName: "plus")
+                        .font(.title3)
+                }
+                .foregroundStyle(.primary)
+            }
+            
+            if selectedImage != nil {
+                Image(uiImage: selectedImage!)
+                    .resizable()
+                    .scaledToFit()
+                
+                Button(action: {
+                    selectedImage = nil // 이미지 삭제
+                }) {
+                    HStack {
+                        Image(systemName: "trash")
+                        Text("이미지 삭제")
+                    }
+                    .foregroundColor(.red)
+                    .frame(maxWidth: .infinity)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Validation and Add D-Day
+    func validateAndAddDDay() {
+        if title.isEmpty {
+            alertMessage = "제목을 입력하세요."
+            isPresentedErrorAlert = true
+        }
+        
+        if isLunarDate && viewModel.solarDate == nil {
+            alertMessage = "해당 날짜는 음양력 계산이 불가능합니다."
+            isPresentedErrorAlert = true
+            return
+        }
+        
+        let dDay = DDay(
+            type: type,
+            title: title,
+            date: selectedDate,
+            isLunarDate: isLunarDate,
+            convertedSolarDateFromLunar: viewModel.solarDate,
+            startFromDayOne: startFromDayOne,
+            isRepeatOn: isRepeatOn,
+            repeatType: repeatType
+        )
+        
+        viewModel.addDDay(dDay: dDay, image: selectedImage)
+        dismiss()
+    }
+}
 
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var selectedImage: UIImage?
@@ -204,8 +221,5 @@ struct ImagePicker: UIViewControllerRepresentable {
     }
 }
 
-#Preview {
-    AddDDayView(type: .dDay)
-}
 
 

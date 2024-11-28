@@ -17,31 +17,8 @@ struct DDayView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                List {
-                    if viewModel.isGrouped {
-                        ForEach(viewModel.sortedAndGroupedDDayItems, id: \.key) { group in
-                            Section(header: Text(group.key.rawValue)) {
-                                ForEach(group.value, id: \.pk) { dDayItem in
-                                    NavigationLink(destination: DDayDetailView(dDayItem: dDayItem, viewModel: viewModel)) {
-                                        DDayCardView(dDayItem: dDayItem, dDayText: viewModel.dDayText[dDayItem.pk] ?? "")
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        ForEach(viewModel.sortedDDayItems, id: \.pk) { dDayItem in
-                            NavigationLink(destination: DDayDetailView(dDayItem: dDayItem, viewModel: viewModel)) {
-                                DDayCardView(dDayItem: dDayItem, dDayText: viewModel.dDayText[dDayItem.pk] ?? "")
-                            }
-                        }
-                    }
-                    
-                }
+                DDayListView()
                 .listStyle(.grouped)
-                .navigationDestination(isPresented: $navigateToAddDDayView) {
-                    AddDDayView(type: selectedDDayType)
-                        .environmentObject(viewModel)
-                }
                 
                 if isPresentedSelectDDayTypeAlertView {
                     SelectDDayTypeAlertView(
@@ -52,56 +29,80 @@ struct DDayView: View {
                 }
             }
             .navigationTitle("")
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Text("Dear Day")
-                        .foregroundStyle(.gray)
-                        .font(.headline)
-                        .fontWeight(.bold)
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        isPresentedSelectDDayTypeAlertView.toggle()
-                    } label: {
-                        Image(systemName: "plus")
-                            .foregroundColor(.gray)
-                    }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    DDayMenu(selectedSortOption: $viewModel.selectedSortOption, isGrouped: $viewModel.isGrouped)
-                        .onChange(of: viewModel.selectedSortOption) { _ in
-                            viewModel.updateSortedAndGroupedDDays()
-                        }
-                        .onChange(of: viewModel.isGrouped) { _ in
-                            viewModel.updateSortedAndGroupedDDays()
-                        }
-                }
+            .navigationDestination(isPresented: $navigateToAddDDayView) {
+                AddDDayView(type: selectedDDayType)
+                    .environmentObject(viewModel)
+            }
+            .toolbar { 
+                ToolbarContent()
+            }
+            .task {
+                viewModel.fetchDDay()
             }
         }
-        .task {
-            viewModel.fetchDDay()
-        }
-        .tint(.gray)
+        .tint(.secondary)
     }
 }
 
-fileprivate struct DDayMenu: View {
-    @Binding var selectedSortOption: SortOption
-    @Binding var isGrouped: Bool
-    
-    var body: some View {
-        Menu {
-            Menu {
-                Picker("", selection: $selectedSortOption) {
-                    ForEach(SortOption.allCases) { option in
-                        Text(option.rawValue).tag(option)
+private extension DDayView {
+    @ViewBuilder
+    func DDayListView() -> some View {
+        List {
+            if viewModel.isGrouped {
+                ForEach(viewModel.sortedAndGroupedDDayItems, id: \.key) { group in
+                    Section(header: Text(group.key.rawValue)) {
+                        ForEach(group.value, id: \.pk) { dDayItem in
+                            NavigationLink(destination: DDayDetailView(dDayItem: dDayItem, viewModel: viewModel)) {
+                                DDayCardView(dDayItem: dDayItem, dDayText: viewModel.dDayText[dDayItem.pk] ?? "")
+                            }
+                        }
                     }
                 }
-            } label: {
-                Label("다음으로 정렬", systemImage: "arrow.up.arrow.down")
-                Text(selectedSortOption.rawValue)
+            } else {
+                ForEach(viewModel.sortedDDayItems, id: \.pk) { dDayItem in
+                    NavigationLink(destination: DDayDetailView(dDayItem: dDayItem, viewModel: viewModel)) {
+                        DDayCardView(dDayItem: dDayItem, dDayText: viewModel.dDayText[dDayItem.pk] ?? "")
+                    }
+                }
             }
-            Toggle(isOn: $isGrouped) {
+        }
+    }
+    
+    @ToolbarContentBuilder
+    func ToolbarContent() -> some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Text("Dear Day")
+                .foregroundStyle(.gray)
+                .font(.headline)
+                .fontWeight(.bold)
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                isPresentedSelectDDayTypeAlertView.toggle()
+            } label: {
+                Image(systemName: "plus")
+                    .foregroundColor(.gray)
+            }
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            DDayMenu()
+            .onChange(of: viewModel.selectedSortOption) { _ in
+                viewModel.updateSortedAndGroupedDDays()
+            }
+            .onChange(of: viewModel.isGrouped) { _ in
+                viewModel.updateSortedAndGroupedDDays()
+            }
+        }
+    }
+    
+    private func DDayMenu() -> some View {
+        Menu {
+            Picker("정렬", selection: $viewModel.selectedSortOption) {
+                ForEach(SortOption.allCases, id: \.self) { option in
+                    Text(option.rawValue).tag(option)
+                }
+            }
+            Toggle(isOn: $viewModel.isGrouped) {
                 Label("그룹화", systemImage: "rectangle.grid.1x2")
             }
         } label: {

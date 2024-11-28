@@ -15,27 +15,15 @@ struct DDayCardView: View {
     var body: some View {
         HStack(spacing: 20) {
             Text(dDayItem.title)
-                .foregroundColor(.gray)
-                .font(.callout)
-                .lineLimit(1)
-            
+                .asRowTitle()
             Spacer()
             VStack(alignment: .trailing) {
                 Text(dDayText)
-                    .foregroundColor(.gray)
-                    .font(.title3)
-                    .fontWeight(.bold)
+                    .asRowDDayText()
                 Text("\(DateFormatterManager.shared.formatDate(dDayItem.date))\(dDayItem.isLunarDate ? " (음력)" : "")")
-                    .foregroundColor(.gray.opacity(0.8))
-                    .font(.caption)
+                    .asRowDate()
             }
         }
         .padding(8)
-        .onAppear {
-            print("DDayCardView appeared: \(dDayItem.title)")
-        }
-        .onDisappear {
-            print("DDayCardView disappeared: \(dDayItem.title)")
-        }
     }
 }

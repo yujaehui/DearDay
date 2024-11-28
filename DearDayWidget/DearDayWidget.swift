@@ -175,25 +175,19 @@ struct MediumWidgetView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(entry.dDay.title)
-                .lineLimit(1)
-                .foregroundColor(.gray)
-                .font(.title3)
+                .asMainTitle()
             HStack {
                 VStack(alignment: .leading) {
                     Text("\(DateFormatterManager.shared.formatDate(entry.dDay.date))\(entry.dDay.isLunarDate ? " (음력)" : "")")
-                        .foregroundColor(.gray.opacity(0.8))
-                        .font(.callout)
+                        .asMainDate()
                     if entry.dDay.repeatType != .none {
                         Text("[\(entry.dDay.repeatType.rawValue) 반복]")
-                            .foregroundColor(.gray.opacity(0.8))
-                            .font(.caption)
+                            .asMainRepeatType()
                     }
                 }
                 Spacer()
                 Text(entry.dDayText)
-                    .foregroundColor(.gray)
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .asMainDDayText()
             }
         }
         .padding()
@@ -216,25 +210,19 @@ struct LargeWidgetView: View {
             }
             VStack(alignment: .leading, spacing: 10) {
                 Text(entry.dDay.title)
-                    .lineLimit(1)
-                    .foregroundColor(.gray)
-                    .font(.title3)
+                    .asMainTitle()
                 HStack {
                     VStack(alignment: .leading) {
                         Text("\(DateFormatterManager.shared.formatDate(entry.dDay.date))\(entry.dDay.isLunarDate ? " (음력)" : "")")
-                            .foregroundColor(.gray.opacity(0.8))
-                            .font(.callout)
+                            .asMainDate()
                         if entry.dDay.repeatType != .none {
                             Text("[\(entry.dDay.repeatType.rawValue) 반복]")
-                                .foregroundColor(.gray.opacity(0.8))
-                                .font(.caption)
+                                .asMainRepeatType()
                         }
                     }
                     Spacer()
                     Text(entry.dDayText)
-                        .foregroundColor(.gray)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
+                        .asMainDDayText()
                 }
             }
             .padding()

@@ -128,7 +128,7 @@ struct DearDayListWidgetEntryView: View {
         case .systemLarge:
             LargeListWidgetView(entry: entry)
         default:
-            Text(entry.selectedDDays[0].dDayText)
+            Text("")
         }
     }
 }
@@ -151,14 +151,10 @@ struct MediumListWidgetView: View {
                 ForEach(entry.selectedDDays.prefix(3)) { item in
                     HStack(spacing: 10) {
                         Text(item.dDay.title)
-                            .foregroundStyle(.gray)
-                            .font(.callout)
-                            .lineLimit(1)
+                            .asRowTitle()
                         Spacer()
                         Text(item.dDayText)
-                            .foregroundStyle(.gray)
-                            .font(.title3)
-                            .fontWeight(.bold)
+                            .asRowDDayText()
                     }
                     Divider()
                 }
@@ -186,18 +182,13 @@ struct LargeListWidgetView: View {
                 ForEach(entry.selectedDDays.prefix(5)) { item in
                     HStack(spacing: 10) {
                         Text(item.dDay.title)
-                            .foregroundStyle(.gray)
-                            .font(.callout)
-                            .lineLimit(1)
+                            .asRowTitle()
                         Spacer()
                         VStack(alignment: .trailing) {
                             Text(item.dDayText)
-                                .foregroundColor(.gray)
-                                .font(.title3)
-                                .fontWeight(.bold)
+                                .asRowDDayText()
                             Text("\(DateFormatterManager.shared.formatDate(item.dDay.date))\(item.dDay.isLunarDate ? " (음력)" : "")")
-                                .foregroundColor(.gray.opacity(0.8))
-                                .font(.caption)
+                                .asRowDate()
                         }
                     }
                     Divider()
