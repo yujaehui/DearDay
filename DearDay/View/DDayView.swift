@@ -56,7 +56,7 @@ private extension DDayView {
                 .foregroundStyle(.secondary)
                 .font(.title3)
             Text("상단의 + 버튼을 눌러 D-DAY를 추가할 수 있습니다.")
-                .foregroundColor(.secondary.opacity(0.8))
+                .foregroundStyle(.secondary.opacity(0.8))
                 .font(.caption)
         }
         .padding()

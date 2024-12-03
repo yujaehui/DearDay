@@ -10,7 +10,7 @@ import SwiftUI
 private struct RowTitle: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
             .font(.callout)
             .lineLimit(1)
     }
@@ -19,7 +19,7 @@ private struct RowTitle: ViewModifier {
 private struct RowDDayText: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
             .font(.title3)
     }
 }
@@ -27,7 +27,7 @@ private struct RowDDayText: ViewModifier {
 private struct RowDate: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .foregroundColor(.secondary.opacity(0.8))
+            .foregroundStyle(.secondary.opacity(0.8))
             .font(.caption)
     }
 }

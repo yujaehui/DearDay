@@ -78,7 +78,7 @@ private extension DDayDetailView {
             }
         } label: {
             Image(systemName: "ellipsis")
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .rotationEffect(.degrees(90))
         }
     }

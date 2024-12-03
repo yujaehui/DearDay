@@ -10,7 +10,7 @@ import SwiftUI
 private struct MainTitle: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
             .font(.title3)
             .lineLimit(1)
     }
@@ -19,7 +19,7 @@ private struct MainTitle: ViewModifier {
 private struct MainDDayText: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
             .font(.largeTitle)
     }
 }
@@ -27,7 +27,7 @@ private struct MainDDayText: ViewModifier {
 private struct MainDate: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .foregroundColor(.secondary.opacity(0.8))
+            .foregroundStyle(.secondary.opacity(0.8))
             .font(.callout)
     }
 }
@@ -35,7 +35,7 @@ private struct MainDate: ViewModifier {
 private struct MainRepeatType: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .foregroundColor(.secondary.opacity(0.8))
+            .foregroundStyle(.secondary.opacity(0.8))
             .font(.caption)
     }
 }

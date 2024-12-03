@@ -73,11 +73,11 @@ struct AnniversaryView: View {
                         if anniversary.isYear,
                            let yearDifference = Calendar.current.dateComponents([.year], from: dDayItem.convertedSolarDateFromLunar ?? dDayItem.date, to: anniversary.date).year {
                             Text("\(yearDifference + 1) Years")
-                                .foregroundColor(isPast(anniversary.date) ? .secondary : .primary)
+                                .foregroundStyle(isPast(anniversary.date) ? .secondary : .primary)
                                 .font(.headline)
                         } else {
                             Text("\(anniversary.days) Days")
-                                .foregroundColor(isPast(anniversary.date) ? .secondary : .primary)
+                                .foregroundStyle(isPast(anniversary.date) ? .secondary : .primary)
                                 .font(.headline)
                         }
                         
@@ -90,7 +90,7 @@ struct AnniversaryView: View {
                 }
                 
                 Text(DateFormatterManager.shared.formatDate(anniversary.date))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .font(.subheadline)
             }
             .padding(.vertical, 8)

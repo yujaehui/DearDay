@@ -123,14 +123,14 @@ struct DearDayWidgetEntryView: View {
         default:
             VStack(spacing: 10) {
                 Text(entry.dDayText)
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.secondary)
                     .font(.title)
                 Text(entry.dDay.title)
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.secondary)
                     .font(.caption)
                     .lineLimit(1)
                 Text(DateFormatterManager.shared.formatDate(entry.dDay.date))
-                    .foregroundColor(.gray.opacity(0.8))
+                    .foregroundStyle(.secondary.opacity(0.8))
                     .font(.caption)
             }
             .padding()

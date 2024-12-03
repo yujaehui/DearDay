@@ -55,7 +55,7 @@ struct EditDDayView: View {
                         validateAndEditDDay()
                     } label: {
                         Text("수정")
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }

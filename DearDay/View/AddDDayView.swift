@@ -40,7 +40,7 @@ struct AddDDayView: View {
                         validateAndAddDDay()
                     } label: {
                         Text("추가")
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
