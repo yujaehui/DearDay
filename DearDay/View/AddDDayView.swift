@@ -145,7 +145,7 @@ private extension AddDDayView {
                         Image(systemName: "trash")
                         Text("이미지 삭제")
                     }
-                    .foregroundColor(.red)
+                    .foregroundStyle(.red)
                     .frame(maxWidth: .infinity)
                 }
             }

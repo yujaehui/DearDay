@@ -98,7 +98,7 @@ private extension DDayView {
                 isPresentedSelectDDayTypeAlertView.toggle()
             } label: {
                 Image(systemName: "plus")
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.secondary)
             }
         }
         ToolbarItem(placement: .topBarTrailing) {
@@ -124,7 +124,7 @@ private extension DDayView {
             }
         } label: {
             Image(systemName: "ellipsis")
-                .foregroundColor(.gray)
+                .foregroundStyle(.secondary)
                 .rotationEffect(.degrees(90))
         }
     }

@@ -67,7 +67,7 @@ struct AnniversaryView: View {
                 HStack {
                     if anniversary.days == 0 {
                         Text("Today")
-                            .foregroundColor(.red)
+                            .foregroundStyle(.red)
                             .font(.headline)
                     } else {
                         if anniversary.isYear,
@@ -83,7 +83,7 @@ struct AnniversaryView: View {
                         
                         if isToday(anniversary.date) {
                             Image(systemName: "arrowtriangle.left.fill")
-                                .foregroundColor(.red)
+                                .foregroundStyle(.red)
                                 .font(.footnote)
                         }
                     }
