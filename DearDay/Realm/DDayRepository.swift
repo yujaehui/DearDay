@@ -16,6 +16,7 @@ final class DDayRepository: DDayRepositoryProtocol {
     }
     
     func fetchItem() -> [DDay] {
+        print(realm.configuration.fileURL)
         let realm = try! Realm()
         return Array(realm.objects(DDay.self))
     }

@@ -18,7 +18,9 @@ final class DateFormatterManager {
     }
     
     func calculateDDayString(from date: Date, type: DDayType, startFromDayOne: Bool, calendar: Calendar) -> String {
-        let components = calendar.dateComponents([.day], from: calendar.startOfDay(for: date), to: calendar.startOfDay(for: Date()))
+        let startDate = calendar.startOfDay(for: date)
+        let currentDate = calendar.startOfDay(for: Date())
+        let components = calendar.dateComponents([.day], from: startDate, to: currentDate)
         
         switch type {
         case .dDay:
@@ -32,6 +34,17 @@ final class DateFormatterManager {
                 }
             }
         case .numberOfDays:
+            let startDateComponents = calendar.dateComponents([.month, .day], from: startDate)
+            let currentDateComponents = calendar.dateComponents([.month, .day], from: currentDate)
+            
+            if startDateComponents.month == currentDateComponents.month &&
+               startDateComponents.day == currentDateComponents.day {
+                let yearDifference = calendar.dateComponents([.year], from: startDate, to: currentDate).year ?? 0
+                if yearDifference > 0 {
+                    return "\(yearDifference) years"
+                }
+            }
+            
             if let dayDifference = components.day {
                 let dDayValue = dayDifference + 1
                 if dDayValue > 0 {

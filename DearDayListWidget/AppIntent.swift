@@ -75,7 +75,8 @@ struct DDayEntity: AppEntity {
         case .none:
             return apiService.fetchSolarDateSync(year: year, month: month, day: day)
         case .year:
-            if let thisYearDate = apiService.fetchSolarDateSync(year: currentYear, month: month, day: day), thisYearDate >= Date() {
+            if let thisYearDate = apiService.fetchSolarDateSync(year: currentYear, month: month, day: day), 
+                calendar.startOfDay(for: thisYearDate) >= calendar.startOfDay(for: Date()) {
                 return thisYearDate
             }
             return apiService.fetchSolarDateSync(year: currentYear + 1, month: month, day: day)

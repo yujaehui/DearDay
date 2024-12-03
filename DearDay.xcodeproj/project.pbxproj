@@ -313,8 +313,8 @@
 		09F38C7A2CBCE7D500F824D7 /* DearDay */ = {
 			isa = PBXGroup;
 			children = (
-				093160F42CF71B720074CDB7 /* ViewModifier */,
 				0966B1572CE723C600C38430 /* DearDay.entitlements */,
+				093160F42CF71B720074CDB7 /* ViewModifier */,
 				09F38C982CBE3EB300F824D7 /* Manager */,
 				095B58DE2CD3544200EC3531 /* Realm */,
 				09F38CAF2CBFBA6B00F824D7 /* Network */,

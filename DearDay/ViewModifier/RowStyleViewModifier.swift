@@ -21,7 +21,6 @@ private struct RowDDayText: ViewModifier {
         content
             .foregroundColor(.secondary)
             .font(.title3)
-            .fontWeight(.bold)
     }
 }
 

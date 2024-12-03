@@ -64,7 +64,8 @@ extension Provider {
         case .none:
             return apiService.fetchSolarDateSync(year: year, month: month, day: day)
         case .year:
-            if let thisYearDate = apiService.fetchSolarDateSync(year: currentYear, month: month, day: day), thisYearDate >= Date() {
+            if let thisYearDate = apiService.fetchSolarDateSync(year: currentYear, month: month, day: day), 
+                calendar.startOfDay(for: thisYearDate) >= calendar.startOfDay(for: Date()) {
                 return thisYearDate
             }
             return apiService.fetchSolarDateSync(year: currentYear + 1, month: month, day: day)
@@ -124,7 +125,6 @@ struct DearDayWidgetEntryView: View {
                 Text(entry.dDayText)
                     .foregroundColor(.gray)
                     .font(.title)
-                    .fontWeight(.bold)
                 Text(entry.dDay.title)
                     .foregroundColor(.gray)
                     .font(.caption)
@@ -156,7 +156,7 @@ struct AccessoryRectangularView: View {
         VStack(spacing: 5) {
             Text(entry.dDay.title)
             Text(entry.dDayText)
-                .font(.system(size: 25, weight: .bold))
+                .font(.system(size: 25))
         }
     }
 }

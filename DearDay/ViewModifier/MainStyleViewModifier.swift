@@ -21,7 +21,6 @@ private struct MainDDayText: ViewModifier {
         content
             .foregroundColor(.secondary)
             .font(.largeTitle)
-            .fontWeight(.bold)
     }
 }
 

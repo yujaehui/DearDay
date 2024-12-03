@@ -59,15 +59,23 @@ final class DDayViewModel: ObservableObject {
     }
     
     func fetchDDay() {
-        dDayItems = repository.fetchItem().map { DDayItem(from: $0) }
-        Task { await fetchAllDDayData() }
+        let dDays = repository.fetchItem()
+        
+        dDayItems = dDays.map { DDayItem(from: $0) }
+        Task { 
+            await fetchAllDDayData()
+            await NotificationManager.shared.scheduleYearlyRepeatingLunarDdayNotification(for: dDayItems)
+            NotificationManager.shared.scheduleHundredDayNotifications(for: dDayItems)
+            NotificationManager.shared.scheduleYearlyNotifications(for: dDayItems)
+
+        }
     }
     
     func addDDay(dDay: DDay, image: UIImage?) {
-        NotificationManager.shared.scheduleNotification(for: dDay)          // 알림 추가
-        saveImageIfNeeded(for: dDay, image: image)                          // 이미지 추가
-        self.repository.createItem(dDay)                                    // 데이터베이스 추가
-        WidgetCenter.shared.reloadAllTimelines()                            // 위젯 동기화
+        NotificationManager.shared.scheduleNotification(for: dDay, updatedDDay: dDay)           // 알림 추가
+        saveImageIfNeeded(for: dDay, image: image)                                              // 이미지 추가
+        self.repository.createItem(dDay)                                                        // 데이터베이스 추가
+        WidgetCenter.shared.reloadAllTimelines()                                                // 위젯 동기화
         
         fetchDDay()
     }
@@ -75,12 +83,12 @@ final class DDayViewModel: ObservableObject {
     func editDDay(dDayItem: DDayItem, updatedDDay: DDay, image: UIImage?) {
         guard let dDay = repository.fetchItem().first(where: { $0.pk.stringValue == dDayItem.pk }) else { return }
         
-        NotificationManager.shared.removeNotification(for: dDay)            // 기존 알림 제거
-        NotificationManager.shared.scheduleNotification(for: updatedDDay)   // 새로운 알림 추가
-        removeExistingImage(for: dDay)                                      // 기존 이미지 제거
-        saveImageIfNeeded(for: dDay, image: image)                          // 새로운 이미지 추가
-        self.repository.updateItem(dDay, updatedItem: updatedDDay)          // 데이터베이스 변경
-        WidgetCenter.shared.reloadAllTimelines()                            // 위젯 동기화
+        NotificationManager.shared.removeAllNotificationsForDDay(for: dDay)                     // 기존 알림 제거
+        NotificationManager.shared.scheduleNotification(for: dDay, updatedDDay: updatedDDay)    // 새로운 알림 추가
+        removeExistingImage(for: dDay)                                                          // 기존 이미지 제거
+        saveImageIfNeeded(for: dDay, image: image)                                              // 새로운 이미지 추가
+        self.repository.updateItem(dDay, updatedItem: updatedDDay)                              // 데이터베이스 변경
+        WidgetCenter.shared.reloadAllTimelines()                                                // 위젯 동기화
         
         fetchDDay()
     }
@@ -88,10 +96,10 @@ final class DDayViewModel: ObservableObject {
     func deleteDDay(dDayItem: DDayItem) {
         guard let dDay = repository.fetchItem().first(where: { $0.pk.stringValue == dDayItem.pk }) else { return }
 
-        NotificationManager.shared.removeNotification(for: dDay)            // 알림 제거
-        removeExistingImage(for: dDay)                                      // 이미지 제거
-        self.repository.deleteItem(dDay)                                    // 데이터베이스 제거
-        WidgetCenter.shared.reloadAllTimelines()                            // 위젯 동기화
+        NotificationManager.shared.removeAllNotificationsForDDay(for: dDay)                     // 알림 제거
+        removeExistingImage(for: dDay)                                                          // 이미지 제거
+        self.repository.deleteItem(dDay)                                                        // 데이터베이스 제거
+        WidgetCenter.shared.reloadAllTimelines()                                                // 위젯 동기화
         
         fetchDDay()
     }
@@ -155,7 +163,8 @@ final class DDayViewModel: ObservableObject {
         case .none:
             return await apiService.fetchSolarDate(year: year, month: month, day: day)
         case .year:
-            if let thisYearDate = await apiService.fetchSolarDate(year: currentYear, month: month, day: day), thisYearDate >= Date() {
+            if let thisYearDate = await apiService.fetchSolarDate(year: currentYear, month: month, day: day),
+               calendar.startOfDay(for: thisYearDate) >= calendar.startOfDay(for: Date()) {
                 return thisYearDate
             }
             return await apiService.fetchSolarDate(year: currentYear + 1, month: month, day: day)
@@ -170,13 +179,13 @@ final class DDayViewModel: ObservableObject {
         switch repeatType {
         case .none: break
         case .year:
-            while adjustedDate < Date() {
+            while calendar.startOfDay(for: adjustedDate) < calendar.startOfDay(for: Date()) {
                 if let newDate = calendar.date(byAdding: .year, value: 1, to: adjustedDate) {
                     adjustedDate = newDate
                 }
             }
         case .month:
-            while adjustedDate < Date() {
+            while calendar.startOfDay(for: adjustedDate) < calendar.startOfDay(for: Date()) {
                 if let newDate = calendar.date(byAdding: .month, value: 1, to: adjustedDate) {
                     adjustedDate = newDate
                 }
