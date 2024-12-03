@@ -111,7 +111,7 @@ extension DDayEntity {
             self.id = ""
             self.type = .dDay
             self.title = "No Upcoming D-Days"
-            self.date = Date(timeIntervalSince1970: 0)
+            self.date = Date()
             self.isLunarDate = false
             self.convertedSolarDateFromLunar = nil
             self.startFromDayOne = true

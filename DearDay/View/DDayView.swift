@@ -17,8 +17,12 @@ struct DDayView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                DDayListView()
-                .listStyle(.grouped)
+                if viewModel.dDayItems.isEmpty {
+                    DDayEmptyView()
+                } else {
+                    DDayListView()
+                    .listStyle(.grouped)
+                }
                 
                 if isPresentedSelectDDayTypeAlertView {
                     SelectDDayTypeAlertView(
@@ -45,6 +49,19 @@ struct DDayView: View {
 }
 
 private extension DDayView {
+    @ViewBuilder
+    func DDayEmptyView() -> some View {
+        VStack(spacing: 10) {
+            Text("기억하고 싶은 순간을 기록하세요.")
+                .foregroundStyle(.secondary)
+                .font(.title3)
+            Text("상단의 + 버튼을 눌러 D-DAY를 추가할 수 있습니다.")
+                .foregroundColor(.secondary.opacity(0.8))
+                .font(.caption)
+        }
+        .padding()
+    }
+    
     @ViewBuilder
     func DDayListView() -> some View {
         List {

@@ -107,6 +107,22 @@ struct DDayEntity: AppEntity {
 }
 
 extension DDayEntity {
+    init(defaultEntity: Bool = true) {
+        if defaultEntity {
+            self.id = ""
+            self.type = .dDay
+            self.title = "No Upcoming D-Days"
+            self.date = Date()
+            self.isLunarDate = false
+            self.convertedSolarDateFromLunar = nil
+            self.startFromDayOne = true
+            self.isRepeatOn = false
+            self.repeatType = .none
+        } else {
+            fatalError("Custom initialization required")
+        }
+    }
+    
     static var none: DDayEntity {
         DDayEntity(id: "none", type: .dDay, title: "선택 안함", date: Date.distantPast, isLunarDate: false, convertedSolarDateFromLunar: nil, startFromDayOne: false, isRepeatOn: false, repeatType: .none)
     }
@@ -160,6 +176,10 @@ struct ConfigurationDearDayListIntent: WidgetConfigurationIntent {
         let repository = DDayRepository()
         let dDays = repository.fetchItem()
         
-        return dDays.map { DDayEntity(id: $0.pk.stringValue, type: $0.type, title: $0.title, date: $0.date, isLunarDate: $0.isLunarDate, convertedSolarDateFromLunar: $0.convertedSolarDateFromLunar, startFromDayOne: $0.startFromDayOne, isRepeatOn: $0.isRepeatOn, repeatType: $0.repeatType) }
+        if dDays.isEmpty {
+            return [DDayEntity(defaultEntity: true)] // 기본 D-DayEntity 생성
+        } else {
+            return dDays.map { DDayEntity(id: $0.pk.stringValue, type: $0.type, title: $0.title, date: $0.date, isLunarDate: $0.isLunarDate, convertedSolarDateFromLunar: $0.convertedSolarDateFromLunar, startFromDayOne: $0.startFromDayOne, isRepeatOn: $0.isRepeatOn, repeatType: $0.repeatType) }
+        }
     }
 }
