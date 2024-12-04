@@ -25,6 +25,7 @@ struct AddDDayView: View {
     @State private var alertMessage = ""
     
     @Environment(\.dismiss) private var dismiss
+    @FocusState private var isTitleFieldFocused: Bool
     
     var body: some View {
         NavigationStack {
@@ -62,6 +63,7 @@ private extension AddDDayView {
         Section {
             TextField("제목을 입력하세요", text: $title)
                 .multilineTextAlignment(.center)
+                .focused($isTitleFieldFocused)
         }
     }
     

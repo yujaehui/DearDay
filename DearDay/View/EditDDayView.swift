@@ -27,6 +27,7 @@ struct EditDDayView: View {
     @State private var alertMessage = ""
     
     @Environment(\.dismiss) private var dismiss
+    @FocusState private var isTitleFieldFocused: Bool
     
     init(dDayItem: DDayItem, viewModel: DDayViewModel) {
         self.dDayItem = dDayItem
@@ -81,6 +82,7 @@ private extension EditDDayView {
         Section {
             TextField("제목을 입력하세요", text: $title)
                 .multilineTextAlignment(.center)
+                .focused($isTitleFieldFocused)
         }
     }
 
