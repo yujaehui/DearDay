@@ -13,7 +13,11 @@ struct Provider: AppIntentTimelineProvider {
     private var apiService = APIService()
 
     func placeholder(in context: Context) -> SelectedDDayEntry {
-        SelectedDDayEntry(date: Date(), configuration: ConfigurationDearDayIntent(), dDay: DDayEntity(),  dDayText: "")
+        let configuration = ConfigurationDearDayIntent()
+        let currentDate = Date()
+        let dDay = configuration.selectedDDay ?? configuration.defaultSelectedDDay()
+        let dDayText = calculateDDaySync(from: dDay.date, type: dDay.type, isLunar: dDay.isLunarDate, startFromDayOne: dDay.startFromDayOne, repeatType: dDay.repeatType)
+        return SelectedDDayEntry(date: currentDate, configuration: configuration, dDay: dDay, dDayText: dDayText)
     }
 
     func snapshot(for configuration: ConfigurationDearDayIntent, in context: Context) async -> SelectedDDayEntry {
@@ -110,16 +114,12 @@ struct DearDayWidgetEntryView: View {
     
     var body: some View {
         switch widgetFamily {
-        case .accessoryCircular:
-            AccessoryCircularView(entry: entry)
-        case .accessoryRectangular:
-            AccessoryRectangularView(entry: entry)
-        case .accessoryInline:
-            AccessoryInlineView(entry: entry)
         case .systemMedium:
             MediumWidgetView(entry: entry)
+                .containerBackground(.clear, for: .widget)
         case .systemLarge:
             LargeWidgetView(entry: entry)
+                .containerBackground(.clear, for: .widget)
         default:
             VStack(spacing: 10) {
                 Text(entry.dDayText)
@@ -134,38 +134,8 @@ struct DearDayWidgetEntryView: View {
                     .font(.caption)
             }
             .padding()
+            .containerBackground(.clear, for: .widget)
         }
-    }
-}
-
-struct AccessoryCircularView: View {
-    var entry: Provider.Entry
-    
-    var body: some View {
-        ZStack {
-            AccessoryWidgetBackground()
-            Text(entry.dDayText)
-        }
-    }
-}
-
-struct AccessoryRectangularView: View {
-    var entry: Provider.Entry
-    
-    var body: some View {
-        VStack(spacing: 5) {
-            Text(entry.dDay.title)
-            Text(entry.dDayText)
-                .font(.system(size: 25))
-        }
-    }
-}
-
-struct AccessoryInlineView: View {
-    var entry: Provider.Entry
-    
-    var body: some View {
-        Text("\(entry.dDay.title) \(entry.dDayText)")
     }
 }
 
@@ -201,7 +171,7 @@ struct LargeWidgetView: View {
         VStack {
             if let image = ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(entry.dDay.id)") {
                 GeometryReader { geometry in
-                    Image(uiImage: image)
+                    Image(uiImage: resizeImage(image, targetSize: geometry.size))
                         .resizable()
                         .scaledToFill()
                         .frame(width: geometry.size.width, height: geometry.size.height)
@@ -228,6 +198,24 @@ struct LargeWidgetView: View {
             .padding()
         }
     }
+    
+    func resizeImage(_ image: UIImage, targetSize: CGSize) -> UIImage {
+        let size = image.size
+
+        let widthRatio = targetSize.width / size.width
+        let heightRatio = targetSize.height / size.height
+        let scaleRatio = min(widthRatio, heightRatio)
+
+        let newSize = CGSize(
+            width: size.width * scaleRatio,
+            height: size.height * scaleRatio
+        )
+        let renderer = UIGraphicsImageRenderer(size: newSize)
+        return renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: newSize))
+        }
+    }
+
 }
 
 // MARK: - Widget
@@ -244,7 +232,7 @@ struct DearDayWidget: Widget {
         }
         .configurationDisplayName("D-Day Single Widget")
         .description("Displays a single D-Day.")
-        .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline, .systemSmall, .systemMedium, .systemLarge])
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
         .contentMarginsDisabled()
     }
 }

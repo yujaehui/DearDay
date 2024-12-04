@@ -158,8 +158,8 @@ final class NotificationManager {
             if let nextDate = calendar.date(byAdding: .year, value: yearsSinceStart, to: notificationDate) {
                 
                 var triggerDate = calendar.dateComponents([.month, .day], from: nextDate)
-                triggerDate.hour = 0
-                triggerDate.minute = 0
+                triggerDate.hour = 18
+                triggerDate.minute = 43
                 
                 let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
                 

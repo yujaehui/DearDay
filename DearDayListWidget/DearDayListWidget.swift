@@ -126,8 +126,10 @@ struct DearDayListWidgetEntryView: View {
         switch widgetFamily {
         case .systemMedium:
             MediumListWidgetView(entry: entry)
+                .containerBackground(.clear, for: .widget)
         case .systemLarge:
             LargeListWidgetView(entry: entry)
+                .containerBackground(.clear, for: .widget)
         default:
             Text("")
         }

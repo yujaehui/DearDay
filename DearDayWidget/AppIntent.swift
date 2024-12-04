@@ -154,7 +154,7 @@ struct ConfigurationDearDayIntent: WidgetConfigurationIntent {
         if let firstDDay = dDays.first {
             return DDayEntity(id: firstDDay.pk.stringValue, type: firstDDay.type, title: firstDDay.title, date: firstDDay.date, isLunarDate: firstDDay.isLunarDate, convertedSolarDateFromLunar: firstDDay.convertedSolarDateFromLunar, startFromDayOne: firstDDay.startFromDayOne, isRepeatOn: firstDDay.isRepeatOn, repeatType: firstDDay.repeatType)
         } else {
-            return DDayEntity()
+            return DDayEntity(defaultEntity: true)
         }
     }
 }
