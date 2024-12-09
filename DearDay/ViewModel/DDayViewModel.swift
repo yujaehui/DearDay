@@ -9,6 +9,7 @@ import Foundation
 import RealmSwift
 import WidgetKit
 import SwiftUI
+import Combine
 
 enum SortOption: String, CaseIterable, Identifiable {
     case creationDate = "생성일"
@@ -29,6 +30,7 @@ final class DDayViewModel: ObservableObject {
     @Published var dDayImage: [String: UIImage?] = [:]
     @Published var dDayText: [String: String] = [:]
     @Published var solarDate: Date?
+    @Published var errorMessage: String?
     @Published var isGrouped: Bool = UserDefaults.standard.bool(forKey: "isGrouped") {
         didSet {
             UserDefaults.standard.set(isGrouped, forKey: "isGrouped")
@@ -42,8 +44,9 @@ final class DDayViewModel: ObservableObject {
     
     @Published private(set) var sortedAndGroupedDDayItems: [(key: DDayType, value: [DDayItem])] = []
     @Published private(set) var sortedDDayItems: [DDayItem] = []
-
-    // MARK: - Dependencies
+    
+    // MARK: - Private Properties
+    private var cancellables: Set<AnyCancellable> = []
     private let repository: DDayRepositoryProtocol
     private let apiService: APIServiceProtocol
     
@@ -51,23 +54,48 @@ final class DDayViewModel: ObservableObject {
     init(repository: DDayRepositoryProtocol, apiService: APIServiceProtocol) {
         self.repository = repository
         self.apiService = apiService
+        monitorNetworkConnectivity()
     }
     
     // MARK: - Public Methods
     func updateLunarDate(lunarDate: Date) {
-        Task { solarDate = await self.apiService.fetchSolarDate(lunarDate: lunarDate) }
+        print(#function)
+        
+        Task {
+            let response = await apiService.fetchSolarDate(lunarDate: lunarDate)
+            solarDate = response.data
+            errorMessage = response.error?.errorMessage
+        }
+    }
+    
+    func monitorLunarDateUpdates(isLunarDate: Binding<Bool>, selectedDate: Binding<Date>) {
+        NetworkMonitor.shared.$isConnected
+            .dropFirst()
+            .removeDuplicates()
+            .sink { [weak self] isConnected in
+                guard let self = self else { return }
+                if isConnected, isLunarDate.wrappedValue {
+                    print("\(isConnected) 네트워크가 연결되었습니다. 데이터를 가져옵니다.")
+                    self.updateLunarDate(lunarDate: selectedDate.wrappedValue)
+                } else {
+                    print("\(isConnected) 네트워크 연결이 없습니다. 연결 후 다시 시도해주세요.")
+                    self.updateLunarDate(lunarDate: selectedDate.wrappedValue)
+                }
+            }
+            .store(in: &cancellables)
     }
     
     func fetchDDay() {
-        let dDays = repository.fetchItem()
+        print(#function)
         
+        let dDays = repository.fetchItem()
         dDayItems = dDays.map { DDayItem(from: $0) }
-        Task { 
+        
+        Task {
             await fetchAllDDayData()
             await NotificationManager.shared.scheduleYearlyRepeatingLunarDdayNotification(for: dDayItems)
             NotificationManager.shared.scheduleHundredDayNotifications(for: dDayItems)
             NotificationManager.shared.scheduleYearlyNotifications(for: dDayItems)
-
         }
     }
     
@@ -113,6 +141,24 @@ final class DDayViewModel: ObservableObject {
     }
     
     // MARK: - Private Methods
+    private func monitorNetworkConnectivity() {
+        NetworkMonitor.shared.$isConnected
+            .dropFirst() // 초기 값 무시
+            .removeDuplicates() // 중복 상태 제거
+            .sink { [weak self] isConnected in
+                guard let self = self else { return }
+                if isConnected {
+                    print("\(isConnected) 네트워크가 연결되었습니다. 데이터를 가져옵니다. 위젯 타임라인을 갱신합니다.")
+                    WidgetCenter.shared.reloadAllTimelines()
+                    self.fetchDDay()
+                } else {
+                    print("\(isConnected) 네트워크 연결이 없습니다. 연결 후 다시 시도해주세요.")
+                    self.fetchDDay()
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
     private func fetchAllDDayData() async {
         await withTaskGroup(of: Void.self) { group in
             group.addTask { await self.loadAllImages() }
@@ -138,10 +184,11 @@ final class DDayViewModel: ObservableObject {
         var adjustedDate = date
         
         if isLunar {
-            if let closestLunarDate = await fetchClosestSolarDate(from: date, repeatType: repeatType) {
+            let result = await fetchClosestSolarDate(from: date, repeatType: repeatType)
+            if let closestLunarDate = result.0 {
                 adjustedDate = closestLunarDate
-            } else {
-                return "음력 계산 실패"
+            } else if let errorMessage = result.1 {
+                return errorMessage
             }
         }
         
@@ -152,7 +199,7 @@ final class DDayViewModel: ObservableObject {
         return DateFormatterManager.shared.calculateDDayString(from: adjustedDate, type: type, startFromDayOne: startFromDayOne, calendar: calendar)
     }
     
-    private func fetchClosestSolarDate(from date: Date, repeatType: RepeatType) async -> Date? {
+    private func fetchClosestSolarDate(from date: Date, repeatType: RepeatType) async -> (Date?, String?) {
         let calendar = Calendar.current
         let currentYear = calendar.component(.year, from: Date())
         let year = calendar.component(.year, from: date)
@@ -161,15 +208,19 @@ final class DDayViewModel: ObservableObject {
         
         switch repeatType {
         case .none:
-            return await apiService.fetchSolarDate(year: year, month: month, day: day)
+            let response = await apiService.fetchSolarDate(year: year, month: month, day: day)
+            return (response.data, response.error?.shortErrorMessage)
         case .year:
-            if let thisYearDate = await apiService.fetchSolarDate(year: currentYear, month: month, day: day),
+            let currentYearResponse = await apiService.fetchSolarDate(year: currentYear, month: month, day: day)
+            if let thisYearDate = currentYearResponse.data,
                calendar.startOfDay(for: thisYearDate) >= calendar.startOfDay(for: Date()) {
-                return thisYearDate
+                return (thisYearDate, nil)
             }
-            return await apiService.fetchSolarDate(year: currentYear + 1, month: month, day: day)
+            
+            let nextYearResponse = await apiService.fetchSolarDate(year: currentYear + 1, month: month, day: day)
+            return (nextYearResponse.data, nextYearResponse.error?.shortErrorMessage)
         case .month:
-            return nil
+            return (nil, nil)
         }
     }
     

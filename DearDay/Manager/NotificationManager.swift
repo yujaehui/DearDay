@@ -54,8 +54,6 @@ final class NotificationManager {
             // D-Day(음력): 반복이 없는 경우
             scheduleNoneRepeatingLunarDdayNotification(for: dDay, date: notificationDate, content: content)
         }
-        
-        logPendingNotifications()
     }
     
     // D-Day(음력): 매년 반복의 경우 O
@@ -132,8 +130,6 @@ final class NotificationManager {
                 }
             }
         }
-        
-        logPendingNotifications()
     }
     
     // 날짜 수: 1년 단위 기념일 처리
@@ -158,8 +154,8 @@ final class NotificationManager {
             if let nextDate = calendar.date(byAdding: .year, value: yearsSinceStart, to: notificationDate) {
                 
                 var triggerDate = calendar.dateComponents([.month, .day], from: nextDate)
-                triggerDate.hour = 18
-                triggerDate.minute = 43
+                triggerDate.hour = 0
+                triggerDate.minute = 0
                 
                 let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
                 
@@ -172,8 +168,6 @@ final class NotificationManager {
                 }
             }
         }
-        
-        logPendingNotifications()
     }
     
     func removeAllNotificationsForDDay(for dDay: DDay) {
@@ -281,13 +275,17 @@ final class NotificationManager {
         
         switch repeatType {
         case .none:
-            return await apiService.fetchSolarDate(year: year, month: month, day: day)
+            let response = await apiService.fetchSolarDate(year: year, month: month, day: day)
+            return response.data
         case .year:
-            if let thisYearDate = await apiService.fetchSolarDate(year: currentYear, month: month, day: day),
+            let currentYearResponse = await apiService.fetchSolarDate(year: currentYear, month: month, day: day)
+            if let thisYearDate = currentYearResponse.data,
                calendar.startOfDay(for: thisYearDate) >= calendar.startOfDay(for: Date()) {
                 return thisYearDate
             }
-            return await apiService.fetchSolarDate(year: currentYear + 1, month: month, day: day)
+            
+            let nextYearResponse = await apiService.fetchSolarDate(year: currentYear + 1, month: month, day: day)
+            return nextYearResponse.data
         case .month:
             return nil
         }

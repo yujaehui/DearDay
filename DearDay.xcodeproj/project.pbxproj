@@ -93,6 +93,11 @@
 		09BC121F2D0054A900B18BA2 /* DDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58E42CD3556000EC3531 /* DDay.swift */; };
 		09BC12202D0054AD00B18BA2 /* DDayRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0966B1752CEF5E9300C38430 /* DDayRepositoryProtocol.swift */; };
 		09BC12212D0054B000B18BA2 /* APIServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0966B1772CEF5E9F00C38430 /* APIServiceProtocol.swift */; };
+		09BC12252D04968800B18BA2 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BC12242D04968800B18BA2 /* NetworkMonitor.swift */; };
+		09BC12262D04974F00B18BA2 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BC12242D04968800B18BA2 /* NetworkMonitor.swift */; };
+		09BC12272D04975000B18BA2 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BC12242D04968800B18BA2 /* NetworkMonitor.swift */; };
+		09BC12282D04975000B18BA2 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BC12242D04968800B18BA2 /* NetworkMonitor.swift */; };
+		09BC122A2D06FE5F00B18BA2 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BC12292D06FE5F00B18BA2 /* ImagePicker.swift */; };
 		09F38C7C2CBCE7D500F824D7 /* DearDayApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C7B2CBCE7D500F824D7 /* DearDayApp.swift */; };
 		09F38C7E2CBCE7D500F824D7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C7D2CBCE7D500F824D7 /* ContentView.swift */; };
 		09F38C802CBCE7D500F824D7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F38C7F2CBCE7D500F824D7 /* Assets.xcassets */; };
@@ -190,6 +195,8 @@
 		09BC12062D00528400B18BA2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		09BC12082D00528400B18BA2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		09BC12132D00529900B18BA2 /* DearDayAccessoryWidgetExtensionRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DearDayAccessoryWidgetExtensionRelease.entitlements; sourceTree = "<group>"; };
+		09BC12242D04968800B18BA2 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		09BC12292D06FE5F00B18BA2 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		09F38C782CBCE7D500F824D7 /* DearDay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DearDay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09F38C7B2CBCE7D500F824D7 /* DearDayApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DearDayApp.swift; sourceTree = "<group>"; };
 		09F38C7D2CBCE7D500F824D7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -422,6 +429,7 @@
 				095B58DC2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift */,
 				095B58DA2CD2346600EC3531 /* AddDDayView.swift */,
 				095B58F22CD8AEBB00EC3531 /* EditDDayView.swift */,
+				09BC12292D06FE5F00B18BA2 /* ImagePicker.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -441,6 +449,7 @@
 				09F38CB62CBFC20600F824D7 /* APIService.swift */,
 				09F38CB22CBFBF2700F824D7 /* SolarDataItem.swift */,
 				09F38CB42CBFBF3500F824D7 /* SolarDateXMLParser.swift */,
+				09BC12242D04968800B18BA2 /* NetworkMonitor.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -634,6 +643,7 @@
 				093160EF2CF6E7470074CDB7 /* APIServiceProtocol.swift in Sources */,
 				093160D32CF6E6650074CDB7 /* DearDayListWidget.swift in Sources */,
 				093160D12CF6E6650074CDB7 /* DearDayListWidgetBundle.swift in Sources */,
+				09BC12272D04975000B18BA2 /* NetworkMonitor.swift in Sources */,
 				093160FC2CF84C7E0074CDB7 /* MainStyleViewModifier.swift in Sources */,
 				093160EE2CF6E7450074CDB7 /* DDayRepositoryProtocol.swift in Sources */,
 				093160EC2CF6E73E0074CDB7 /* SolarDateXMLParser.swift in Sources */,
@@ -658,6 +668,7 @@
 				0966B16B2CE9CE5500C38430 /* ImageDocumentManager.swift in Sources */,
 				0966B1452CE71A8700C38430 /* DearDayWidget.swift in Sources */,
 				0966B1692CE7378000C38430 /* AppGroupID.swift in Sources */,
+				09BC12262D04974F00B18BA2 /* NetworkMonitor.swift in Sources */,
 				093160FB2CF84C7D0074CDB7 /* MainStyleViewModifier.swift in Sources */,
 				0966B1642CE7344400C38430 /* APIService.swift in Sources */,
 				0966B1592CE7287E00C38430 /* DDayRepository.swift in Sources */,
@@ -683,6 +694,7 @@
 				09BC12172D00549400B18BA2 /* ImageDocumentManager.swift in Sources */,
 				09BC121C2D0054A100B18BA2 /* APIService.swift in Sources */,
 				09BC121B2D00549F00B18BA2 /* APIKey.swift in Sources */,
+				09BC12282D04975000B18BA2 /* NetworkMonitor.swift in Sources */,
 				09BC12192D00549B00B18BA2 /* RealmConfiguration.swift in Sources */,
 				09BC12142D00548B00B18BA2 /* MainStyleViewModifier.swift in Sources */,
 				09BC12202D0054AD00B18BA2 /* DDayRepositoryProtocol.swift in Sources */,
@@ -712,6 +724,7 @@
 				0966B1782CEF5E9F00C38430 /* APIServiceProtocol.swift in Sources */,
 				09F38CB52CBFBF3500F824D7 /* SolarDateXMLParser.swift in Sources */,
 				095B59052CE2100900EC3531 /* String+Extension.swift in Sources */,
+				09BC12252D04968800B18BA2 /* NetworkMonitor.swift in Sources */,
 				095B58DD2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift in Sources */,
 				09F38CB12CBFBA7B00F824D7 /* APIKey.swift in Sources */,
 				095B59092CE3214E00EC3531 /* NotificationManager.swift in Sources */,
@@ -724,6 +737,7 @@
 				09F38C9A2CBE3EC400F824D7 /* DateFormatterManager.swift in Sources */,
 				09F38C8A2CBCE80900F824D7 /* DDayView.swift in Sources */,
 				09F38CAC2CBFB1C000F824D7 /* DDayImageCardView.swift in Sources */,
+				09BC122A2D06FE5F00B18BA2 /* ImagePicker.swift in Sources */,
 				095B58EB2CD35E3F00EC3531 /* ImageDocumentManager.swift in Sources */,
 				0966B1762CEF5E9300C38430 /* DDayRepositoryProtocol.swift in Sources */,
 			);
@@ -1069,7 +1083,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = DearDay/DearDay.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"DearDay/Preview Content\"";
 				DEVELOPMENT_TEAM = NLBNZ4T579;
 				ENABLE_PREVIEWS = YES;
@@ -1106,7 +1120,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = DearDay/DearDay.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"DearDay/Preview Content\"";
 				DEVELOPMENT_TEAM = NLBNZ4T579;
 				ENABLE_PREVIEWS = YES;

@@ -50,6 +50,9 @@ struct EditDDayView: View {
                 optionSection
                 imageSection
             }
+            .task {
+                viewModel.monitorLunarDateUpdates(isLunarDate: $isLunarDate, selectedDate: $selectedDate)
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
@@ -94,8 +97,8 @@ private extension EditDDayView {
             if isLunarDate, let solarDate = viewModel.solarDate {
                 Text("\(DateFormatterManager.shared.formatDate(solarDate))\(" (양력)")")
                     .asFormConvertedDate()
-            } else if isLunarDate {
-                Text("해당 날짜는 음양력 계산이 불가능합니다.")
+            } else if isLunarDate, let errorMessage = viewModel.errorMessage {
+                Text(errorMessage)
                     .asFormConvertedDate()
             }
             
@@ -170,14 +173,16 @@ private extension EditDDayView {
         }
     }
     
-    func validateAndEditDDay() {
+    func validateAndEditDDay()  {
         if title.isEmpty {
             alertMessage = "제목을 입력하세요."
             isPresentedErrorAlert = true
+            return
         }
         
-        if isLunarDate && viewModel.solarDate == nil {
-            alertMessage = "해당 날짜는 음양력 계산이 불가능합니다."
+        if isLunarDate && viewModel.solarDate == nil,
+            let errorMessage = viewModel.errorMessage {
+            alertMessage = errorMessage
             isPresentedErrorAlert = true
             return
         }

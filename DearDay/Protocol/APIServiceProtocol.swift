@@ -8,8 +8,8 @@
 import Foundation
 
 protocol APIServiceProtocol {
-    func fetchSolarDate(lunarDate: Date) async -> Date?
-    func fetchSolarDate(year: Int, month: Int, day: Int) async -> Date?
-    func fetchSolarDateSync(year: Int, month: Int, day: Int) -> Date?
+    func fetchSolarDate(lunarDate: Date) async -> ResponseWrapper<Date>
+    func fetchSolarDate(year: Int, month: Int, day: Int) async -> ResponseWrapper<Date>
+    func fetchSolarDateSync(year: Int, month: Int, day: Int) -> ResponseWrapper<Date>
 }
 

@@ -25,7 +25,11 @@ struct Provider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<DDayEntry>) -> Void) {
         let currentDate = Date()
         let entry = fetchClosestDDayEntry()
-        let nextUpdate = Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!
+        
+        // 자정 시간을 계산
+        let calendar = Calendar.current
+        let nextUpdate = calendar.nextDate(after: currentDate, matching: DateComponents(hour: 0, minute: 0), matchingPolicy: .strict)!
+        
         let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
         completion(timeline)
     }
@@ -49,21 +53,22 @@ extension Provider {
         var adjustedDate = date
         
         if isLunar {
-            if let closestLunarDate = fetchClosestSolarDateSync(from: date, repeatType: repeatType) {
+            let result = fetchClosestSolarDateSync(from: date, repeatType: repeatType)
+            if let closestLunarDate = result.0 {
                 adjustedDate = closestLunarDate
-            } else {
-                return "음력 계산 실패"
+            } else if let errorMessage = result.1 {
+                return errorMessage
             }
         }
         
         if !isLunar && adjustedDate < Date() {
-            adjustedDate = adjustForRepeatingDateIfNeeded(date: adjustedDate, repeatType: repeatType, calendar: calendar)
+            adjustedDate = adjustDateForRepeatType(date: adjustedDate, repeatType: repeatType, calendar: calendar)
         }
         
         return DateFormatterManager.shared.calculateDDayString(from: adjustedDate, type: type, startFromDayOne: startFromDayOne, calendar: calendar)
     }
     
-    private func fetchClosestSolarDateSync(from date: Date, repeatType: RepeatType) -> Date? {
+    private func fetchClosestSolarDateSync(from date: Date, repeatType: RepeatType) -> (Date?, String?) {
         let calendar = Calendar.current
         let currentYear = calendar.component(.year, from: Date())
         let year = calendar.component(.year, from: date)
@@ -72,17 +77,23 @@ extension Provider {
         
         switch repeatType {
         case .none:
-            return apiService.fetchSolarDateSync(year: year, month: month, day: day)
+            let response = apiService.fetchSolarDateSync(year: year, month: month, day: day)
+            return (response.data, response.error?.shortErrorMessage)
         case .year:
-            if let thisYearDate = apiService.fetchSolarDateSync(year: currentYear, month: month, day: day), thisYearDate >= Date() {
-                return thisYearDate
+            let currentYearResponse = apiService.fetchSolarDateSync(year: currentYear, month: month, day: day)
+            if let thisYearDate = currentYearResponse.data,
+               calendar.startOfDay(for: thisYearDate) >= calendar.startOfDay(for: Date()) {
+                return (thisYearDate, nil)
             }
-            return apiService.fetchSolarDateSync(year: currentYear + 1, month: month, day: day)
-        case .month: return nil
+            
+            let nextYearResponse = apiService.fetchSolarDateSync(year: currentYear + 1, month: month, day: day)
+            return (nextYearResponse.data, nextYearResponse.error?.shortErrorMessage)
+        case .month: 
+            return (nil, nil)
         }
     }
     
-    private func adjustForRepeatingDateIfNeeded(date: Date, repeatType: RepeatType, calendar: Calendar) -> Date {
+    private func adjustDateForRepeatType(date: Date, repeatType: RepeatType, calendar: Calendar) -> Date {
         var adjustedDate = date
         
         switch repeatType {

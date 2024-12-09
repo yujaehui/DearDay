@@ -40,9 +40,6 @@ struct DDayView: View {
             .toolbar { 
                 ToolbarContent()
             }
-            .task {
-                viewModel.fetchDDay()
-            }
         }
         .tint(.secondary)
     }
