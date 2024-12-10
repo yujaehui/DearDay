@@ -32,10 +32,20 @@ struct DDayImageCardView: View {
                     }
                 }
                 Spacer()
-                Text(dDayText)
-                    .asMainDDayText()
+                if isErrorMessage(dDayText) {
+                    Text(dDayText)
+                        .asMainErrorText()
+                } else {
+                    Text(dDayText)
+                        .asMainDDayText()
+                }
             }
         }
         .padding()
+    }
+    
+    private func isErrorMessage(_ text: String) -> Bool {
+        let shortErrorMessages = APIServiceError.allCases.map { $0.shortErrorMessage }
+        return shortErrorMessages.contains(text)
     }
 }

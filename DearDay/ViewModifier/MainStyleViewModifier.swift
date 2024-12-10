@@ -24,6 +24,14 @@ private struct MainDDayText: ViewModifier {
     }
 }
 
+private struct MainErrorText: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .foregroundStyle(.red)
+            .font(.callout)
+    }
+}
+
 private struct MainDate: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -47,6 +55,10 @@ extension View {
     
     func asMainDDayText() -> some View {
         modifier(MainDDayText())
+    }
+    
+    func asMainErrorText() -> some View {
+        modifier(MainErrorText())
     }
     
     func asMainDate() -> some View {
