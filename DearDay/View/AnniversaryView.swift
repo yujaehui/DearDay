@@ -48,7 +48,8 @@ struct AnniversaryView: View {
                let convertedSolarDateFromLunar = dDayItem.convertedSolarDateFromLunar,
                let anniversary = calendar.date(byAdding: .day, value: offset, to: convertedSolarDateFromLunar) {
                 dates.append((days, calendar.startOfDay(for: anniversary), false))
-            } else if dDayItem.isLunarDate == false, let anniversary = calendar.date(byAdding: .day, value: offset, to: dDayItem.date) {
+            } else if dDayItem.isLunarDate == false,
+                      let anniversary = calendar.date(byAdding: .day, value: offset, to: dDayItem.date) {
                 dates.append((days, calendar.startOfDay(for: anniversary), false))
             }
         }

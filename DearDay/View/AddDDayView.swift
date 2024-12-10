@@ -104,6 +104,8 @@ private extension AddDDayView {
                 .onChange(of: isLunarDate) { newValue in
                     if newValue {
                         viewModel.updateLunarDate(lunarDate: selectedDate)
+                    } else {
+                        viewModel.solarDate = nil
                     }
                 }
             
