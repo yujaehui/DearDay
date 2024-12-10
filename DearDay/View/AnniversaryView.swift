@@ -11,6 +11,8 @@ import RealmSwift
 struct AnniversaryView: View {
     var dDayItem: DDayItem
     
+    var calendar = Calendar.current
+    
     var anniversaryIntervals: [Int] {
         var intervals = [1, 10, 50]
         intervals.append(contentsOf: stride(from: 100, through: 36400, by: 100))
@@ -19,12 +21,16 @@ struct AnniversaryView: View {
     
     var anniversaryYearIntervals: [Int] {
         var yearIntervals: [Int] = []
-        let calendar = Calendar.current
         
         for year in 1...100 {
-            let dateForYear = calendar.date(byAdding: .year, value: year, to: dDayItem.convertedSolarDateFromLunar ?? dDayItem.date)!
-            
-            if let daysDifference = calendar.dateComponents([.day], from: dDayItem.convertedSolarDateFromLunar ?? dDayItem.date, to: dateForYear).day {
+            if dDayItem.isLunarDate == true,
+               let convertedSolarDateFromLunar = dDayItem.convertedSolarDateFromLunar,
+               let dateForYear = calendar.date(byAdding: .year, value: year, to: convertedSolarDateFromLunar),
+               let daysDifference = calendar.dateComponents([.day], from: convertedSolarDateFromLunar, to: dateForYear).day {
+                yearIntervals.append(daysDifference)
+            } else if dDayItem.isLunarDate == false,
+                      let dateForYear = calendar.date(byAdding: .year, value: year, to: dDayItem.date),
+                      let daysDifference = calendar.dateComponents([.day], from: dDayItem.date, to: dateForYear).day {
                 yearIntervals.append(daysDifference)
             }
         }
@@ -34,12 +40,15 @@ struct AnniversaryView: View {
     
     var anniversaries: [(days: Int, date: Date, isYear: Bool)] {
         var dates: [(days: Int, date: Date, isYear: Bool)] = []
-        let calendar = Calendar.current
         
         // 일 단위 기념일 목록 추가
         for days in anniversaryIntervals {
             let offset = dDayItem.startFromDayOne ? days - 1 : days
-            if let anniversary = calendar.date(byAdding: .day, value: offset, to: dDayItem.convertedSolarDateFromLunar ?? dDayItem.date) {
+            if dDayItem.isLunarDate == true,
+               let convertedSolarDateFromLunar = dDayItem.convertedSolarDateFromLunar,
+               let anniversary = calendar.date(byAdding: .day, value: offset, to: convertedSolarDateFromLunar) {
+                dates.append((days, calendar.startOfDay(for: anniversary), false))
+            } else if dDayItem.isLunarDate == false, let anniversary = calendar.date(byAdding: .day, value: offset, to: dDayItem.date) {
                 dates.append((days, calendar.startOfDay(for: anniversary), false))
             }
         }
@@ -47,8 +56,14 @@ struct AnniversaryView: View {
         // 연 단위 기념일 목록 추가
         for yearDays in anniversaryYearIntervals {
             let offset = yearDays // 연 단위를 계산할 때는 시작일을 1일로 생각하는 것을 고려하지 않음
-            if let anniversary = calendar.date(byAdding: .day, value: offset, to: dDayItem.convertedSolarDateFromLunar ?? dDayItem.date) {
+            if dDayItem.isLunarDate == true,
+               let convertedSolarDateFromLunar = dDayItem.convertedSolarDateFromLunar,
+               let anniversary = calendar.date(byAdding: .day, value: offset, to: convertedSolarDateFromLunar) {
                 dates.append((yearDays, calendar.startOfDay(for: anniversary), true))
+            } else if dDayItem.isLunarDate == false,
+                      let anniversary = calendar.date(byAdding: .day, value: offset, to: dDayItem.date) {
+                dates.append((yearDays, calendar.startOfDay(for: anniversary), true))
+                
             }
         }
         
@@ -70,8 +85,14 @@ struct AnniversaryView: View {
                             .foregroundStyle(.red)
                             .font(.headline)
                     } else {
-                        if anniversary.isYear,
-                           let yearDifference = Calendar.current.dateComponents([.year], from: dDayItem.convertedSolarDateFromLunar ?? dDayItem.date, to: anniversary.date).year {
+                        if anniversary.isYear == true,
+                           let convertedSolarDateFromLunar = dDayItem.convertedSolarDateFromLunar,
+                           let yearDifference = calendar.dateComponents([.year], from: convertedSolarDateFromLunar, to: anniversary.date).year {
+                            Text("\(yearDifference + 1) Years")
+                                .foregroundStyle(isPast(anniversary.date) ? .secondary : .primary)
+                                .font(.headline)
+                        } else if anniversary.isYear == true,
+                                  let yearDifference = calendar.dateComponents([.year], from: dDayItem.date, to: anniversary.date).year {
                             Text("\(yearDifference + 1) Years")
                                 .foregroundStyle(isPast(anniversary.date) ? .secondary : .primary)
                                 .font(.headline)
@@ -99,12 +120,10 @@ struct AnniversaryView: View {
     }
     
     private func isPast(_ date: Date) -> Bool {
-        let calendar = Calendar.current
         return calendar.startOfDay(for: date) < calendar.startOfDay(for: Date())
     }
     
     private func isToday(_ date: Date) -> Bool {
-        let calendar = Calendar.current
         return calendar.isDateInToday(date)
     }
 }
