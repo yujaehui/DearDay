@@ -226,7 +226,6 @@ struct LargeWidgetView: View {
             image.draw(in: CGRect(origin: .zero, size: newSize))
         }
     }
-
 }
 
 // MARK: - Widget

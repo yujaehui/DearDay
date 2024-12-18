@@ -34,25 +34,24 @@ final class NotificationManager {
             body: "잊지 말고 의미 있는 하루 보내세요!"
         )
         
-        let notificationDate = dDay.convertedSolarDateFromLunar ?? dDay.date
-        
         guard dDay.type == .dDay else { return }
         
         if dDay.isLunarDate == false {
             switch dDay.repeatType {
             case .none:
                 // D-Day(양력): 반복이 없는 경우
-                scheduleNoneRepeatingDdayNotification(for: dDay, date: notificationDate, content: content)
+                scheduleNoneRepeatingDdayNotification(for: dDay, date: dDay.date, content: content)
             case .month:
                 // D-Day(양력): 매월 반복의 경우
-                scheduleMonthlyRepeatingDdayNotification(for: dDay, date: notificationDate, content: content)
+                scheduleMonthlyRepeatingDdayNotification(for: dDay, date: dDay.date, content: content)
             case .year:
                 // D-Day(양력): 매년 반복의 경우
-                scheduleYearlyRepeatingDdayNotification(for: dDay, date: notificationDate, content: content)
+                scheduleYearlyRepeatingDdayNotification(for: dDay, date: dDay.date, content: content)
             }
-        } else if dDay.isLunarDate == true && dDay.isRepeatOn == false {
+        } else if dDay.isLunarDate == true && dDay.isRepeatOn == false,
+                    let convertedSolarDateFromLunar = dDay.convertedSolarDateFromLunar {
             // D-Day(음력): 반복이 없는 경우
-            scheduleNoneRepeatingLunarDdayNotification(for: dDay, date: notificationDate, content: content)
+            scheduleNoneRepeatingLunarDdayNotification(for: dDay, date: convertedSolarDateFromLunar, content: content)
         }
     }
     
