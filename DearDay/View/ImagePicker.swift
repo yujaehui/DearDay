@@ -10,6 +10,8 @@ import PhotosUI
 
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var selectedImage: UIImage?
+    var targetSize: CGSize = UIScreen.main.bounds.size
+    var scale: CGFloat = UIScreen.main.scale
     
     func makeUIViewController(context: Context) -> PHPickerViewController {
         var configuration = PHPickerConfiguration()
@@ -24,26 +26,64 @@ struct ImagePicker: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+        Coordinator(self, targetSize: targetSize, scale: scale)
     }
     
     class Coordinator: NSObject, PHPickerViewControllerDelegate {
         let parent: ImagePicker
+        let targetSize: CGSize
+        let scale: CGFloat
         
-        init(_ parent: ImagePicker) {
+        init(_ parent: ImagePicker, targetSize: CGSize, scale: CGFloat) {
             self.parent = parent
+            self.targetSize = targetSize
+            self.scale = scale
         }
         
         func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
             picker.dismiss(animated: true)
             
-            guard let provider = results.first?.itemProvider, provider.canLoadObject(ofClass: UIImage.self) else { return }
+            guard let provider = results.first?.itemProvider, provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) else { return }
             
-            provider.loadObject(ofClass: UIImage.self) { image, _ in
-                DispatchQueue.main.async {
-                    self.parent.selectedImage = image as? UIImage
+            provider.loadFileRepresentation(forTypeIdentifier: UTType.image.identifier) { [weak self] url, error in
+                guard let self = self, let url = url else { return }
+                
+                let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(url.lastPathComponent)
+                do {
+                    try FileManager.default.copyItem(at: url, to: tempURL)
+                    
+                    let downsampledImage = self.downsampleImage(at: tempURL, to: self.targetSize, scale: self.scale)
+                    
+                    DispatchQueue.main.async {
+                        self.parent.selectedImage = downsampledImage
+                    }
+                    
+                    try FileManager.default.removeItem(at: tempURL)
+                } catch {
+                    print("Error handling image file: \(error)")
                 }
             }
+        }
+        
+        private func downsampleImage(at imageURL: URL, to pointSize: CGSize, scale: CGFloat) -> UIImage {
+            let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+            guard let imageSource = CGImageSourceCreateWithURL(imageURL as CFURL, imageSourceOptions) else {
+                return UIImage()
+            }
+            
+            let maxDimensionInPixels = max(pointSize.width, pointSize.height) * scale
+            let downsampleOptions = [
+                kCGImageSourceCreateThumbnailFromImageAlways: true,
+                kCGImageSourceShouldCacheImmediately: true,
+                kCGImageSourceCreateThumbnailWithTransform: true,
+                kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels
+            ] as CFDictionary
+            
+            guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions) else {
+                return UIImage()
+            }
+            
+            return UIImage(cgImage: downsampledImage)
         }
     }
 }
