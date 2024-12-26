@@ -86,9 +86,8 @@ private extension DDayView {
     func ToolbarContent() -> some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Text("Dear Day")
-                .foregroundStyle(.gray)
+                .foregroundStyle(.secondary)
                 .font(.headline)
-                .fontWeight(.bold)
         }
         ToolbarItem(placement: .topBarTrailing) {
             Button {

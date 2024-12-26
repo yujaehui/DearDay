@@ -15,6 +15,8 @@ struct DDayDetailView: View {
     @State private var isPresentedAnniversaryView: Bool = false
     @State private var isPresentedEditDDayView: Bool = false
     @State private var isPresentedDeleteAlert = false
+    @State private var isPresentedErrorAlert = false
+    @State private var alertMessage = ""
     
     @Environment(\.dismiss) private var dismiss
     
@@ -42,6 +44,9 @@ struct DDayDetailView: View {
                     dismiss()
                 }
             }
+            .alert(isPresented: $isPresentedErrorAlert) {
+                Alert(title: Text("오류"), message: Text(alertMessage), dismissButton: .default(Text("확인")))
+            }
         }
     }
 }
@@ -66,15 +71,25 @@ private extension DDayDetailView {
     
     func DDayDetailMenu() -> some View {
         Menu {
-            Button {
-                $isPresentedEditDDayView.wrappedValue.toggle()
-            } label: {
-                Label("수정", systemImage: "square.and.pencil")
+            Section {
+                Button {
+                    $isPresentedEditDDayView.wrappedValue.toggle()
+                } label: {
+                    Label("수정", systemImage: "square.and.pencil")
+                }
+                Button(role: .destructive) {
+                    $isPresentedDeleteAlert.wrappedValue.toggle()
+                } label: {
+                    Label("삭제", systemImage: "trash")
+                }
             }
-            Button(role: .destructive) {
-                $isPresentedDeleteAlert.wrappedValue.toggle()
-            } label: {
-                Label("삭제", systemImage: "trash")
+            Section {
+                Button {
+                    let view = ShareDDayImageCardView(dDayItem: dDayItem, dDayText: viewModel.dDayText[dDayItem.pk] ?? "Loading...", dDayImage: viewModel.dDayImage[dDayItem.pk] ?? nil)
+                    shareToInstagramStory(image: view.snapshot())
+                } label: {
+                    Label("Instagram 공유", systemImage: "square.and.arrow.up")
+                }
             }
         } label: {
             Image(systemName: "ellipsis")
@@ -82,4 +97,37 @@ private extension DDayDetailView {
                 .rotationEffect(.degrees(90))
         }
     }
+    
+    func shareToInstagramStory(image: UIImage,
+                               backgroundTopColor: String = "#FFFFFF",
+                               backgroundBottomColor: String = "#FFFFFF") {
+        
+        guard let urlScheme = URL(string: "instagram-stories://share?source_application=\(InstagramAppID.id)") else {
+            alertMessage = "Instagram URL Scheme이 잘못되었습니다.\n잠시 후 다시 시도해 주십시오."
+            isPresentedErrorAlert = true
+            return
+        }
+
+        guard UIApplication.shared.canOpenURL(urlScheme) else {
+            alertMessage = "Instagram이 설치되어 있지 않습니다.\n설치 후 다시 시도해 주십시오."
+            isPresentedErrorAlert = true
+            return
+        }
+
+        guard let imageData = image.pngData() else {
+            alertMessage = "이미지 데이터를 변환할 수 없습니다.\n잠시 후 다시 시도해 주십시오."
+            isPresentedErrorAlert = true
+            return
+        }
+
+        let pasteboardItems: [String: Any] = [
+            "com.instagram.sharedSticker.stickerImage": imageData,
+            "com.instagram.sharedSticker.backgroundTopColor": backgroundTopColor,
+            "com.instagram.sharedSticker.backgroundBottomColor": backgroundBottomColor
+        ]
+
+        UIPasteboard.general.setItems([pasteboardItems], options: [:])
+        UIApplication.shared.open(urlScheme, options: [:], completionHandler: nil)
+    }
 }
+

@@ -5,6 +5,7 @@
 GoogleService-Info.plist
 APIKey.swift
 AppGroupID.swift
+InstagramAppID.swift
 
 ### Swift ###
 # Xcode
