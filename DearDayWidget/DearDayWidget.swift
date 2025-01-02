@@ -125,13 +125,45 @@ struct DearDayWidgetEntryView: View {
     
     var body: some View {
         switch widgetFamily {
-        case .systemMedium:
-            MediumWidgetView(entry: entry)
-                .containerBackground(.clear, for: .widget)
-        case .systemLarge:
-            LargeWidgetView(entry: entry)
+        case .systemSmall:
+            SmallWidgetView(entry: entry)
                 .containerBackground(.clear, for: .widget)
         default:
+            MediumAndLargeWidgetView(entry: entry)
+                .containerBackground(.clear, for: .widget)
+        }
+    }
+}
+
+struct SmallWidgetView: View {
+    var entry: Provider.Entry
+    
+    var body: some View {
+        if let image = ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(entry.dDay.id)") {
+            VStack {
+                VStack(alignment: .leading) {
+                    Text(entry.dDay.title)
+                        .foregroundStyle(.white)
+                        .font(.system(size: 14))
+                        .lineLimit(1)
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Text(entry.dDayText)
+                            .foregroundStyle(.white)
+                            .font(.system(size: 23.8))
+                    }
+                }
+                .padding()
+            }
+            .background {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+                    .clipped()
+                    .edgesIgnoringSafeArea(.all)
+            }
+        } else {
             VStack(spacing: 10) {
                 Text(entry.dDayText)
                     .foregroundStyle(.secondary)
@@ -145,50 +177,49 @@ struct DearDayWidgetEntryView: View {
                     .font(.caption)
             }
             .padding()
-            .containerBackground(.clear, for: .widget)
         }
     }
 }
 
-struct MediumWidgetView: View {
+struct MediumAndLargeWidgetView: View {
     var entry: Provider.Entry
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(entry.dDay.title)
-                .asMainTitle()
-            HStack {
+        if let image = ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(entry.dDay.id)") {
+            VStack {
                 VStack(alignment: .leading) {
-                    Text("\(DateFormatterManager.shared.formatDate(entry.dDay.date))\(entry.dDay.isLunarDate ? " (음력)" : "")")
-                        .asMainDate()
-                    if entry.dDay.repeatType != .none {
-                        Text("[\(entry.dDay.repeatType.rawValue) 반복]")
-                            .asMainRepeatType()
+                    Text(entry.dDay.title)
+                        .foregroundStyle(.white)
+                        .font(.title3)
+                        .lineLimit(1)
+                    Spacer()
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("\(DateFormatterManager.shared.formatDate(entry.dDay.date))\(entry.dDay.isLunarDate ? " (음력)" : "")")
+                                .foregroundStyle(.white.opacity(0.8))
+                                .font(.callout)
+                            if entry.dDay.repeatType != .none {
+                                Text("[\(entry.dDay.repeatType.rawValue) 반복]")
+                                    .foregroundStyle(.white.opacity(0.8))
+                                    .font(.caption)
+                            }
+                        }
+                        Spacer()
+                        Text(entry.dDayText)
+                            .foregroundStyle(.white)
+                            .font(.largeTitle)
                     }
                 }
-                Spacer()
-                Text(entry.dDayText)
-                    .asMainDDayText()
+                .padding()
             }
-        }
-        .padding()
-    }
-}
-
-struct LargeWidgetView: View {
-    var entry: Provider.Entry
-    
-    var body: some View {
-        VStack {
-            if let image = ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(entry.dDay.id)") {
-                GeometryReader { geometry in
-                    Image(uiImage: resizeImage(image, targetSize: geometry.size))
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                        .clipped()
-                }
+            .background {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+                    .clipped()
+                    .edgesIgnoringSafeArea(.all)
             }
+        } else {
             VStack(alignment: .leading, spacing: 10) {
                 Text(entry.dDay.title)
                     .asMainTitle()
@@ -207,23 +238,6 @@ struct LargeWidgetView: View {
                 }
             }
             .padding()
-        }
-    }
-    
-    func resizeImage(_ image: UIImage, targetSize: CGSize) -> UIImage {
-        let size = image.size
-
-        let widthRatio = targetSize.width / size.width
-        let heightRatio = targetSize.height / size.height
-        let scaleRatio = min(widthRatio, heightRatio)
-
-        let newSize = CGSize(
-            width: size.width * scaleRatio,
-            height: size.height * scaleRatio
-        )
-        let renderer = UIGraphicsImageRenderer(size: newSize)
-        return renderer.image { _ in
-            image.draw(in: CGRect(origin: .zero, size: newSize))
         }
     }
 }
