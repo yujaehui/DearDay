@@ -74,6 +74,7 @@
 		098A2E2A2D1D71C30030DE14 /* InstagramAppID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098A2E292D1D71C30030DE14 /* InstagramAppID.swift */; };
 		098A2E2C2D1D72010030DE14 /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098A2E2B2D1D72010030DE14 /* View+Extension.swift */; };
 		098A2E2E2D1D79E90030DE14 /* ShareDDayImageCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098A2E2D2D1D79E90030DE14 /* ShareDDayImageCardView.swift */; };
+		09AF58042D27C4820081A8D0 /* ImageEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09AF58032D27C4820081A8D0 /* ImageEditorView.swift */; };
 		09BC11FF2D00528200B18BA2 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0966B13D2CE71A8700C38430 /* WidgetKit.framework */; };
 		09BC12002D00528200B18BA2 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0966B13F2CE71A8700C38430 /* SwiftUI.framework */; };
 		09BC12032D00528200B18BA2 /* DearDayAccessoryWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BC12022D00528200B18BA2 /* DearDayAccessoryWidgetBundle.swift */; };
@@ -195,6 +196,7 @@
 		098A2E292D1D71C30030DE14 /* InstagramAppID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstagramAppID.swift; sourceTree = "<group>"; };
 		098A2E2B2D1D72010030DE14 /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
 		098A2E2D2D1D79E90030DE14 /* ShareDDayImageCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareDDayImageCardView.swift; sourceTree = "<group>"; };
+		09AF58032D27C4820081A8D0 /* ImageEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageEditorView.swift; sourceTree = "<group>"; };
 		09BC11FE2D00528200B18BA2 /* DearDayAccessoryWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DearDayAccessoryWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		09BC12022D00528200B18BA2 /* DearDayAccessoryWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DearDayAccessoryWidgetBundle.swift; sourceTree = "<group>"; };
 		09BC12042D00528200B18BA2 /* DearDayAccessoryWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DearDayAccessoryWidget.swift; sourceTree = "<group>"; };
@@ -447,6 +449,7 @@
 				095B58DA2CD2346600EC3531 /* AddDDayView.swift */,
 				095B58F22CD8AEBB00EC3531 /* EditDDayView.swift */,
 				09BC12292D06FE5F00B18BA2 /* ImagePicker.swift */,
+				09AF58032D27C4820081A8D0 /* ImageEditorView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -755,6 +758,7 @@
 				09F38CB72CBFC20600F824D7 /* APIService.swift in Sources */,
 				0966B1712CE9F82B00C38430 /* DDayViewModel.swift in Sources */,
 				09F38C9A2CBE3EC400F824D7 /* DateFormatterManager.swift in Sources */,
+				09AF58042D27C4820081A8D0 /* ImageEditorView.swift in Sources */,
 				09F38C8A2CBCE80900F824D7 /* DDayView.swift in Sources */,
 				09F38CAC2CBFB1C000F824D7 /* DDayImageCardView.swift in Sources */,
 				09BC122A2D06FE5F00B18BA2 /* ImagePicker.swift in Sources */,

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PhotosUI
+import CropViewController
 
 struct AddDDayView: View {
     @EnvironmentObject var viewModel: DDayViewModel
@@ -19,8 +20,12 @@ struct AddDDayView: View {
     @State var isRepeatOn: Bool = false
     @State var repeatType: RepeatType = .none
     @State var selectedImage: UIImage?
+    @State var editedImage: UIImage?
     
     @State private var isPresentedImagePicker = false
+    @State private var isImageSelected = false
+    @State private var isPresentedImageEditorView = false
+    
     @State private var isPresentedErrorAlert = false
     @State private var alertMessage = ""
     
@@ -49,8 +54,24 @@ struct AddDDayView: View {
                 }
             }
             .sheet(isPresented: $isPresentedImagePicker) {
-                ImagePicker(selectedImage: $selectedImage)
+                ImagePicker(selectedImage: $selectedImage, isImageSelected: $isImageSelected)
                     .ignoresSafeArea()
+                    .onDisappear {
+                        isPresentedImageEditorView = isImageSelected ? true : false
+                        isImageSelected = false
+                    }
+            }
+            .fullScreenCover(isPresented: $isPresentedImageEditorView) {
+                ImageEditorView(
+                    selectedImage: $selectedImage,
+                    onComplete: { editedImage in
+                        self.editedImage = editedImage
+                        isPresentedImageEditorView = false
+                    },
+                    onCancel: {
+                        isPresentedImageEditorView = false
+                    }
+                )
             }
             .alert(isPresented: $isPresentedErrorAlert) {
                 Alert(title: Text("오류"), message: Text(alertMessage), dismissButton: .default(Text("확인")))
@@ -140,13 +161,13 @@ private extension AddDDayView {
                 .foregroundStyle(.primary)
             }
             
-            if selectedImage != nil {
-                Image(uiImage: selectedImage!)
+            if editedImage != nil {
+                Image(uiImage: editedImage!)
                     .resizable()
                     .scaledToFit()
                 
                 Button(action: {
-                    selectedImage = nil // 이미지 삭제
+                    editedImage = nil // 이미지 삭제
                 }) {
                     HStack {
                         Image(systemName: "trash")
@@ -185,7 +206,7 @@ private extension AddDDayView {
             repeatType: repeatType
         )
         
-        viewModel.addDDay(dDay: dDay, image: selectedImage)
+        viewModel.addDDay(dDay: dDay, image: editedImage)
         dismiss()
     }
 }

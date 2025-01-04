@@ -10,6 +10,7 @@ import PhotosUI
 
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var selectedImage: UIImage?
+    @Binding var isImageSelected: Bool
     var targetSize: CGSize = UIScreen.main.bounds.size
     var scale: CGFloat = UIScreen.main.scale
     
@@ -43,8 +44,12 @@ struct ImagePicker: UIViewControllerRepresentable {
         func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
             picker.dismiss(animated: true)
             
-            guard let provider = results.first?.itemProvider, provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) else { return }
+            guard let provider = results.first?.itemProvider, provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) else {
+                parent.isImageSelected = false // 이미지가 선택되지 않은 경우
+                return
+            }
             
+            parent.isImageSelected = true // 이미지가 선택된 경우
             provider.loadFileRepresentation(forTypeIdentifier: UTType.image.identifier) { [weak self] url, error in
                 guard let self = self, let url = url else { return }
                 
