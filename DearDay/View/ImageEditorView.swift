@@ -52,6 +52,7 @@ struct ImageEditorView: View {
                         Button("완료") {
                             let render = ImageRenderer(content: imageEditor())
                             render.proposedSize = .init(cropSize)
+                            render.scale = UIScreen.main.scale // 디스플레이 스케일 설정
                             if let image = render.uiImage {
                                 onComplete?(image)
                             } else {
@@ -112,12 +113,23 @@ private extension ImageEditorView {
     
     private func validateBounds(rect: CGRect, size: CGSize) {
         withAnimation(.easeInOut(duration: 0.2)) {
-            if rect.minX > 0 { offset.width -= rect.minX }
-            if rect.minY > 0 { offset.height -= rect.minY }
-            if rect.maxX < size.width { offset.width -= (rect.maxX - size.width) }
-            if rect.maxY < size.height { offset.height -= (rect.maxY - size.height) }
+            if rect.minX > 0 {
+                offset.width -= rect.minX
+                haptic(.medium)
+            }
+            if rect.minY > 0 { 
+                offset.height -= rect.minY
+                haptic(.medium)
+            }
+            if rect.maxX < size.width {
+                offset.width -= (rect.maxX - size.width)
+                haptic(.medium)
+            }
+            if rect.maxY < size.height {
+                offset.height -= (rect.maxY - size.height)
+                haptic(.medium)
+            }
         }
-        haptic(.medium)
     }
     
     private func haptic(_ style: UIImpactFeedbackGenerator.FeedbackStyle) {

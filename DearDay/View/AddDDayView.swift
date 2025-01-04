@@ -7,7 +7,6 @@
 
 import SwiftUI
 import PhotosUI
-import CropViewController
 
 struct AddDDayView: View {
     @EnvironmentObject var viewModel: DDayViewModel
