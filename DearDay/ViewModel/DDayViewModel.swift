@@ -9,7 +9,6 @@ import Foundation
 import RealmSwift
 import WidgetKit
 import SwiftUI
-import Combine
 import os
 
 enum SortOption: String, CaseIterable, Identifiable {
@@ -34,6 +33,7 @@ final class DDayViewModel: ObservableObject {
     @Published var dDayText: [String: String] = [:]
     @Published var solarDate: Date?
     @Published var errorMessage: String?
+    
     @Published var isGrouped: Bool = UserDefaults.standard.bool(forKey: "isGrouped") {
         didSet {
             UserDefaults.standard.set(isGrouped, forKey: "isGrouped")
@@ -48,8 +48,9 @@ final class DDayViewModel: ObservableObject {
     @Published private(set) var sortedAndGroupedDDayItems: [(key: DDayType, value: [DDayItem])] = []
     @Published private(set) var sortedDDayItems: [DDayItem] = []
     
+//    @Published private var previousNetworkStatus: Bool = NetworkMonitor.shared.isConnected
+    
     // MARK: - Private Properties
-    private var cancellables: Set<AnyCancellable> = []
     private let repository: DDayRepositoryProtocol
     private let apiService: APIServiceProtocol
     
@@ -57,7 +58,8 @@ final class DDayViewModel: ObservableObject {
     init(repository: DDayRepositoryProtocol, apiService: APIServiceProtocol) {
         self.repository = repository
         self.apiService = apiService
-        monitorNetworkConnectivity()
+        
+        self.fetchDDay()
     }
     
     // MARK: - Public Methods
@@ -68,76 +70,74 @@ final class DDayViewModel: ObservableObject {
             errorMessage = response.error?.errorMessage
         }
     }
-    
-    func monitorLunarDateUpdates(isLunarDate: Binding<Bool>, selectedDate: Binding<Date>) {
-        NetworkMonitor.shared.$isConnected
-            .dropFirst()
-            .removeDuplicates()
-            .sink { [weak self] isConnected in
-                guard let self = self else { return }
-                if isConnected, isLunarDate.wrappedValue {
-                    print("\(isConnected) 네트워크가 연결되었습니다. 데이터를 가져옵니다.")
-                    self.updateLunarDate(lunarDate: selectedDate.wrappedValue)
-                } else {
-                    print("\(isConnected) 네트워크 연결이 없습니다. 연결 후 다시 시도해주세요.")
-                    self.updateLunarDate(lunarDate: selectedDate.wrappedValue)
-                }
-            }
-            .store(in: &cancellables)
-    }
 
     func fetchDDay() {
         os_signpost(.begin, log: logger, name: "fetchDDay")
-        print("✅ fetchDDay 시작")
+        //print("✅ fetchDDay 시작")
         
         let dDays = repository.fetchItem()
         dDayItems = dDays.map { DDayItem(from: $0) }
         
         Task {
             os_signpost(.begin, log: logger, name: "fetchAllDDayData")
-            print("🔵 fetchAllDDayData 시작")
+            //print("🔵 fetchAllDDayData 시작")
             async let fetchData: () = fetchAllDDayData()
             
             os_signpost(.begin, log: logger, name: "scheduleYearlyLunarNotifications")
-            print("🔵 scheduleYearlyLunarNotifications 시작")
+            //print("🔵 scheduleYearlyLunarNotifications 시작")
             async let yearlyLunarNotifications: () = NotificationManager.shared.scheduleYearlyRepeatingLunarDdayNotification(for: dDayItems)
             
             os_signpost(.begin, log: logger, name: "scheduleHundredDayNotifications")
-            print("🔵 scheduleHundredDayNotifications 시작")
+            //print("🔵 scheduleHundredDayNotifications 시작")
             async let hundredDayNotifications: () = NotificationManager.shared.scheduleHundredDayNotifications(for: dDayItems)
             
             os_signpost(.begin, log: logger, name: "scheduleYearlyNotifications")
-            print("🔵 scheduleYearlyNotifications 시작")
+            //print("🔵 scheduleYearlyNotifications 시작")
             async let yearlyNotifications: () = NotificationManager.shared.scheduleYearlyNotifications(for: dDayItems)
 
             // 모든 비동기 작업이 끝날 때까지 대기
             await fetchData
             os_signpost(.end, log: logger, name: "fetchAllDDayData")
-            print("🔴 fetchAllDDayData 완료")
+            //print("🔴 fetchAllDDayData 완료")
             
             await yearlyLunarNotifications
             os_signpost(.end, log: logger, name: "scheduleYearlyLunarNotifications")
-            print("🔴 scheduleYearlyLunarNotifications 완료")
+            //print("🔴 scheduleYearlyLunarNotifications 완료")
             
             await hundredDayNotifications
             os_signpost(.end, log: logger, name: "scheduleHundredDayNotifications")
-            print("🔴 scheduleHundredDayNotifications 완료")
+            //print("🔴 scheduleHundredDayNotifications 완료")
             
             await yearlyNotifications
             os_signpost(.end, log: logger, name: "scheduleYearlyNotifications")
-            print("🔴 scheduleYearlyNotifications 완료")
+            //print("🔴 scheduleYearlyNotifications 완료")
             
             // 🔥 모든 데이터 패치 후 정렬 및 그룹화 실행
-            print("🔵 updateSortedAndGroupedDDays 실행")
+            //print("🔵 updateSortedAndGroupedDDays 실행")
             updateSortedAndGroupedDDays()
-            print("🔴 updateSortedAndGroupedDDays 완료")
+            //print("🔴 updateSortedAndGroupedDDays 완료")
             
             os_signpost(.end, log: logger, name: "fetchDDay")
-            print("✅ fetchDDay 완료")
+            //print("✅ fetchDDay 완료")
         }
     }
-
     
+//    func refreshDDay() {
+//        let currentNetworkStatus = NetworkMonitor.shared.isConnected
+//
+//        if currentNetworkStatus != previousNetworkStatus {
+//            // 네트워크 상태가 변경되었을 때만 fetchDDay() 실행
+//            print("♻️ 네트워크 상태 변경")
+//            fetchDDay()
+//        } else {
+//            print("🔒 네트워크 상태 변경 없음")
+//        }
+//
+//        // 이전 상태 업데이트
+//        previousNetworkStatus = currentNetworkStatus
+//    }
+
+
     func addDDay(dDay: DDay, image: UIImage?) {
         NotificationManager.shared.scheduleNotification(for: dDay, updatedDDay: dDay)           // 알림 추가
         saveImageIfNeeded(for: dDay, image: image)                                              // 이미지 추가
@@ -180,24 +180,6 @@ final class DDayViewModel: ObservableObject {
     }
     
     // MARK: - Private Methods
-    private func monitorNetworkConnectivity() {
-        NetworkMonitor.shared.$isConnected
-            .dropFirst() // 초기 값 무시
-            .removeDuplicates() // 중복 상태 제거
-            .sink { [weak self] isConnected in
-                guard let self = self else { return }
-                if isConnected {
-                    print("\(isConnected) 네트워크가 연결되었습니다. 데이터를 가져옵니다. 위젯 타임라인을 갱신합니다.")
-                    WidgetCenter.shared.reloadAllTimelines()
-                    self.fetchDDay()
-                } else {
-                    print("\(isConnected) 네트워크 연결이 없습니다. 연결 후 다시 시도해주세요.")
-                    self.fetchDDay()
-                }
-            }
-            .store(in: &cancellables)
-    }
-    
 //    private func fetchAllDDayData() async {
 //        await withTaskGroup(of: Void.self) { group in
 //            group.addTask { await self.loadAllImages() }
@@ -208,26 +190,26 @@ final class DDayViewModel: ObservableObject {
     
     private func fetchAllDDayData() async {
         os_signpost(.begin, log: logger, name: "fetchAllDDayData")
-        print("✅ fetchAllDDayData 시작")
+        //print("✅ fetchAllDDayData 시작")
 
         await withTaskGroup(of: Void.self) { group in
             group.addTask {
                 os_signpost(.begin, log: self.logger, name: "loadAllImages")
-                print("🔵 loadAllImages 시작")
+                //print("🔵 loadAllImages 시작")
                 await self.loadAllImages()
                 os_signpost(.end, log: self.logger, name: "loadAllImages")
-                print("🔴 loadAllImages 완료")
+                //print("🔴 loadAllImages 완료")
             }
             group.addTask {
                 os_signpost(.begin, log: self.logger, name: "loadAllTexts")
-                print("🔵 loadAllTexts 시작")
+                //print("🔵 loadAllTexts 시작")
                 await self.loadAllTexts()
                 os_signpost(.end, log: self.logger, name: "loadAllTexts")
-                print("🔴 loadAllTexts 완료")
+                //print("🔴 loadAllTexts 완료")
             }
         }
             
-        print("✅ fetchAllDDayData 완료")
+        //print("✅ fetchAllDDayData 완료")
         os_signpost(.end, log: logger, name: "fetchAllDDayData")
 
     }
@@ -236,9 +218,9 @@ final class DDayViewModel: ObservableObject {
         await withTaskGroup(of: (String, UIImage?)?.self) { group in
             for dDayItem in dDayItems {
                 group.addTask {
-                    print(#function, dDayItem.title, "🔵 시작")
+                    //print(#function, dDayItem.title, "🔵 시작")
                     let image = await ImageDocumentManager.shared.loadImageFromDocument(fileName: dDayItem.pk)
-                    print(#function, dDayItem.title, "🔴 종료")
+                    //print(#function, dDayItem.title, "🔴 종료")
                     return (dDayItem.pk, image)
                 }
             }
@@ -261,9 +243,9 @@ final class DDayViewModel: ObservableObject {
         await withTaskGroup(of: (String, String)?.self) { group in
             for dDayItem in dDayItems {
                 group.addTask {
-                    print(#function, dDayItem.title, "🔵 시작")
+                    //print(#function, dDayItem.title, "🔵 시작")
                     let text = await self.calculateDDay(from: dDayItem.date, type: dDayItem.type, isLunar: dDayItem.isLunarDate, startFromDayOne: dDayItem.startFromDayOne, repeatType: dDayItem.repeatType)
-                    print(#function, dDayItem.title, "🔴 종료")
+                    //print(#function, dDayItem.title, "🔴 종료")
                     return (dDayItem.pk, text)
                 }
             }

@@ -177,8 +177,7 @@ final class NotificationManager {
         UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: identifiers)
     }
     
-    // MARK: - Private Helpers
-    
+    // MARK: - Private Methods
     private func logPendingNotifications() {
         UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
             print("현재 등록된 알림 개수: \(requests.count)")

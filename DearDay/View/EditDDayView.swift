@@ -55,9 +55,6 @@ struct EditDDayView: View {
                 optionSection
                 imageSection
             }
-            .task {
-                viewModel.monitorLunarDateUpdates(isLunarDate: $isLunarDate, selectedDate: $selectedDate)
-            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {

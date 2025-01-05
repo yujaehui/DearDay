@@ -80,6 +80,12 @@ private extension DDayView {
                 }
             }
         }
+        .onReceive(NetworkMonitor.shared.$isConnected) { isConnected in
+            print(isConnected)
+            if isConnected {
+                viewModel.fetchDDay()
+            }
+        }
     }
     
     @ToolbarContentBuilder

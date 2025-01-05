@@ -8,20 +8,16 @@
 import SwiftUI
 import Network
 
-final class NetworkMonitor {
+final class NetworkMonitor: ObservableObject {
     static let shared = NetworkMonitor()
-    private let monitor = NWPathMonitor(prohibitedInterfaceTypes: [.wiredEthernet, .loopback, .other])
+    private let monitor = NWPathMonitor()
     private let queue = DispatchQueue.global()
-    @Published var isConnected: Bool = true
+    @Published private(set) var isConnected: Bool = false
     
     private init() {
         monitor.pathUpdateHandler = { path in
             DispatchQueue.main.async {
-                if path.status == .satisfied {
-                    self.isConnected = true
-                } else {
-                    self.isConnected = false
-                }
+                self.isConnected = (path.status == .satisfied)
             }
         }
         monitor.start(queue: queue)
