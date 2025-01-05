@@ -158,7 +158,7 @@ private extension ImageEditorView {
             .onChanged { value in
                 isInteracting = true
                 isGridAppear = true
-                scale = max(1.0, lastScale * value)
+                scale = max(0.5, lastScale * value)
             }
             .onEnded { _ in
                 withAnimation(.easeInOut(duration: 0.2)) {
@@ -178,26 +178,28 @@ private extension ImageEditorView {
     @ViewBuilder
     private func editorControls() -> some View {
         VStack {
-            HStack(spacing: 10) {
-                Button {
-                    isPortrait = true
-                    toggleOrientation()
-                } label: {
-                    Image(systemName: isPortrait ? "checkmark.rectangle.portrait" : "rectangle.portrait")
-                        .font(.title2)
-                        .foregroundColor(isPortrait ? .yellow : .gray)
+            if selectedRatioIndex != 0 {
+                HStack(spacing: 10) {
+                    Button {
+                        isPortrait = true
+                        toggleOrientation()
+                    } label: {
+                        Image(systemName: isPortrait ? "checkmark.rectangle.portrait" : "rectangle.portrait")
+                            .font(.title2)
+                            .foregroundColor(isPortrait ? .yellow : .gray)
+                    }
+                    
+                    Button {
+                        isPortrait = false
+                        toggleOrientation()
+                    } label: {
+                        Image(systemName: !isPortrait ? "checkmark.rectangle" : "rectangle")
+                            .font(.title2)
+                            .foregroundColor(!isPortrait ? .yellow : .gray)
+                    }
                 }
-                
-                Button {
-                    isPortrait = false
-                    toggleOrientation()
-                } label: {
-                    Image(systemName: !isPortrait ? "checkmark.rectangle" : "rectangle")
-                        .font(.title2)
-                        .foregroundColor(!isPortrait ? .yellow : .gray)
-                }
+                .padding()
             }
-            .padding()
             
             HStack {
                 ForEach(0..<aspectRatios.count, id: \.self) { index in
