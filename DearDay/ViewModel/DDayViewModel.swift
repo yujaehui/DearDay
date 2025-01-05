@@ -173,31 +173,82 @@ final class DDayViewModel: ObservableObject {
         }
     }
     
+//    private func loadAllTexts() async {
+//        for dDayItem in dDayItems {
+//            dDayText[dDayItem.pk] = await calculateDDay(from: dDayItem.date, type: dDayItem.type, isLunar: dDayItem.isLunarDate, startFromDayOne: dDayItem.startFromDayOne, repeatType: dDayItem.repeatType)
+//        }
+//    }
+    
     private func loadAllTexts() async {
         for dDayItem in dDayItems {
-            dDayText[dDayItem.pk] = await calculateDDay(from: dDayItem.date, type: dDayItem.type, isLunar: dDayItem.isLunarDate, startFromDayOne: dDayItem.startFromDayOne, repeatType: dDayItem.repeatType)
+            let cacheKey = "\(dDayItem.date.timeIntervalSince1970)_\(dDayItem.type)_\(dDayItem.isLunarDate)_\(dDayItem.startFromDayOne)_\(dDayItem.repeatType)"
+            if let cachedText = dDayCache[cacheKey] {
+                dDayText[dDayItem.pk] = cachedText // ✅ 캐시된 값 사용
+            } else {
+                dDayText[dDayItem.pk] = await calculateDDay(
+                    from: dDayItem.date,
+                    type: dDayItem.type,
+                    isLunar: dDayItem.isLunarDate,
+                    startFromDayOne: dDayItem.startFromDayOne,
+                    repeatType: dDayItem.repeatType
+                )
+            }
         }
     }
+
     
+//    private func calculateDDay(from date: Date, type: DDayType, isLunar: Bool, startFromDayOne: Bool, repeatType: RepeatType) async -> String {
+//        let calendar = Calendar.current
+//        var adjustedDate = date
+//        
+//        if isLunar {
+//            let result = await fetchClosestSolarDate(from: date, repeatType: repeatType)
+//            if let closestLunarDate = result.0 {
+//                adjustedDate = closestLunarDate
+//            } else if let errorMessage = result.1 {
+//                return errorMessage
+//            }
+//        }
+//        
+//        if !isLunar && adjustedDate < Date() {
+//            adjustedDate = adjustDateForRepeatType(date: adjustedDate, repeatType: repeatType, calendar: calendar)
+//        }
+//        
+//        return DateFormatterManager.shared.calculateDDayString(from: adjustedDate, type: type, startFromDayOne: startFromDayOne, calendar: calendar)
+//    }
+    
+    // Memoization을 위한 캐시 추가
+    private var dDayCache: [String: String] = [:] // Key: D-Day의 PK, Value: 계산된 D-Day 문자열
+
     private func calculateDDay(from date: Date, type: DDayType, isLunar: Bool, startFromDayOne: Bool, repeatType: RepeatType) async -> String {
         let calendar = Calendar.current
         var adjustedDate = date
-        
+
+        let cacheKey = "\(date.timeIntervalSince1970)_\(type)_\(isLunar)_\(startFromDayOne)_\(repeatType)" // 캐싱을 위한 Key 생성
+        if let cachedResult = dDayCache[cacheKey] {
+            return cachedResult // 캐시된 값이 있으면 반환 (O(1))
+        }
+
         if isLunar {
             let result = await fetchClosestSolarDate(from: date, repeatType: repeatType)
             if let closestLunarDate = result.0 {
                 adjustedDate = closestLunarDate
             } else if let errorMessage = result.1 {
+                dDayCache[cacheKey] = errorMessage // 캐싱
                 return errorMessage
             }
         }
-        
+
         if !isLunar && adjustedDate < Date() {
             adjustedDate = adjustDateForRepeatType(date: adjustedDate, repeatType: repeatType, calendar: calendar)
         }
-        
-        return DateFormatterManager.shared.calculateDDayString(from: adjustedDate, type: type, startFromDayOne: startFromDayOne, calendar: calendar)
+
+        let result = DateFormatterManager.shared.calculateDDayString(from: adjustedDate, type: type, startFromDayOne: startFromDayOne, calendar: calendar)
+        dDayCache[cacheKey] = result // 결과 저장
+
+        return result
     }
+
     
     private func fetchClosestSolarDate(from date: Date, repeatType: RepeatType) async -> (Date?, String?) {
         let calendar = Calendar.current

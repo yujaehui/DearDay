@@ -39,6 +39,7 @@ struct AddDDayView: View {
                 optionsSection
                 imageSection
             }
+            .scrollDismissesKeyboard(.immediately)
             .task {
                 viewModel.monitorLunarDateUpdates(isLunarDate: $isLunarDate, selectedDate: $selectedDate)
             }
@@ -108,6 +109,7 @@ private extension AddDDayView {
                 .datePickerStyle(.wheel)
                 .labelsHidden()
                 .onChange(of: selectedDate) { newDate in
+                    isTitleFieldFocused = false
                     if isLunarDate {
                         viewModel.updateLunarDate(lunarDate: newDate)
                     }
@@ -209,6 +211,3 @@ private extension AddDDayView {
         dismiss()
     }
 }
-
-
-

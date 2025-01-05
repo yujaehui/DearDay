@@ -55,6 +55,7 @@ struct EditDDayView: View {
                 optionSection
                 imageSection
             }
+            .scrollDismissesKeyboard(.immediately)
             .task {
                 viewModel.monitorLunarDateUpdates(isLunarDate: $isLunarDate, selectedDate: $selectedDate)
             }
@@ -127,6 +128,7 @@ private extension EditDDayView {
                 .datePickerStyle(.wheel)
                 .labelsHidden()
                 .onChange(of: selectedDate) { newDate in
+                    isTitleFieldFocused = false
                     if isLunarDate {
                         viewModel.updateLunarDate(lunarDate: newDate)
                     }
