@@ -10,6 +10,7 @@ import RealmSwift
 import WidgetKit
 import SwiftUI
 import Combine
+import os
 
 enum SortOption: String, CaseIterable, Identifiable {
     case creationDate = "생성일"
@@ -25,6 +26,8 @@ enum SortOption: String, CaseIterable, Identifiable {
 
 @MainActor
 final class DDayViewModel: ObservableObject {
+    private let logger = OSLog(subsystem: "com.dearday.debug", category: "async/await")
+    
     // MARK: - Published Properties
     @Published var dDayItems: [DDayItem] = []
     @Published var dDayImage: [String: UIImage?] = [:]
@@ -59,8 +62,6 @@ final class DDayViewModel: ObservableObject {
     
     // MARK: - Public Methods
     func updateLunarDate(lunarDate: Date) {
-        print(#function)
-        
         Task {
             let response = await apiService.fetchSolarDate(lunarDate: lunarDate)
             solarDate = response.data
@@ -84,20 +85,58 @@ final class DDayViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
+
     func fetchDDay() {
-        print(#function)
+        os_signpost(.begin, log: logger, name: "fetchDDay")
+        print("✅ fetchDDay 시작")
         
         let dDays = repository.fetchItem()
         dDayItems = dDays.map { DDayItem(from: $0) }
         
         Task {
-            await fetchAllDDayData()
-            await NotificationManager.shared.scheduleYearlyRepeatingLunarDdayNotification(for: dDayItems)
-            NotificationManager.shared.scheduleHundredDayNotifications(for: dDayItems)
-            NotificationManager.shared.scheduleYearlyNotifications(for: dDayItems)
+            os_signpost(.begin, log: logger, name: "fetchAllDDayData")
+            print("🔵 fetchAllDDayData 시작")
+            async let fetchData: () = fetchAllDDayData()
+            
+            os_signpost(.begin, log: logger, name: "scheduleYearlyLunarNotifications")
+            print("🔵 scheduleYearlyLunarNotifications 시작")
+            async let yearlyLunarNotifications: () = NotificationManager.shared.scheduleYearlyRepeatingLunarDdayNotification(for: dDayItems)
+            
+            os_signpost(.begin, log: logger, name: "scheduleHundredDayNotifications")
+            print("🔵 scheduleHundredDayNotifications 시작")
+            async let hundredDayNotifications: () = NotificationManager.shared.scheduleHundredDayNotifications(for: dDayItems)
+            
+            os_signpost(.begin, log: logger, name: "scheduleYearlyNotifications")
+            print("🔵 scheduleYearlyNotifications 시작")
+            async let yearlyNotifications: () = NotificationManager.shared.scheduleYearlyNotifications(for: dDayItems)
+
+            // 모든 비동기 작업이 끝날 때까지 대기
+            await fetchData
+            os_signpost(.end, log: logger, name: "fetchAllDDayData")
+            print("🔴 fetchAllDDayData 완료")
+            
+            await yearlyLunarNotifications
+            os_signpost(.end, log: logger, name: "scheduleYearlyLunarNotifications")
+            print("🔴 scheduleYearlyLunarNotifications 완료")
+            
+            await hundredDayNotifications
+            os_signpost(.end, log: logger, name: "scheduleHundredDayNotifications")
+            print("🔴 scheduleHundredDayNotifications 완료")
+            
+            await yearlyNotifications
+            os_signpost(.end, log: logger, name: "scheduleYearlyNotifications")
+            print("🔴 scheduleYearlyNotifications 완료")
+            
+            // 🔥 모든 데이터 패치 후 정렬 및 그룹화 실행
+            print("🔵 updateSortedAndGroupedDDays 실행")
+            updateSortedAndGroupedDDays()
+            print("🔴 updateSortedAndGroupedDDays 완료")
+            
+            os_signpost(.end, log: logger, name: "fetchDDay")
+            print("✅ fetchDDay 완료")
         }
     }
+
     
     func addDDay(dDay: DDay, image: UIImage?) {
         NotificationManager.shared.scheduleNotification(for: dDay, updatedDDay: dDay)           // 알림 추가
@@ -159,27 +198,109 @@ final class DDayViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
+//    private func fetchAllDDayData() async {
+//        await withTaskGroup(of: Void.self) { group in
+//            group.addTask { await self.loadAllImages() }
+//            group.addTask { await self.loadAllTexts() }
+//        }
+//        updateSortedAndGroupedDDays()
+//    }
+    
     private func fetchAllDDayData() async {
+        os_signpost(.begin, log: logger, name: "fetchAllDDayData")
+        print("✅ fetchAllDDayData 시작")
+
         await withTaskGroup(of: Void.self) { group in
-            group.addTask { await self.loadAllImages() }
-            group.addTask { await self.loadAllTexts() }
+            group.addTask {
+                os_signpost(.begin, log: self.logger, name: "loadAllImages")
+                print("🔵 loadAllImages 시작")
+                await self.loadAllImages()
+                os_signpost(.end, log: self.logger, name: "loadAllImages")
+                print("🔴 loadAllImages 완료")
+            }
+            group.addTask {
+                os_signpost(.begin, log: self.logger, name: "loadAllTexts")
+                print("🔵 loadAllTexts 시작")
+                await self.loadAllTexts()
+                os_signpost(.end, log: self.logger, name: "loadAllTexts")
+                print("🔴 loadAllTexts 완료")
+            }
         }
-        updateSortedAndGroupedDDays()
+            
+        print("✅ fetchAllDDayData 완료")
+        os_signpost(.end, log: logger, name: "fetchAllDDayData")
+
     }
     
-    private func loadAllImages() {
-        for dDayItem in dDayItems {
-            dDayImage[dDayItem.pk] = ImageDocumentManager.shared.loadImageFromDocument(fileName: dDayItem.pk)
+    private func loadAllImages() async {
+        await withTaskGroup(of: (String, UIImage?)?.self) { group in
+            for dDayItem in dDayItems {
+                group.addTask {
+                    print(#function, dDayItem.title, "🔵 시작")
+                    let image = await ImageDocumentManager.shared.loadImageFromDocument(fileName: dDayItem.pk)
+                    print(#function, dDayItem.title, "🔴 종료")
+                    return (dDayItem.pk, image)
+                }
+            }
+            
+            var newDDayImage: [String : UIImage?] = [:]
+            
+            for await result in group {
+                if let (pk, image) = result {
+                    newDDayImage[pk] = image
+                }
+            }
+            
+            await MainActor.run {
+                dDayImage = newDDayImage
+            }
         }
     }
     
     private func loadAllTexts() async {
-        for dDayItem in dDayItems {
-            dDayText[dDayItem.pk] = await calculateDDay(from: dDayItem.date, type: dDayItem.type, isLunar: dDayItem.isLunarDate, startFromDayOne: dDayItem.startFromDayOne, repeatType: dDayItem.repeatType)
+        await withTaskGroup(of: (String, String)?.self) { group in
+            for dDayItem in dDayItems {
+                group.addTask {
+                    print(#function, dDayItem.title, "🔵 시작")
+                    let text = await self.calculateDDay(from: dDayItem.date, type: dDayItem.type, isLunar: dDayItem.isLunarDate, startFromDayOne: dDayItem.startFromDayOne, repeatType: dDayItem.repeatType)
+                    print(#function, dDayItem.title, "🔴 종료")
+                    return (dDayItem.pk, text)
+                }
+            }
+
+            var newDDayText: [String: String] = [:]
+            
+            for await result in group {
+                if let (pk, text) = result {
+                    newDDayText[pk] = text
+                }
+            }
+
+            await MainActor.run {
+                dDayText = newDDayText
+            }
         }
     }
     
+//    private func loadAllImages() async {
+//        for dDayItem in dDayItems {
+//            print(#function, dDayItem.title, "🔵 시작")
+//            dDayImage[dDayItem.pk] = await ImageDocumentManager.shared.loadImageFromDocument(fileName: dDayItem.pk)
+//            print(#function, dDayItem.title, "🔴 종료")
+//        }
+//    }
+    
+//    private func loadAllTexts() async {
+//        for dDayItem in dDayItems {
+//            print(#function, dDayItem.title, "🔵 시작")
+//            dDayText[dDayItem.pk] = await calculateDDay(from: dDayItem.date, type: dDayItem.type, isLunar: dDayItem.isLunarDate, startFromDayOne: dDayItem.startFromDayOne, repeatType: dDayItem.repeatType)
+//            print(#function, dDayItem.title, "🔴 종료")
+//        }
+//    }
+    
     private func calculateDDay(from date: Date, type: DDayType, isLunar: Bool, startFromDayOne: Bool, repeatType: RepeatType) async -> String {
+        //try? await Task.sleep(nanoseconds: 1_000_000_000)
+        
         let calendar = Calendar.current
         var adjustedDate = date
         
@@ -193,9 +314,9 @@ final class DDayViewModel: ObservableObject {
         }
         
         if !isLunar && adjustedDate < Date() {
-            adjustedDate = adjustDateForRepeatType(date: adjustedDate, repeatType: repeatType, calendar: calendar)
+            adjustedDate = await adjustDateForRepeatType(date: adjustedDate, repeatType: repeatType, calendar: calendar)
         }
-        
+                
         return DateFormatterManager.shared.calculateDDayString(from: adjustedDate, type: type, startFromDayOne: startFromDayOne, calendar: calendar)
     }
     
@@ -224,7 +345,7 @@ final class DDayViewModel: ObservableObject {
         }
     }
     
-    private func adjustDateForRepeatType(date: Date, repeatType: RepeatType, calendar: Calendar) -> Date {
+    private func adjustDateForRepeatType(date: Date, repeatType: RepeatType, calendar: Calendar) async -> Date {
         var adjustedDate = date
         
         switch repeatType {

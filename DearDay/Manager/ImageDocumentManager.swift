@@ -33,6 +33,20 @@ final class ImageDocumentManager {
         }
     }
     
+    func loadImageFromDocument(fileName: String) async -> UIImage? {
+        guard let documentDirectory = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroupID.id) else { return nil }
+        let fileURL = documentDirectory.appendingPathComponent("\(fileName).jpg")
+        
+        return await Task.detached {
+            if FileManager.default.fileExists(atPath: fileURL.path) {
+                return UIImage(contentsOfFile: fileURL.path)
+            } else {
+                return nil
+            }
+        }.value
+    }
+
+    
     func removeImageFromDocument(fileName: String) {
         guard let documentDirectory = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroupID.id) else { return }
         let fileURL = documentDirectory.appendingPathComponent("\(fileName).jpg")
