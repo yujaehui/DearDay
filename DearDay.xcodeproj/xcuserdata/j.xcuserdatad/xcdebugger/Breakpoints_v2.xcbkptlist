@@ -71,69 +71,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "8121EA35-B903-4661-A2F8-6A3F38EC5218"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "DearDay/View/AddDDayView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "44"
-            endingLineNumber = "44"
-            landmarkName = "body"
-            landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "8121EA35-B903-4661-A2F8-6A3F38EC5218 - 1e0e4df12e324ab9"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #2 @Sendable () async -&gt; () in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.background&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(_: &#x3c4;_1_0, ignoresSafeAreaEdges: SwiftUI.Edge.Set) -&gt; some&gt;&gt;.0 in DearDay.AddDDayView.body.getter : some"
-                  moduleName = "DearDay"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/j/Desktop/DearDay/DearDay/View/AddDDayView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "39"
-                  endingLineNumber = "39"
-                  offsetFromSymbolStart = "96">
-               </Location>
-               <Location
-                  uuid = "8121EA35-B903-4661-A2F8-6A3F38EC5218 - ca7eaaf1e06143fe"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 () -&gt; &lt;&lt;opaque return type of static SwiftUI.ToolbarContentBuilder.buildBlock&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.ToolbarContent&gt;(&#x3c4;_0_0) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.background&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(_: &#x3c4;_1_0, ignoresSafeAreaEdges: SwiftUI.Edge.Set) -&gt; some&gt;&gt;.0 in DearDay.AddDDayView.body.getter : some"
-                  moduleName = "DearDay"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/j/Desktop/DearDay/DearDay/View/AddDDayView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "39"
-                  endingLineNumber = "39"
-                  offsetFromSymbolStart = "228">
-               </Location>
-               <Location
-                  uuid = "8121EA35-B903-4661-A2F8-6A3F38EC5218 - bc83b6dd3cc42a00"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; SwiftUI.Button&lt;&lt;&lt;opaque return type of SwiftUI.View.foregroundStyle&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(&#x3c4;_1_0) -&gt; some&gt;&gt;.0&gt; in closure #2 () -&gt; &lt;&lt;opaque return type of static SwiftUI.ToolbarContentBuilder.buildBlock&lt;&#x3c4;_0_0 where &#x3c4;_0_0: SwiftUI.ToolbarContent&gt;(&#x3c4;_0_0) -&gt; some&gt;&gt;.0 in closure #1 () -&gt; &lt;&lt;opaque return type of SwiftUI.View.background&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.ShapeStyle&gt;(_: &#x3c4;_1_0, ignoresSafeAreaEdges: SwiftUI.Edge.Set) -&gt; some&gt;&gt;.0 in DearDay.AddDDayView.body.getter : some"
-                  moduleName = "DearDay"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/j/Desktop/DearDay/DearDay/View/AddDDayView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "40"
-                  endingLineNumber = "40"
-                  offsetFromSymbolStart = "188">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "8EEC4DC8-519A-4572-8FD7-9D8765CAA84C"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -145,6 +82,132 @@
             endingLineNumber = "9"
             landmarkName = "unknown"
             landmarkType = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "649CD903-C83B-49E7-9E04-8E845D14DDC5"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "DearDay/Network/NetworkMonitor.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "21"
+            endingLineNumber = "21"
+            landmarkName = "init()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "649CD903-C83B-49E7-9E04-8E845D14DDC5 - f14f8c5910066bf2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in closure #1 (Network.NWPath) -&gt; () in DearDay.NetworkMonitor.() -&gt; DearDay.NetworkMonitor.init() -&gt; DearDay.NetworkMonitor"
+                  moduleName = "DearDay"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/j/Desktop/%E1%84%83%E1%85%B5%E1%84%8B%E1%85%A5%E1%84%83%E1%85%A6%E1%84%8B%E1%85%B5/DearDay/DearDay/Network/NetworkMonitor.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "21"
+                  endingLineNumber = "21"
+                  offsetFromSymbolStart = "196">
+               </Location>
+               <Location
+                  uuid = "649CD903-C83B-49E7-9E04-8E845D14DDC5 - f14f8c5910066bf2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in closure #1 (Network.NWPath) -&gt; () in DearDay.NetworkMonitor.() -&gt; DearDay.NetworkMonitor.init() -&gt; DearDay.NetworkMonitor"
+                  moduleName = "DearDay"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/j/Desktop/%E1%84%83%E1%85%B5%E1%84%8B%E1%85%A5%E1%84%83%E1%85%A6%E1%84%8B%E1%85%B5/DearDay/DearDay/Network/NetworkMonitor.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "21"
+                  endingLineNumber = "21"
+                  offsetFromSymbolStart = "348">
+               </Location>
+               <Location
+                  uuid = "649CD903-C83B-49E7-9E04-8E845D14DDC5 - f14f8c5910066bf2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in closure #1 (Network.NWPath) -&gt; () in DearDay.NetworkMonitor.() -&gt; DearDay.NetworkMonitor.init() -&gt; DearDay.NetworkMonitor"
+                  moduleName = "DearDay"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/j/Desktop/%E1%84%83%E1%85%B5%E1%84%8B%E1%85%A5%E1%84%83%E1%85%A6%E1%84%8B%E1%85%B5/DearDay/DearDay/Network/NetworkMonitor.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "21"
+                  endingLineNumber = "21"
+                  offsetFromSymbolStart = "408">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3F809598-4109-4A86-925A-44497AF577BF"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "DearDay/Network/NetworkMonitor.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
+            landmarkName = "init()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "3F809598-4109-4A86-925A-44497AF577BF - f14f8c5910066b34"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in closure #1 (Network.NWPath) -&gt; () in DearDay.NetworkMonitor.() -&gt; DearDay.NetworkMonitor.init() -&gt; DearDay.NetworkMonitor"
+                  moduleName = "DearDay"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/j/Desktop/%E1%84%83%E1%85%B5%E1%84%8B%E1%85%A5%E1%84%83%E1%85%A6%E1%84%8B%E1%85%B5/DearDay/DearDay/Network/NetworkMonitor.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "23"
+                  endingLineNumber = "23"
+                  offsetFromSymbolStart = "356">
+               </Location>
+               <Location
+                  uuid = "3F809598-4109-4A86-925A-44497AF577BF - f14f8c5910066b34"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in closure #1 (Network.NWPath) -&gt; () in DearDay.NetworkMonitor.() -&gt; DearDay.NetworkMonitor.init() -&gt; DearDay.NetworkMonitor"
+                  moduleName = "DearDay"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/j/Desktop/%E1%84%83%E1%85%B5%E1%84%8B%E1%85%A5%E1%84%83%E1%85%A6%E1%84%8B%E1%85%B5/DearDay/DearDay/Network/NetworkMonitor.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "23"
+                  endingLineNumber = "23"
+                  offsetFromSymbolStart = "368">
+               </Location>
+               <Location
+                  uuid = "3F809598-4109-4A86-925A-44497AF577BF - f14f8c5910066b34"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in closure #1 (Network.NWPath) -&gt; () in DearDay.NetworkMonitor.() -&gt; DearDay.NetworkMonitor.init() -&gt; DearDay.NetworkMonitor"
+                  moduleName = "DearDay"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/j/Desktop/%E1%84%83%E1%85%B5%E1%84%8B%E1%85%A5%E1%84%83%E1%85%A6%E1%84%8B%E1%85%B5/DearDay/DearDay/Network/NetworkMonitor.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "23"
+                  endingLineNumber = "23"
+                  offsetFromSymbolStart = "428">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

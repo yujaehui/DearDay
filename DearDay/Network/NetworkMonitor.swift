@@ -7,20 +7,23 @@
 
 import SwiftUI
 import Network
-import WidgetKit
 
 final class NetworkMonitor {
     static let shared = NetworkMonitor()
-    private let monitor = NWPathMonitor()
+    private let monitor = NWPathMonitor(prohibitedInterfaceTypes: [.wiredEthernet, .loopback, .other])
     private let queue = DispatchQueue.global()
     @Published var isConnected: Bool = true
     
     private init() {
-        monitor.start(queue: queue)
         monitor.pathUpdateHandler = { path in
             DispatchQueue.main.async {
-                self.isConnected = path.status == .satisfied
+                if path.status == .satisfied {
+                    self.isConnected = true
+                } else {
+                    self.isConnected = false
+                }
             }
         }
+        monitor.start(queue: queue)
     }
 }
