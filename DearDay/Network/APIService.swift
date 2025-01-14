@@ -133,8 +133,6 @@ final class APIService: APIServiceProtocol {
     // MARK: - Private Helpers
     
     private func fetchSolarDateItems(lunYear: Int, lunMonth: Int, lunDay: Int) async throws -> [SolarDateItem] {
-        print(#function)
-
         guard let url = constructURL(year: lunYear, month: lunMonth, day: lunDay) else {
             throw APIServiceError.invalidURL
         }
@@ -149,8 +147,6 @@ final class APIService: APIServiceProtocol {
     }
 
     private func fetchSolarDateItemsSync(lunYear: Int, lunMonth: Int, lunDay: Int) throws -> [SolarDateItem] {
-        print(#function)
-
         guard let url = constructURL(year: lunYear, month: lunMonth, day: lunDay) else {
             throw APIServiceError.invalidURL
         }

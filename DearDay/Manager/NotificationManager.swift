@@ -57,6 +57,8 @@ final class NotificationManager {
     
     // D-Day(음력): 매년 반복의 경우 O
     func scheduleYearlyRepeatingLunarDdayNotification(for dDays: [DDayItem]) async {
+        //try? await Task.sleep(nanoseconds: 1_000_000_000)
+
         let notificationCenter = UNUserNotificationCenter.current()
         let calendar = Calendar.current
         
@@ -93,7 +95,9 @@ final class NotificationManager {
     }
     
     // 날짜 수: 100일 단위 기념일 처리
-    func scheduleHundredDayNotifications(for dDays: [DDayItem]) {
+    func scheduleHundredDayNotifications(for dDays: [DDayItem]) async {
+        //try? await Task.sleep(nanoseconds: 1_000_000_000)
+
         let notificationCenter = UNUserNotificationCenter.current()
         let calendar = Calendar.current
         let now = Date()
@@ -122,17 +126,20 @@ final class NotificationManager {
                 
                 let request = UNNotificationRequest(identifier: "\(dDay.pk)-100", content: content, trigger: trigger)
                 
-                notificationCenter.add(request) { error in
-                    if let error = error {
-                        print("100일 알림 등록 실패: \(error.localizedDescription)")
-                    }
+                do {
+                    try await notificationCenter.add(request)
+                    print("100일 알림 등록 성공: \(dDay.title)")
+                } catch {
+                    print("100일 알림 등록 실패: \(error.localizedDescription)")
                 }
             }
         }
     }
     
     // 날짜 수: 1년 단위 기념일 처리
-    func scheduleYearlyNotifications(for dDays: [DDayItem]) {
+    func scheduleYearlyNotifications(for dDays: [DDayItem]) async {
+        //try? await Task.sleep(nanoseconds: 1_000_000_000)
+
         let notificationCenter = UNUserNotificationCenter.current()
         let calendar = Calendar.current
         let now = Date()
@@ -160,10 +167,11 @@ final class NotificationManager {
                 
                 let request = UNNotificationRequest(identifier: "\(dDay.pk)-year", content: content, trigger: trigger)
                 
-                notificationCenter.add(request) { error in
-                    if let error = error {
-                        print("1년 단위 알림 등록 실패: \(error.localizedDescription)")
-                    }
+                do {
+                    try await notificationCenter.add(request)
+                    print("1년 단위 알림 등록 성공: \(dDay.title)")
+                } catch {
+                    print("1년 단위 알림 등록 실패: \(error.localizedDescription)")
                 }
             }
         }

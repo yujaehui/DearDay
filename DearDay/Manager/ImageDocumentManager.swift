@@ -33,6 +33,24 @@ final class ImageDocumentManager {
         }
     }
     
+    func loadImageFromDocument(fileName: String) async -> UIImage? {
+        guard let documentDirectory = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroupID.id) else { return nil }
+        
+        //try? await Task.sleep(nanoseconds: 1_000_000_000)
+        let fileURL = documentDirectory.appendingPathComponent("\(fileName).jpg")
+
+        return await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {  // 백그라운드에서 실행
+                if FileManager.default.fileExists(atPath: fileURL.path()) {
+                    let image = UIImage(contentsOfFile: fileURL.path()) // 파일 IO
+                    continuation.resume(returning: image)
+                } else {
+                    continuation.resume(returning: nil)
+                }
+            }
+        }
+    }
+    
     func removeImageFromDocument(fileName: String) {
         guard let documentDirectory = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroupID.id) else { return }
         let fileURL = documentDirectory.appendingPathComponent("\(fileName).jpg")
