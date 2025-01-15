@@ -82,7 +82,7 @@
 |-------------|---------------|----------------|----------------|----------------|
 | <img src="https://github.com/user-attachments/assets/25ff1938-0052-42cc-8438-1ed2eecc93dc" width="200"> | <img src="https://github.com/user-attachments/assets/d7ba2936-ba7c-4cf8-8c08-7364ee3c3f73" width="200"> | <img src="https://github.com/user-attachments/assets/9c5db3c6-3e9f-4dcf-aeb0-6e4f074c6360" width="200"> | <img src="https://github.com/user-attachments/assets/213c75a2-0910-49b7-9aaa-1bdcde397b14" width="200"> | <img src="https://github.com/user-attachments/assets/3cc3f956-6eb0-47c3-805b-2c40304dd1d7" width="200"> |
 
-| 정렬 및 그룹화 | 디데이 타입 디테일 | 날짜수 타입 디테일 | 날짜수 타입 기념일 | 인스타그램 스토리 공유 |
+| 정렬 및 그룹화 | 디데이 타입 디테일 | 날짜수 타입 디테일 | 날짜수 타입 기념일 | 인스타그램 스토리 |
 |-------------|---------------|----------------|----------------|----------------|
 | <img src="https://github.com/user-attachments/assets/336e6eb8-0a85-418d-8593-e6bbc0776405" width="200"> | <img src="https://github.com/user-attachments/assets/e0107cfd-f8a0-4f99-92f1-6a402284dbd7" width="200"> | <img src="https://github.com/user-attachments/assets/3367c37a-a7e8-4a62-8380-974a48d2a1b1" width="200"> | <img src="https://github.com/user-attachments/assets/9886ce46-c4a4-43b2-b598-daa1c0e222dc" width="200"> | <img src="https://github.com/user-attachments/assets/e567d712-311a-4e8a-bbb1-2187640c29c8" width="200"> |
 
