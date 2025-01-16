@@ -413,10 +413,10 @@
 ### 5. 메모리 사용량 비교
 
 - **다운샘플링 적용 전**
-- 
+<img src="https://github.com/user-attachments/assets/f092c510-3fb8-4873-8471-3ee50dc99ca5" width="600">
 
 - **다운샘플링 적용 후**
-- 
+<img src="https://github.com/user-attachments/assets/ba242a6d-b5f7-4109-9175-820f56000cf9" width="600">
 
 ### **6. 결론**
 
