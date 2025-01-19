@@ -148,8 +148,7 @@
 
 - **기본 구성**
 - **SwiftUI**: iOS 사용자 인터페이스 구성
-- **Codebase UI**: SwiftUI 기반으로 코드에서 뷰 설계, Storyboard 의존성 제거
-
+  
 ### **비동기 처리 및 네트워크 통신**
 
 - **Swift Concurrency**: 비동기 작업 관리 (`async/await`, `Task`, `Actor`)
