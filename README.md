@@ -151,7 +151,6 @@
   
 ### **비동기 처리 및 네트워크 통신**
 
-- **Combine**: 네트워크 상태 모니터링 및 비동기 데이터 흐름 관리
 - **Swift Concurrency**: 비동기 작업 관리 (`async/await`, `Task`, `Actor`)
 - **XMLParser**: XML 데이터 파싱 및 처리
 
