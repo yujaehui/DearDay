@@ -48,8 +48,6 @@ final class DDayViewModel: ObservableObject {
     @Published private(set) var sortedAndGroupedDDayItems: [(key: DDayType, value: [DDayItem])] = []
     @Published private(set) var sortedDDayItems: [DDayItem] = []
     
-//    @Published private var previousNetworkStatus: Bool = NetworkMonitor.shared.isConnected
-    
     // MARK: - Private Properties
     private let repository: DDayRepositoryProtocol
     private let apiService: APIServiceProtocol
@@ -59,6 +57,7 @@ final class DDayViewModel: ObservableObject {
         self.repository = repository
         self.apiService = apiService
         
+        WidgetCenter.shared.reloadAllTimelines()
         self.fetchDDay()
     }
     
@@ -72,102 +71,70 @@ final class DDayViewModel: ObservableObject {
     }
 
     func fetchDDay() {
+        print("♻️FETCH♻️")
         os_signpost(.begin, log: logger, name: "fetchDDay")
-        //print("✅ fetchDDay 시작")
         
         let dDays = repository.fetchItem()
         dDayItems = dDays.map { DDayItem(from: $0) }
         
         Task {
             os_signpost(.begin, log: logger, name: "fetchAllDDayData")
-            //print("🔵 fetchAllDDayData 시작")
             async let fetchData: () = fetchAllDDayData()
             
             os_signpost(.begin, log: logger, name: "scheduleYearlyLunarNotifications")
-            //print("🔵 scheduleYearlyLunarNotifications 시작")
             async let yearlyLunarNotifications: () = NotificationManager.shared.scheduleYearlyRepeatingLunarDdayNotification(for: dDayItems)
             
             os_signpost(.begin, log: logger, name: "scheduleHundredDayNotifications")
-            //print("🔵 scheduleHundredDayNotifications 시작")
             async let hundredDayNotifications: () = NotificationManager.shared.scheduleHundredDayNotifications(for: dDayItems)
             
             os_signpost(.begin, log: logger, name: "scheduleYearlyNotifications")
-            //print("🔵 scheduleYearlyNotifications 시작")
             async let yearlyNotifications: () = NotificationManager.shared.scheduleYearlyNotifications(for: dDayItems)
 
             // 모든 비동기 작업이 끝날 때까지 대기
             await fetchData
             os_signpost(.end, log: logger, name: "fetchAllDDayData")
-            //print("🔴 fetchAllDDayData 완료")
             
             await yearlyLunarNotifications
             os_signpost(.end, log: logger, name: "scheduleYearlyLunarNotifications")
-            //print("🔴 scheduleYearlyLunarNotifications 완료")
             
             await hundredDayNotifications
             os_signpost(.end, log: logger, name: "scheduleHundredDayNotifications")
-            //print("🔴 scheduleHundredDayNotifications 완료")
             
             await yearlyNotifications
             os_signpost(.end, log: logger, name: "scheduleYearlyNotifications")
-            //print("🔴 scheduleYearlyNotifications 완료")
             
             // 🔥 모든 데이터 패치 후 정렬 및 그룹화 실행
-            //print("🔵 updateSortedAndGroupedDDays 실행")
             updateSortedAndGroupedDDays()
-            //print("🔴 updateSortedAndGroupedDDays 완료")
             
             os_signpost(.end, log: logger, name: "fetchDDay")
-            //print("✅ fetchDDay 완료")
         }
     }
-    
-//    func refreshDDay() {
-//        let currentNetworkStatus = NetworkMonitor.shared.isConnected
-//
-//        if currentNetworkStatus != previousNetworkStatus {
-//            // 네트워크 상태가 변경되었을 때만 fetchDDay() 실행
-//            print("♻️ 네트워크 상태 변경")
-//            fetchDDay()
-//        } else {
-//            print("🔒 네트워크 상태 변경 없음")
-//        }
-//
-//        // 이전 상태 업데이트
-//        previousNetworkStatus = currentNetworkStatus
-//    }
-
 
     func addDDay(dDay: DDay, image: UIImage?) {
         NotificationManager.shared.scheduleNotification(for: dDay, updatedDDay: dDay)           // 알림 추가
         saveImageIfNeeded(for: dDay, image: image)                                              // 이미지 추가
         self.repository.createItem(dDay)                                                        // 데이터베이스 추가
         WidgetCenter.shared.reloadAllTimelines()                                                // 위젯 동기화
-        
         fetchDDay()
     }
     
     func editDDay(dDayItem: DDayItem, updatedDDay: DDay, image: UIImage?) {
         guard let dDay = repository.fetchItem().first(where: { $0.pk.stringValue == dDayItem.pk }) else { return }
-        
         NotificationManager.shared.removeAllNotificationsForDDay(for: dDay)                     // 기존 알림 제거
         NotificationManager.shared.scheduleNotification(for: dDay, updatedDDay: updatedDDay)    // 새로운 알림 추가
         removeExistingImage(for: dDay)                                                          // 기존 이미지 제거
         saveImageIfNeeded(for: dDay, image: image)                                              // 새로운 이미지 추가
         self.repository.updateItem(dDay, updatedItem: updatedDDay)                              // 데이터베이스 변경
         WidgetCenter.shared.reloadAllTimelines()                                                // 위젯 동기화
-        
         fetchDDay()
     }
     
     func deleteDDay(dDayItem: DDayItem) {
         guard let dDay = repository.fetchItem().first(where: { $0.pk.stringValue == dDayItem.pk }) else { return }
-
         NotificationManager.shared.removeAllNotificationsForDDay(for: dDay)                     // 알림 제거
         removeExistingImage(for: dDay)                                                          // 이미지 제거
         self.repository.deleteItem(dDay)                                                        // 데이터베이스 제거
         WidgetCenter.shared.reloadAllTimelines()                                                // 위젯 동기화
-        
         fetchDDay()
     }
     
@@ -180,38 +147,21 @@ final class DDayViewModel: ObservableObject {
     }
     
     // MARK: - Private Methods
-//    private func fetchAllDDayData() async {
-//        await withTaskGroup(of: Void.self) { group in
-//            group.addTask { await self.loadAllImages() }
-//            group.addTask { await self.loadAllTexts() }
-//        }
-//        updateSortedAndGroupedDDays()
-//    }
-    
     private func fetchAllDDayData() async {
         os_signpost(.begin, log: logger, name: "fetchAllDDayData")
-        //print("✅ fetchAllDDayData 시작")
-
         await withTaskGroup(of: Void.self) { group in
             group.addTask {
                 os_signpost(.begin, log: self.logger, name: "loadAllImages")
-                //print("🔵 loadAllImages 시작")
                 await self.loadAllImages()
                 os_signpost(.end, log: self.logger, name: "loadAllImages")
-                //print("🔴 loadAllImages 완료")
             }
             group.addTask {
                 os_signpost(.begin, log: self.logger, name: "loadAllTexts")
-                //print("🔵 loadAllTexts 시작")
                 await self.loadAllTexts()
                 os_signpost(.end, log: self.logger, name: "loadAllTexts")
-                //print("🔴 loadAllTexts 완료")
             }
         }
-            
-        //print("✅ fetchAllDDayData 완료")
         os_signpost(.end, log: logger, name: "fetchAllDDayData")
-
     }
     
     private func loadAllImages() async {
@@ -263,7 +213,15 @@ final class DDayViewModel: ObservableObject {
             }
         }
     }
-    
+  
+//    private func fetchAllDDayData() async {
+//        await withTaskGroup(of: Void.self) { group in
+//            group.addTask { await self.loadAllImages() }
+//            group.addTask { await self.loadAllTexts() }
+//        }
+//        updateSortedAndGroupedDDays()
+//    }
+//    
 //    private func loadAllImages() async {
 //        for dDayItem in dDayItems {
 //            print(#function, dDayItem.title, "🔵 시작")
@@ -271,7 +229,7 @@ final class DDayViewModel: ObservableObject {
 //            print(#function, dDayItem.title, "🔴 종료")
 //        }
 //    }
-    
+//    
 //    private func loadAllTexts() async {
 //        for dDayItem in dDayItems {
 //            print(#function, dDayItem.title, "🔵 시작")
@@ -280,7 +238,9 @@ final class DDayViewModel: ObservableObject {
 //        }
 //    }
     
+    // MARK: - 디데이 계산 관련 메서드
     private func calculateDDay(from date: Date, type: DDayType, isLunar: Bool, startFromDayOne: Bool, repeatType: RepeatType) async -> String {
+        //네트워크 연결 상태 불안정 - 테스트
         //try? await Task.sleep(nanoseconds: 1_000_000_000)
         
         let calendar = Calendar.current
@@ -348,6 +308,8 @@ final class DDayViewModel: ObservableObject {
         return adjustedDate
     }
     
+    
+    // MARK: -  정렬 및 그룹화 관련 메서드
     private func sortDDays(_ dDays: [DDayItem], by option: SortOption) -> [DDayItem] {
         switch option {
         case .creationDate:
@@ -372,6 +334,7 @@ final class DDayViewModel: ObservableObject {
         return (text1.sortPriority, text1.absoluteValue, text1) < (text2.sortPriority, text2.absoluteValue, text2)
     }
     
+    // MARK: - 이미지 처리 관련 메서드
     private func saveImageIfNeeded(for dDay: DDay, image: UIImage?) {
         guard let image = image else { return }
         ImageDocumentManager.shared.saveImageToDocument(image: image, fileName: dDay.pk.stringValue)
