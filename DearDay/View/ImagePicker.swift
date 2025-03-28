@@ -62,7 +62,7 @@ struct ImagePicker: UIViewControllerRepresentable {
             let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
             guard let imageSource = CGImageSourceCreateWithData(data as CFData, imageSourceOptions) else { return nil }
             
-            let maxDimensionInPixels = min(size.width, size.height) * scale
+            let maxDimensionInPixels = max(size.width, size.height) * scale
             let downsampleOptions = [
                 kCGImageSourceCreateThumbnailFromImageAlways: true,
                 kCGImageSourceShouldCacheImmediately: true,
