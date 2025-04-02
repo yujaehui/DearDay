@@ -21,9 +21,10 @@
    - [프로토콜 기반 DI](#protocol-based-di)
 5. [🛠️ 기술 스택](#tech-stack)
 6. [🚀 트러블 슈팅](#troubleshooting)
-   - [효율적인 네트워크 활용을 위한 API 호출 제어 전략](#api-optimization)
-   - [다운샘플링으로 메모리 사용량 개선](#downsampling-and-temp-files)
-   - [Realm 객체 삭제 오류 해결: DTO 패턴을 활용한 안정적 데이터 처리](#realm-delete-error)
+   - [이미지 로드 및 음양력 계산의 비동기 로딩 병렬화](#troubleshooting1)
+   - [네트워크 모니터링 기반의 안정적인 API 요청 설계](#troubleshooting2)
+   - [이미지 다운샘플링으로 메모리 절약](#troubleshooting3)
+   - [DTO 패턴을 활용한 Realm 객체의 스레드 안전성 문제 해결](#troubleshooting4)
 7. [🗂️ 파일 디렉토리 구조](#file-structure)
 8. [🛣️ 향후 계획](#future-plans)
 
@@ -174,477 +175,87 @@
 
 <h1 id="troubleshooting">🚀 트러블 슈팅</h1>
 
-<h2 id="api-optimization">효율적인 네트워크 활용을 위한 API 호출 제어 전략</h2>
+<h2 id="troubleshooting1">이미지 로드 및 음양력 계산의 비동기 로딩 병렬화</h2>
 
-### **1. 문제 요약**
+### **1. 문제 정의**
 
-- **이슈 제목:** 네트워크 연결이 없는 상태에서 API 호출이 진행되는 문제
-- **발생 위치:** 음양력 계산 API 호출 (`fetchSolarDate`, `fetchSolarDateSync`)
-- **관련 컴포넌트:** `NetworkMonitor`, `APIService`, 네트워크 상태 확인
+- D-Day 리스트의 이미지 로드와 음양력 계산을 async/await 기반으로 구현했으나, for 루프 내에서 순차적으로 실행되면서 비동기 함수임에도 불구하고 동기적으로 작동하는 구조적 한계가 존재
+- 특히 음양력 계산은 네트워크 요청이 포함하고 있어, 연결이 불안정한 환경에서는 로딩될 때까지 최대 8초 이상 지연이 발생 
+- 이에 따라 UI 반영이 늦어지고, 사용자 경험이 크게 저하되는 문제가 나타남
 
-### **2. 문제 상세**
+### **2. 문제 해결**
 
-- **현상 설명:**
-네트워크 연결이 되어 있지 않은 상태에서도 음양력 계산 API 호출이 진행됨. 통신이 실패하기 때문에 데이터는 가져오지 못하지만, **불필요한 API 호출 시도**로 인해 콜 횟수가 증가함.
+- TaskGroup과 async let을 활용하여 이미지 로드와 음양력 계산을 병렬로 처리되도록 구조 개선
+- 각 D-Day 항목에 대해 이미지 로드와 음양력 계산을 동시에 수행하고, 결과는 MainActor에서 UI에 반영
+- OSLog와 Instruments를 사용해 성능 측정 및 병렬화 전후 비교 분석 수행
 
-### **3. 기존 코드 및 원인 분석**
+### **3. 결과**
 
-- **기존 코드:**
-    
-    ```swift
-    func fetchSolarDate(lunarDate: Date) async -> ResponseWrapper<Date> {
-        let year = calendar.component(.year, from: lunarDate)
-        let month = calendar.component(.month, from: lunarDate)
-        let day = calendar.component(.day, from: lunarDate)
-    
-        do {
-            let solarDateItems = try await fetchSolarDateItems(lunYear: year, lunMonth: month, lunDay: day)
-            if let solarItem = solarDateItems.first,
-               let convertedDate = calendar.date(from: DateComponents(year: Int(solarItem.solYear), month: Int(solarItem.solMonth), day: Int(solarItem.solDay))) {
-                return ResponseWrapper(data: convertedDate, error: nil)
-            }
-        } catch {
-            return ResponseWrapper(data: nil, error: .unknownError)
-        }
-    }
-    ```
-    
-- **원인 분석:**
-    - 네트워크 연결 여부를 확인하지 않고 API 호출(`fetchSolarDateItems`)을 진행.
+- 병렬 처리 적용으로 네트워크 연결 불안정 상황에서도 전체 평균 로딩 시간이 최대 8초 → 약 1초로 단축됨
+- 즉, 네트워크 상태와 관계없이 리스트 렌더링 속도가 안정적으로 유지되어, 초기 화면 진입 지연 문제 해소
+- 이미지 로드와 음양력 계산이 동시에 진행되어 UI 반영 속도 향상 및 사용자 경험 개선
+- Instruments와 OSLog를 통해 적용 전후 성능 데이터를 측정해 개선 효과를 수치로 검증
 
-### **4. 해결 방법 및 수정된 코드**
+<h2 id="troubleshooting2">네트워크 모니터링 기반의 안정적인 API 요청 설계</h2>
 
-- **해결 방법:**
-    - **`NetworkMonitor`를 활용한 네트워크 상태 확인:**
-        - `NetworkMonitor`를 사용해 네트워크 연결 상태를 실시간으로 확인.
-        - API 호출 전 연결 상태를 확인하여, 연결이 끊긴 경우 호출을 차단.
-    - **네트워크 연결 상태에 따른 API 호출 제어:**
-        - 연결되지 않은 경우 즉시 반환하며, 적절한 에러 메시지 전달.
-    - **통일된 에러 처리 구조:**
-        - 연결 상태와 관련된 에러(`networkUnavailable`)를 추가하여 호출부에서 처리 로직 간소화.
-- **수정된 코드:**
-    - **NetworkMonitor**
-    
-    ```swift
-    final class NetworkMonitor {
-        static let shared = NetworkMonitor()
-        private let monitor = NWPathMonitor()
-        private let queue = DispatchQueue.global()
-        @Published var isConnected: Bool = true
-    
-        private init() {
-            monitor.start(queue: queue)
-            monitor.pathUpdateHandler = { path in
-                DispatchQueue.main.async {
-                    self.isConnected = path.status == .satisfied
-                }
-            }
-        }
-    }
-    ```
-    
-    - **APIService**
-    
-    ```swift
-    final class APIService: APIServiceProtocol {
-        private let calendar = Calendar.current
-        private let serviceKey = APIKey.key
-        private let baseURL = "http://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService/getSolCalInfo"
-    
-        func fetchSolarDate(lunarDate: Date) async -> ResponseWrapper<Date> {
-            // 네트워크 상태 확인
-            guard NetworkMonitor.shared.isConnected else {
-                return ResponseWrapper(data: nil, error: .networkUnavailable)
-            }
-    
-            let year = calendar.component(.year, from: lunarDate)
-            let month = calendar.component(.month, from: lunarDate)
-            let day = calendar.component(.day, from: lunarDate)
-    
-            do {
-                let solarDateItems = try await fetchSolarDateItems(lunYear: year, lunMonth: month, lunDay: day)
-                if let solarItem = solarDateItems.first,
-                   let convertedDate = calendar.date(from: DateComponents(year: Int(solarItem.solYear), month: Int(solarItem.solMonth), day: Int(solarItem.solDay))) {
-                    return ResponseWrapper(data: convertedDate, error: nil)
-                }
-            } catch let error as APIServiceError {
-                return ResponseWrapper(data: nil, error: error)
-            } catch {
-                return ResponseWrapper(data: nil, error: .unknownError)
-            }
-    
-            return ResponseWrapper(data: nil, error: .unknownError)
-        }
-    }
-    ```
+### **1. 문제 정의**
 
-### **5. 결론**
+- 네트워크 연결이 끊긴 상태에서도 API 요청이 실행되어 불필요한 서버 호출이 발생하는 문제가 존재
+- 또한, 네트워크가 복구 후에도 자동으로 재시도되지 않아 데이터가 최신 상태로 동기화되지 않는 문제가 발생
+- 사용자가 앱을 재실행해야만 정상적인 네트워크 요청이 가능했으며, 이는 불편한 사용자 경험을 초래
 
-- **`NetworkMonitor` 활용:**
-    - 네트워크 연결 상태를 확인한 후, 연결되지 않은 경우 API 호출을 차단하여 불필요한 호출을 방지.
-    - 네트워크가 재연결될 때만 API 호출이 진행되도록 수정.
-- **통합된 에러 처리 구조:**
-    - 통합된 에러 처리 구조(`ResponseWrapper`)로 네트워크 관련 문제를 명확히 구분하여 호출부에서 간소화된 로직으로 처리 가능.
-- **최종 결과:**
-    - 불필요한 API 호출이 제거되어 서버 호출 횟수와 자원 낭비를 줄였으며, 네트워크 상태에 따른 유연한 처리로 앱의 안정성을 높임.
+### **2. 문제 해결**
 
-<h2 id="downsampling-and-temp-files">다운샘플링으로 메모리 사용량 개선</h2>
+- NWPathMonitor를 활용해 네트워크 상태를 실시간 감지하는 로직을 구현
+- 네트워크가 오프라인일 경우 요청을 시도하지 않고, 즉시 실패 메시지를 반환하여 불필요한 API 호출 차단
+- onReceive를 통해 뷰 단에서 네트워크 상태 변화를 감지하고, 복구 시 자동으로 요청을 재시도하도록 흐름 개선
 
-### **1. 문제 요약**
+### **3. 결과**
 
-- **이슈 제목:** 이미지 원본 사용으로 인한 메모리 사용량 급증 문제
-- **발생 위치:** `ImagePicker`를 통한 이미지 선택 및 로드
-- **관련 컴포넌트:** `PHPickerViewController`, `UIImage`, 메모리 최적화
+- 불필요한 서버 호출 제거로 네트워크 리소스 사용 최소화
+- 네트워크 복구 시 자동 동기화가 가능해져, 앱 재실행 없이도 최신 데이터 반영 가능
+- 사용자 입장에서 장애 상황에서도 자연스러운 흐름 유지, 앱 신뢰도 및 사용성 향상
 
-### **2. 문제 상세**
+<h2 id="troubleshooting3">이미지 다운샘플링으로 메모리 절약</h2>
 
-- **현상 설명:**
-    - `PHPickerViewController`를 통해 이미지를 선택하면 원본 이미지를 로드하여 사용하는 방식으로 구현.
-    - 이미지 변경 시 메모리 사용량이 급격히 증가하며, 특히 고해상도 이미지를 다룰 때 메모리 사용량이 급증하여 메모리 부족 문제가 발생할 가능성이 존재.
+### **1. 문제 정의**
 
-### **3. 원인 분석 및 기존 코드**
+- D-Day 등록 및 수정 과정에서 이미지 업로드 시, 고해상도 이미지를 그대로 로드하면 메모리 사용량이 급격히 증가
+- 예를 들어, 7680x4320 해상도의 이미지를 처리할 경우 원본 이미지를 그대로 디코딩하게 되면 메모리 사용량이 최대 175MB에 달하며 과도한 리소스 소모가 발생
+- 이에 따라 화면 전환 지연, 뷰 렌더링 지체 등 앱의 응답성 저하와 성능 저하 현상이 관찰됨
 
-- **기존 코드:**
-    
-    ```swift
-    class Coordinator: NSObject, PHPickerViewControllerDelegate {
-        let parent: ImagePicker
-    
-        init(_ parent: ImagePicker) {
-            self.parent = parent
-        }
-    
-        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-            picker.dismiss(animated: true)
-    
-            guard let provider = results.first?.itemProvider, provider.canLoadObject(ofClass: UIImage.self) else { return }
-    
-            provider.loadObject(ofClass: UIImage.self) { image, _ in
-                DispatchQueue.main.async {
-                    self.parent.selectedImage = image as? UIImage
-                }
-            }
-        }
-    }
-    ```
-    
-- **원인 분석:**
-    - `provider.loadObject(ofClass: UIImage.self)`를 통해 원본 이미지를 메모리에 로드.
-    - 고해상도 이미지를 사용하는 경우 메모리 사용량이 비효율적으로 증가.
+### **2. 문제 해결**
 
-### **4. 해결 방법 및 수정된 코드**
+- 이미지 디코딩 단계에서의 CGImageSourceCreateThumbnailAtIndex를 활용한 다운샘플링 기법 도입
+- 디코딩 이전의 이미지 크기 축소를 통한 메모리 로딩 최소화 및 불필요한 리소스 낭비 방지
 
-- **해결 방법:**
-    - **다운샘플링을 통한 메모리 최적화:**
-        - `CGImageSource`를 활용하여 이미지를 화면 크기에 맞게 다운샘플링.
-        - 필요 없는 메모리 사용을 줄이면서도, 화질 손상을 최소화.
-    - **동적 크기 조정 및 UI 연동:**
-        - 화면 크기에 따라 동적으로 이미지를 리사이징.
-        - 선택된 이미지는 다운샘플링된 결과로 UI에 전달.
-- **수정된 코드**
-    
-    ```swift
-    class Coordinator: NSObject, PHPickerViewControllerDelegate {
-        let parent: ImagePicker
-        let targetSize: CGSize
-        
-        init(_ parent: ImagePicker, targetSize: CGSize) {
-            self.parent = parent
-            self.targetSize = targetSize
-        }
-        
-        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-            picker.dismiss(animated: true)
-            
-            guard let provider = results.first?.itemProvider, provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) else {
-                parent.isImageSelected = false // 이미지가 선택되지 않은 경우
-                return
-            }
-            
-            provider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { [weak self] data, error in
-                guard let self = self, let data = data else {
-                    DispatchQueue.main.async {
-                        self?.parent.isImageSelected = false
-                    }
-                    return
-                }
-                
-                // 데이터를 직접 다운샘플링에 사용
-                DispatchQueue.global(qos: .utility).async {
-                    if let downsampledImage = self.downsampleImage(data: data, to: self.targetSize) {
-                        DispatchQueue.main.async {
-                            self.parent.isImageSelected = true
-                            self.parent.selectedImage = downsampledImage
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            self.parent.isImageSelected = false
-                        }
-                    }
-                }
-            }
-        }
-        
-        private func downsampleImage(data: Data, to pointSize: CGSize) -> UIImage? {
-            let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
-            guard let imageSource = CGImageSourceCreateWithData(data as CFData, imageSourceOptions) else {
-                return nil
-            }
-            
-            let maxDimensionInPixels = max(pointSize.width, pointSize.height)
-            let downsampleOptions = [
-                kCGImageSourceCreateThumbnailFromImageAlways: true,
-                kCGImageSourceShouldCacheImmediately: true,
-                kCGImageSourceCreateThumbnailWithTransform: true,
-                kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels
-            ] as CFDictionary
-            
-            guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions) else {
-                return nil
-            }
-            
-            return UIImage(cgImage: downsampledImage)
-        }
-    }
-    ```
+### **3. 결과**
 
-### 5. 메모리 사용량 비교
+- 동일 해상도의 이미지에 대해 다운샘플링 적용 시 메모리 사용량이 175MB → 49.8MB로 약 71.5% 감소
+- 메모리 절감으로 인해 화면 전환 및 렌더링 지연 현상 해소, 앱의 전체적인 안정성과 반응 속도 향상
+- 고해상도 이미지 사용 환경에서도 일관된 사용자 경험 유지 가능
 
-- **다운샘플링 적용 전**
-<img src="https://github.com/user-attachments/assets/f092c510-3fb8-4873-8471-3ee50dc99ca5" width="600">
+<h2 id="troubleshooting4">DTO 패턴을 활용한 Realm 객체의 스레드 안전성 문제 해결</h2>
 
-- **다운샘플링 적용 후**
-<img src="https://github.com/user-attachments/assets/ba242a6d-b5f7-4109-9175-820f56000cf9" width="600">
+### **1. 문제 정의**
 
-### **6. 결론**
+- D-Day 객체를 삭제할 때, 'Object has been deleted or invalidated.' 오류가 발생
+- Realm에서 객체를 삭제하면 해당 객체는 무효화(invalidated) 되는데, 뷰에서는 삭제된 객체를 참조하고 있기 때문에 발생
+- 또한 D-Day 객체의 네트워크 요청이 비동기로 실행되면서, 'Realm accessed from incorrect thread.' 오류가 발생
+- Realm 객체는 생성된 스레드에서만 접근이 가능한데, 객체에 대한 네트워크 요청이 백그라운드 스레드에서 실행되면서 충돌
 
-- **다운샘플링 적용:**
-    - 원본 이미지 사용으로 인한 메모리 급증 문제를 해결.
-    - `CGImageSource`를 활용해 메모리 효율적인 이미지 처리가 가능해짐.
-- **최적화된 메모리 사용:**
-    - 다운샘플링된 이미지를 UI에 전달하여 메모리 사용량을 효과적으로 줄임.
-    - 고해상도 이미지 사용 시에도 앱 성능 저하를 방지.
-- **최종 결과:**
-    - 이미지 변경 시 메모리 사용량이 안정적으로 관리되며, 사용자 경험이 개선됨.
+### **2. 문제 해결**
 
-<h2 id="realm-delete-error">Realm 객체 삭제 오류 해결: DTO 패턴을 활용한 안정적 데이터 처리</h2>
+- Realm 객체를 직접 사용하지 않고 DTO (Data Transfer Object) 패턴을 도입하여 Struct로 데이터 관리
+- Realm 객체가 삭제되더라도 뷰에서 직접 참조하지 않아, 데이터 무효화 문제를 방지하고 앱의 신뢰성을 향상
+- 또한, DTO는 Realm과 독립적인 값 타입이므로 스레드 간 제약 없이 활용 가능
+- 네트워크 요청 등 비동기 처리에서도 DTO를 사용해 스레드 충돌 없이 안정적인 데이터 처리 구현
 
-### **1. 문제 요약**
+### **3. 결과**
 
-- **이슈 제목:** Realm 객체 삭제 시 `'Object has been deleted or invalidated'` 오류 발생
-- **발생 위치:** `DDay` 객체 삭제 및 뷰 업데이트 시
-- **관련 컴포넌트:** Realm, SwiftUI, `DDay` 모델
-
-### **2. 문제 상세**
-
-- **현상 설명:**
-    - Realm에 저장된 `DDay` 객체를 Realm에서 삭제하려고 시도하면 런타임 오류가 발생.
-    - Realm 객체인 DDay를 뷰에서 직접 참조하여 사용했기에, 삭제된 Realm 객체를 여전히 뷰가 접근하거나 뷰 모델이 참조를 유지하고 있었음
-- **에러 메시지:**
-    
-    ```swift
-    *** Terminating app due to uncaught exception 'RLMException', reason: 'Object has been deleted or invalidated.'
-    ```
-    
-- **에러 분석:**
-    - Realm 객체를 삭제하거나 무효화된 상태에서 다시 접근하려고 할 때 발생.
-
-### **3. 기존 코드 및 원인 분석**
-
-- **기존 코드:**
-    - **DDayViewModel**
-    
-    ```swift
-    @MainActor
-    final class DDayViewModel: ObservableObject {
-        @Published var dDays: [DDay] = []
-    
-        private let repository: DDayRepositoryProtocol
-    
-        init(repository: DDayRepositoryProtocol) {
-            self.repository = repository
-            fetchDDay()
-        }
-    
-        func fetchDDay() {
-            dDays = repository.fetchItem()
-        }
-    
-        func deleteDDay(dDay: DDay) {
-            repository.deleteItem(dDay)
-            fetchDDay()
-        }
-    }
-    ```
-    
-    - **DDayDetailView**
-    
-    ```swift
-    struct DDayDetailView: View {
-        var dDay: DDay
-        @ObservedObject var viewModel: DDayViewModel
-        
-        @State private var isPresentedAnniversaryView: Bool = false
-        @State private var isPresentedEditDDayView: Bool = false
-        @State private var isPresentedDeleteAlert = false
-        
-        @Environment(\.dismiss) private var dismiss
-        
-        var body: some View {
-            NavigationStack {
-                DDayImageCardView(
-                    dDay: dDay,
-                    dDayText: viewModel.dDayText[dDay.pk] ?? "Loading...",
-                    dDayImage: viewModel.dDayImage[dDay.pk] ?? nil
-                )
-                .toolbar {
-                    ToolbarContent()
-                }
-                .sheet(isPresented: $isPresentedAnniversaryView) {
-                    AnniversaryView(dDay: dDay)
-                        .presentationDetents([.medium])
-                }
-                .sheet(isPresented: $isPresentedEditDDayView) {
-                    EditDDayView(dDay: dDay, viewModel: viewModel)
-                }
-                .alert("해당 디데이를 삭제하시겠습니까?", isPresented: $isPresentedDeleteAlert) {
-                    Button("취소", role: .cancel) { }
-                    Button("삭제", role: .destructive) {
-                        viewModel.deleteDDay(dDay: dDay)
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-    ```
-    
-- **원인 분석:**
-    - 뷰에서 Realm 객체를 직접 SwiftUI 뷰에 바인딩하거나 접근하면, 해당 객체가 삭제되었을 때에도 뷰나 다른 컴포넌트에서 접근하려고 시도하면서 예외가 발생.
-
-### **4. 해결 방법 및 수정된 코드**
-
-- **해결 방법:**
-    - **Realm 객체를 뷰에서 직접 다루지 않음:**
-        - Realm 객체와 동일한 형태의 **DTO (Data Transfer Object)**를 생성함. 
-        `DDayItem`을 만들어 뷰에서는 이 객체를 사용하도록 수정.
-    - **뷰 모델에서 Realm 객체를 DTO로 변환:**
-        - `DDay` 객체를 DTO인 `DDayItem`으로 변환하여 뷰에 전달.
-        - Realm 객체의 상태 변경과 무관하게 뷰에서 안전하게 데이터를 사용할 수 있도록 함.
-- **수정된 코드:**
-    - **DDay 모델 (Realm 객체)**
-    
-    ```swift
-    final class DDay: Object, ObjectKeyIdentifiable {
-        @Persisted(primaryKey: true) var pk: ObjectId
-        @Persisted var type: DDayType
-        @Persisted var title: String
-        @Persisted var date: Date
-        @Persisted var isLunarDate: Bool
-        @Persisted var convertedSolarDateFromLunar: Date?
-    }
-    ```
-    
-    - **DTO 구조체 (Realm 객체와 분리된 데이터)**
-    
-    ```swift
-    struct DDayItem {
-        let pk: String
-        let type: DDayType
-        let title: String
-        let date: Date
-        let isLunarDate: Bool
-        let convertedSolarDateFromLunar: Date?
-    
-        // Realm 객체에서 DTO 생성
-        init(from dDay: DDay) {
-            self.pk = dDay.pk.stringValue
-            self.type = dDay.type
-            self.title = dDay.title
-            self.date = dDay.date
-            self.isLunarDate = dDay.isLunarDate
-            self.convertedSolarDateFromLunar = dDay.convertedSolarDateFromLunar
-        }
-    }
-    ```
-    
-    - **뷰 모델 (Realm 객체를 DTO로 변환)**
-    
-    ```swift
-    @MainActor
-    final class DDayViewModel: ObservableObject {
-        @Published var dDayItems: [DDayItem] = []
-    
-        private let repository: DDayRepositoryProtocol
-    
-        init(repository: DDayRepositoryProtocol) {
-            self.repository = repository
-            fetchDDay()
-        }
-    
-        func fetchDDay() {
-            let dDays = repository.fetchItem()
-            dDayItems = dDays.map { DDayItem(from: $0) } // DTO로 변환
-        }
-    
-        func deleteDDay(dDayItem: DDayItem) {
-            guard let dDay = repository.fetchItem().first(where: { $0.pk.stringValue == dDayItem.pk }) else { return }
-            repository.deleteItem(dDay) // Realm에서 삭제
-            fetchDDay() // DTO 리스트 갱신
-        }
-    }
-    ```
-    
-    - **SwiftUI 뷰에서 DTO 사용**
-    
-    ```swift
-    struct DDayDetailView: View {
-        var dDayItem: DDayItem
-        @ObservedObject var viewModel: DDayViewModel
-        
-        @State private var isPresentedAnniversaryView: Bool = false
-        @State private var isPresentedEditDDayView: Bool = false
-        @State private var isPresentedDeleteAlert = false
-        
-        @Environment(\.dismiss) private var dismiss
-        
-        var body: some View {
-            NavigationStack {
-                DDayImageCardView(
-                    dDayItem: dDayItem,
-                    dDayText: viewModel.dDayText[dDayItem.pk] ?? "Loading...",
-                    dDayImage: viewModel.dDayImage[dDayItem.pk] ?? nil
-                )
-                .toolbar {
-                    ToolbarContent()
-                }
-                .sheet(isPresented: $isPresentedAnniversaryView) {
-                    AnniversaryView(dDayItem: dDayItem)
-                        .presentationDetents([.medium])
-                }
-                .sheet(isPresented: $isPresentedEditDDayView) {
-                    EditDDayView(dDayItem: dDayItem, viewModel: viewModel)
-                }
-                .alert("해당 디데이를 삭제하시겠습니까?", isPresented: $isPresentedDeleteAlert) {
-                    Button("취소", role: .cancel) { }
-                    Button("삭제", role: .destructive) {
-                        viewModel.deleteDDay(dDayItem: dDayItem)
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-    ```
-
-### **5. 결론**
-
-- **Realm 객체 직접 참조 제거:**
-    - 뷰에서 Realm 객체를 직접 참조하지 않고 DTO(`DDayItem`)로 변환하여 사용하도록 수정.
-- **안정적인 데이터 처리:**
-    - Realm 객체 삭제 시에도 뷰와 뷰 모델은 DTO를 사용하기 때문에 예외가 발생하지 않음.
-- **최종 결과:**
-    - 해당 오류가 해결되었으며, Realm 객체와 UI 컴포넌트 간의 강한 의존성을 제거하여 코드 안정성과 유지보수성을 높임.
+- Realm 객체 삭제 후에도 뷰와의 참조 충돌 없이 앱 크래시 없이 안정적인 동작 유지
+- 백그라운드 스레드에서도 DTO를 통해 데이터 전달이 원활하게 처리, 스레드 충돌 문제 해결
+- Realm 데이터 흐름의 스레드 안전성과 신뢰성 확보, 전반적인 구조 안정성 향상
 
 ---
 
