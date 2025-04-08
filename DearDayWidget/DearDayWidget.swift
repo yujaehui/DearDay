@@ -157,7 +157,7 @@ struct SmallWidgetView: View {
                 .padding()
             }
             .background {
-                Image(uiImage: image)
+                Image(uiImage: image.resized(to: 800))
                     .resizable()
                     .scaledToFill()
                     .clipped()
@@ -213,7 +213,7 @@ struct MediumAndLargeWidgetView: View {
                 .padding()
             }
             .background {
-                Image(uiImage: image)
+                Image(uiImage: image.resized(to: 900))
                     .resizable()
                     .scaledToFill()
                     .clipped()
@@ -261,3 +261,21 @@ struct DearDayWidget: Widget {
     }
 }
 
+// FIXME: 위젯 이미지 사이즈 조절
+extension UIImage {
+    func resized(to newWidth: CGFloat) -> UIImage {
+        let scale = newWidth / self.size.width
+        let newHeight = self.size.height * scale
+        let newSize = CGSize(width: newWidth, height: newHeight)
+        
+        let format = imageRendererFormat
+        format.opaque = true
+        
+        let resized = UIGraphicsImageRenderer(size: newSize, format: format)
+        let resizedImage = resized.image { context in
+            self.draw(in: CGRect(origin: .zero, size: newSize))
+        }
+        
+        return resizedImage
+    }
+}

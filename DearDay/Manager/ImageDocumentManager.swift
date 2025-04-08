@@ -15,7 +15,7 @@ final class ImageDocumentManager {
     func saveImageToDocument(image: UIImage, fileName: String) {
         guard let documentDirectory = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroupID.id) else { return }
         let fileURL = documentDirectory.appendingPathComponent("\(fileName).jpg")
-        guard let data = image.jpegData(compressionQuality: 1) else { return }
+        guard let data = image.pngData() else { return }
         do {
             try data.write(to: fileURL)
         } catch {

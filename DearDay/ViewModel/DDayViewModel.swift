@@ -72,41 +72,24 @@ final class DDayViewModel: ObservableObject {
 
     func fetchDDay() {
         print("♻️FETCH♻️")
-        os_signpost(.begin, log: logger, name: "fetchDDay")
         
         let dDays = repository.fetchItem()
         dDayItems = dDays.map { DDayItem(from: $0) }
         
         Task {
-            os_signpost(.begin, log: logger, name: "fetchAllDDayData")
             async let fetchData: () = fetchAllDDayData()
-            
-            os_signpost(.begin, log: logger, name: "scheduleYearlyLunarNotifications")
             async let yearlyLunarNotifications: () = NotificationManager.shared.scheduleYearlyRepeatingLunarDdayNotification(for: dDayItems)
-            
-            os_signpost(.begin, log: logger, name: "scheduleHundredDayNotifications")
             async let hundredDayNotifications: () = NotificationManager.shared.scheduleHundredDayNotifications(for: dDayItems)
-            
-            os_signpost(.begin, log: logger, name: "scheduleYearlyNotifications")
             async let yearlyNotifications: () = NotificationManager.shared.scheduleYearlyNotifications(for: dDayItems)
 
             // 모든 비동기 작업이 끝날 때까지 대기
             await fetchData
-            os_signpost(.end, log: logger, name: "fetchAllDDayData")
-            
             await yearlyLunarNotifications
-            os_signpost(.end, log: logger, name: "scheduleYearlyLunarNotifications")
-            
             await hundredDayNotifications
-            os_signpost(.end, log: logger, name: "scheduleHundredDayNotifications")
-            
             await yearlyNotifications
-            os_signpost(.end, log: logger, name: "scheduleYearlyNotifications")
             
-            // 🔥 모든 데이터 패치 후 정렬 및 그룹화 실행
+            // 모든 데이터 패치 후 정렬 및 그룹화 실행
             updateSortedAndGroupedDDays()
-            
-            os_signpost(.end, log: logger, name: "fetchDDay")
         }
     }
 
@@ -168,15 +151,13 @@ final class DDayViewModel: ObservableObject {
         await withTaskGroup(of: (String, UIImage?)?.self) { group in
             for dDayItem in dDayItems {
                 group.addTask {
-                    //print(#function, dDayItem.title, "🔵 시작")
                     let image = await ImageDocumentManager.shared.loadImageFromDocument(fileName: dDayItem.pk)
-                    //print(#function, dDayItem.title, "🔴 종료")
                     return (dDayItem.pk, image)
                 }
             }
             
             var newDDayImage: [String : UIImage?] = [:]
-            
+
             for await result in group {
                 if let (pk, image) = result {
                     newDDayImage[pk] = image
@@ -193,9 +174,7 @@ final class DDayViewModel: ObservableObject {
         await withTaskGroup(of: (String, String)?.self) { group in
             for dDayItem in dDayItems {
                 group.addTask {
-                    //print(#function, dDayItem.title, "🔵 시작")
-                    let text = await self.calculateDDay(from: dDayItem.date, type: dDayItem.type, isLunar: dDayItem.isLunarDate, startFromDayOne: dDayItem.startFromDayOne, repeatType: dDayItem.repeatType)
-                    //print(#function, dDayItem.title, "🔴 종료")
+                    let text = await self.calculateDDay(dDayItem)
                     return (dDayItem.pk, text)
                 }
             }
@@ -213,41 +192,29 @@ final class DDayViewModel: ObservableObject {
             }
         }
     }
-  
-//    private func fetchAllDDayData() async {
-//        await withTaskGroup(of: Void.self) { group in
-//            group.addTask { await self.loadAllImages() }
-//            group.addTask { await self.loadAllTexts() }
-//        }
-//        updateSortedAndGroupedDDays()
-//    }
-//    
+    
 //    private func loadAllImages() async {
 //        for dDayItem in dDayItems {
-//            print(#function, dDayItem.title, "🔵 시작")
 //            dDayImage[dDayItem.pk] = await ImageDocumentManager.shared.loadImageFromDocument(fileName: dDayItem.pk)
-//            print(#function, dDayItem.title, "🔴 종료")
 //        }
 //    }
-//    
+    
 //    private func loadAllTexts() async {
 //        for dDayItem in dDayItems {
-//            print(#function, dDayItem.title, "🔵 시작")
-//            dDayText[dDayItem.pk] = await calculateDDay(from: dDayItem.date, type: dDayItem.type, isLunar: dDayItem.isLunarDate, startFromDayOne: dDayItem.startFromDayOne, repeatType: dDayItem.repeatType)
-//            print(#function, dDayItem.title, "🔴 종료")
+//            dDayText[dDayItem.pk] = await calculateDDay(dDayItem)
 //        }
 //    }
     
     // MARK: - 디데이 계산 관련 메서드
-    private func calculateDDay(from date: Date, type: DDayType, isLunar: Bool, startFromDayOne: Bool, repeatType: RepeatType) async -> String {
+    private func calculateDDay(_ dDayItem: DDayItem) async -> String {
         //네트워크 연결 상태 불안정 - 테스트
         //try? await Task.sleep(nanoseconds: 1_000_000_000)
         
         let calendar = Calendar.current
-        var adjustedDate = date
+        var adjustedDate = dDayItem.date
         
-        if isLunar {
-            let result = await fetchClosestSolarDate(from: date, repeatType: repeatType)
+        if dDayItem.isLunarDate {
+            let result = await fetchClosestSolarDate(from: dDayItem.date, repeatType: dDayItem.repeatType)
             if let closestLunarDate = result.0 {
                 adjustedDate = closestLunarDate
             } else if let errorMessage = result.1 {
@@ -255,11 +222,11 @@ final class DDayViewModel: ObservableObject {
             }
         }
         
-        if !isLunar && adjustedDate < Date() {
-            adjustedDate = await adjustDateForRepeatType(date: adjustedDate, repeatType: repeatType, calendar: calendar)
+        if !dDayItem.isLunarDate && adjustedDate < Date() {
+            adjustedDate = await adjustDateForRepeatType(date: adjustedDate, repeatType: dDayItem.repeatType, calendar: calendar)
         }
                 
-        return DateFormatterManager.shared.calculateDDayString(from: adjustedDate, type: type, startFromDayOne: startFromDayOne, calendar: calendar)
+        return DateFormatterManager.shared.calculateDDayString(from: adjustedDate, type: dDayItem.type, startFromDayOne: dDayItem.startFromDayOne, calendar: calendar)
     }
     
     private func fetchClosestSolarDate(from date: Date, repeatType: RepeatType) async -> (Date?, String?) {
