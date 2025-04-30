@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageEditorView: View {
-    @Binding var selectedImage: UIImage? // 선택된 이미지
+    var selectedImage: UIImage? // 선택된 이미지
     var onComplete: ((UIImage?) -> Void)? // 완료 시 호출되는 클로저
     var onCancel: (() -> Void)? // 취소 시 호출되는 클로저
     

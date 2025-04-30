@@ -20,13 +20,12 @@ struct EditDDayView: View {
     @State var startFromDayOne: Bool
     @State var isRepeatOn: Bool
     @State var repeatType: RepeatType
-    @State var selectedImage: UIImage?
-    @State var editedImage: UIImage?
     
-    @State private var isPresentedImagePicker = false
-    @State private var isImageSelected = false
+    @State private var selectedItem: PhotosPickerItem?
+    @State private var selectedImage: UIImage?
+    @State private var editedImage: UIImage?
+    
     @State private var isPresentedImageEditorView = false
-
     @State private var isPresentedErrorAlert = false
     @State private var alertMessage = ""
     
@@ -65,22 +64,16 @@ struct EditDDayView: View {
                     }
                 }
             }
-            .sheet(isPresented: $isPresentedImagePicker) {
-                ImagePicker(selectedImage: $selectedImage, isImageSelected: $isImageSelected)
-                    .ignoresSafeArea()
-                    .onDisappear {
-                        isPresentedImageEditorView = isImageSelected ? true : false
-                        isImageSelected = false
-                    }
-            }
             .fullScreenCover(isPresented: $isPresentedImageEditorView) {
                 ImageEditorView(
-                    selectedImage: $selectedImage,
+                    selectedImage: selectedImage,
                     onComplete: { editedImage in
+                        self.selectedImage = nil
                         self.editedImage = editedImage
                         isPresentedImageEditorView = false
                     },
                     onCancel: {
+                        self.selectedImage = nil
                         isPresentedImageEditorView = false
                     }
                 )
@@ -93,12 +86,18 @@ struct EditDDayView: View {
                     viewModel.updateLunarDate(lunarDate: selectedDate)
                 }
             }
+            .onChange(of: selectedItem) { newItem in
+                Task {
+                    await loadImage(from: newItem)
+                }
+            }
             .background(.background)
         }
     }
 }
 
 private extension EditDDayView {
+    // MARK: - Title Section
     var titleSection: some View {
         Section {
             TextField("제목을 입력하세요", text: $title)
@@ -106,7 +105,8 @@ private extension EditDDayView {
                 .focused($isTitleFieldFocused)
         }
     }
-
+    
+    // MARK: - Date Section
     var dateSection: some View {
         Section {
             Text("\(DateFormatterManager.shared.formatDate(selectedDate))\(isLunarDate ? " (음력)" : "")")
@@ -133,6 +133,7 @@ private extension EditDDayView {
         .listRowBackground(Color.clear)
     }
     
+    // MARK: - Option Section
     var optionSection: some View {
         Section {
             Toggle("음력", isOn: $isLunarDate)
@@ -160,11 +161,14 @@ private extension EditDDayView {
         }
     }
     
+    // MARK: - Image Section
     var imageSection: some View {
         Section {
-            Button {
-                isPresentedImagePicker = true
-            } label: {
+            PhotosPicker(
+                selection: $selectedItem,
+                matching: .images,
+                photoLibrary: .shared()
+            ) {
                 HStack {
                     Text("이미지 선택")
                     Spacer()
@@ -193,7 +197,8 @@ private extension EditDDayView {
         }
     }
     
-    func validateAndEditDDay()  {
+    // MARK: - Validate and Edit D-Day
+    func validateAndEditDDay() {
         if title.isEmpty {
             alertMessage = "제목을 입력하세요."
             isPresentedErrorAlert = true
@@ -201,7 +206,7 @@ private extension EditDDayView {
         }
         
         if isLunarDate && viewModel.solarDate == nil,
-            let errorMessage = viewModel.errorMessage {
+           let errorMessage = viewModel.errorMessage {
             alertMessage = errorMessage
             isPresentedErrorAlert = true
             return
@@ -220,5 +225,42 @@ private extension EditDDayView {
         
         viewModel.editDDay(dDayItem: dDayItem, updatedDDay: updatedDDay, image: editedImage)
         dismiss()
+    }
+    
+    // MARK: - Load Image
+    private func loadImage(from item: PhotosPickerItem?) async {
+        guard let item = item else { return }
+        
+        do {
+            if let data = try await item.loadTransferable(type: Data.self) {
+                selectedImage = downsampleImage(data: data)
+                if selectedImage != nil {
+                    isPresentedImageEditorView = true
+                }
+            }
+        } catch {
+            print("error: \(error)")
+        }
+        
+        selectedItem = nil
+    }
+    
+    private func downsampleImage(data: Data,
+                                 to size: CGSize = UIScreen.main.bounds.size,
+                                 scale: CGFloat = UIScreen.main.scale) -> UIImage? {
+        let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+        guard let imageSource = CGImageSourceCreateWithData(data as CFData, imageSourceOptions) else { return nil }
+        
+        let maxDimensionInPixels = max(size.width, size.height) * scale
+        let downsampleOptions = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceShouldCacheImmediately: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels
+        ] as CFDictionary
+        
+        guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions) else { return nil }
+        
+        return UIImage(cgImage: downsampledImage)
     }
 }
