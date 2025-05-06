@@ -33,6 +33,23 @@ final class ImageDocumentManager {
         }
     }
     
+    func loadImageFromDocument(fileName: String, maxPixelSize: CGFloat) -> UIImage? {
+        guard let documentDirectory = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroupID.id) else { return nil }
+        let fileURL = documentDirectory.appendingPathComponent("\(fileName).jpg")
+        
+        guard FileManager.default.fileExists(atPath: fileURL.path),
+              let imageSource = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else { return nil }
+
+        let options: [CFString: Any] = [
+            kCGImageSourceThumbnailMaxPixelSize: maxPixelSize,
+            kCGImageSourceCreateThumbnailFromImageAlways: true
+        ]
+
+        guard let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary) else { return nil }
+
+        return UIImage(cgImage: cgImage)
+    }
+    
     func loadImageFromDocument(fileName: String) async -> UIImage? {
         guard let documentDirectory = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroupID.id) else { return nil }
         let fileURL = documentDirectory.appendingPathComponent("\(fileName).jpg")
@@ -45,7 +62,6 @@ final class ImageDocumentManager {
             }
         }.value
     }
-
     
     func removeImageFromDocument(fileName: String) {
         guard let documentDirectory = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: AppGroupID.id) else { return }

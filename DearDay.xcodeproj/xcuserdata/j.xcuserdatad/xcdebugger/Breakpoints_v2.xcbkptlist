@@ -55,33 +55,49 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "07E20D74-7EA4-4948-AA9C-CCD9D19C38AE"
-            shouldBeEnabled = "No"
+            uuid = "A8D6578D-3649-41E1-A6F1-119B1A113FF9"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "DearDayWidget/DearDayWidget.swift"
+            filePath = "DearDayWidget/DearDayWidgetBundle.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "272"
-            endingLineNumber = "272"
-            landmarkName = "resized(to:)"
+            startingLineNumber = "14"
+            endingLineNumber = "14"
+            landmarkName = "init()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "38E6E327-C018-4AA6-BFC6-5DD77C6FFF66"
+            uuid = "46EA460F-4B9E-452C-B0BC-753B50183A49"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "DearDay/View/ImageEditorView.swift"
+            filePath = "DearDayWidget/AppIntent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "11"
-            endingLineNumber = "11"
-            landmarkName = "ImageEditorView"
-            landmarkType = "14">
+            startingLineNumber = "150"
+            endingLineNumber = "150"
+            landmarkName = "entities(for:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BFE88755-C74F-441D-ABA1-C2CD1C34A042"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "DearDayWidget/AppIntent.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "157"
+            endingLineNumber = "157"
+            landmarkName = "suggestedEntities()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

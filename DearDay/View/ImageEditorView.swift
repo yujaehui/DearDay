@@ -158,7 +158,7 @@ private extension ImageEditorView {
             .onChanged { value in
                 isInteracting = true
                 isGridAppear = true
-                scale = max(0.5, lastScale * value)
+                scale = max(1, lastScale * value)
             }
             .onEnded { _ in
                 withAnimation(.easeInOut(duration: 0.2)) {

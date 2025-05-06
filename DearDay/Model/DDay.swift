@@ -8,12 +8,12 @@
 import Foundation
 import RealmSwift
 
-enum DDayType: String, CaseIterable, PersistableEnum {
+enum DDayType: String, CaseIterable, PersistableEnum, Codable {
     case dDay = "D-DAY"
     case numberOfDays = "날짜 수"
 }
 
-enum RepeatType: String, CaseIterable, PersistableEnum {
+enum RepeatType: String, CaseIterable, PersistableEnum, Codable {
     case none
     case month = "매월"
     case year = "매년"
@@ -50,7 +50,7 @@ final class DDay: Object, ObjectKeyIdentifiable {
     }
 }
 
-struct DDayItem {
+struct DDayItem: Codable {
     let pk: String
     let type: DDayType
     let title: String

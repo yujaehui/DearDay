@@ -76,6 +76,8 @@ final class DDayViewModel: ObservableObject {
         let dDays = repository.fetchItem()
         dDayItems = dDays.map { DDayItem(from: $0) }
         
+        DDayAppGroupStorage.save(dDayItems)
+        
         Task {
             async let fetchData: () = fetchAllDDayData()
             async let yearlyLunarNotifications: () = NotificationManager.shared.scheduleYearlyRepeatingLunarDdayNotification(for: dDayItems)

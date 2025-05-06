@@ -18,7 +18,6 @@
 		093160E22CF6E6840074CDB7 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 093160E12CF6E6840074CDB7 /* RealmSwift */; };
 		093160E42CF6E72C0074CDB7 /* DateFormatterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C992CBE3EC400F824D7 /* DateFormatterManager.swift */; };
 		093160E52CF6E72F0074CDB7 /* ImageDocumentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58EA2CD35E3F00EC3531 /* ImageDocumentManager.swift */; };
-		093160E62CF6E7310074CDB7 /* AppGroupID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0966B1672CE7373600C38430 /* AppGroupID.swift */; };
 		093160E72CF6E7340074CDB7 /* RealmConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0966B15D2CE72EA900C38430 /* RealmConfiguration.swift */; };
 		093160E82CF6E7360074CDB7 /* DDayRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58E62CD35A0C00EC3531 /* DDayRepository.swift */; };
 		093160E92CF6E7380074CDB7 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38CB02CBFBA7B00F824D7 /* APIKey.swift */; };
@@ -36,6 +35,14 @@
 		093160FD2CF84C7F0074CDB7 /* RowStyleViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093160F72CF846B90074CDB7 /* RowStyleViewModifier.swift */; };
 		093160FE2CF84C800074CDB7 /* RowStyleViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093160F72CF846B90074CDB7 /* RowStyleViewModifier.swift */; };
 		093161002CF84DF20074CDB7 /* FormStyleViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093160FF2CF84DF20074CDB7 /* FormStyleViewModifier.swift */; };
+		094664232DCA7735004A8105 /* AppGroupID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094664222DCA7735004A8105 /* AppGroupID.swift */; };
+		094664242DCA77BC004A8105 /* AppGroupID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094664222DCA7735004A8105 /* AppGroupID.swift */; };
+		094664252DCA77BC004A8105 /* AppGroupID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094664222DCA7735004A8105 /* AppGroupID.swift */; };
+		094664262DCA77BC004A8105 /* AppGroupID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094664222DCA7735004A8105 /* AppGroupID.swift */; };
+		094664292DCA787B004A8105 /* DDayAppGroupStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094664282DCA787B004A8105 /* DDayAppGroupStorage.swift */; };
+		0946642A2DCA78A6004A8105 /* DDayAppGroupStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094664282DCA787B004A8105 /* DDayAppGroupStorage.swift */; };
+		0946642B2DCA78A6004A8105 /* DDayAppGroupStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094664282DCA787B004A8105 /* DDayAppGroupStorage.swift */; };
+		0946642C2DCA78A6004A8105 /* DDayAppGroupStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094664282DCA787B004A8105 /* DDayAppGroupStorage.swift */; };
 		095B58DB2CD2346600EC3531 /* AddDDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58DA2CD2346600EC3531 /* AddDDayView.swift */; };
 		095B58DD2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58DC2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift */; };
 		095B58E12CD3550000EC3531 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 095B58E02CD3550000EC3531 /* Realm */; };
@@ -62,8 +69,6 @@
 		0966B1642CE7344400C38430 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38CB62CBFC20600F824D7 /* APIService.swift */; };
 		0966B1652CE7344600C38430 /* SolarDateXMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38CB42CBFBF3500F824D7 /* SolarDateXMLParser.swift */; };
 		0966B1662CE7344800C38430 /* SolarDataItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38CB22CBFBF2700F824D7 /* SolarDataItem.swift */; };
-		0966B1682CE7373600C38430 /* AppGroupID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0966B1672CE7373600C38430 /* AppGroupID.swift */; };
-		0966B1692CE7378000C38430 /* AppGroupID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0966B1672CE7373600C38430 /* AppGroupID.swift */; };
 		0966B16A2CE7393B00C38430 /* DateFormatterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C992CBE3EC400F824D7 /* DateFormatterManager.swift */; };
 		0966B16B2CE9CE5500C38430 /* ImageDocumentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58EA2CD35E3F00EC3531 /* ImageDocumentManager.swift */; };
 		0966B1712CE9F82B00C38430 /* DDayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0966B1702CE9F82B00C38430 /* DDayViewModel.swift */; };
@@ -87,7 +92,6 @@
 		09BC12152D00548D00B18BA2 /* RowStyleViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093160F72CF846B90074CDB7 /* RowStyleViewModifier.swift */; };
 		09BC12162D00549200B18BA2 /* DateFormatterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38C992CBE3EC400F824D7 /* DateFormatterManager.swift */; };
 		09BC12172D00549400B18BA2 /* ImageDocumentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58EA2CD35E3F00EC3531 /* ImageDocumentManager.swift */; };
-		09BC12182D00549900B18BA2 /* AppGroupID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0966B1672CE7373600C38430 /* AppGroupID.swift */; };
 		09BC12192D00549B00B18BA2 /* RealmConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0966B15D2CE72EA900C38430 /* RealmConfiguration.swift */; };
 		09BC121A2D00549C00B18BA2 /* DDayRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095B58E62CD35A0C00EC3531 /* DDayRepository.swift */; };
 		09BC121B2D00549F00B18BA2 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F38CB02CBFBA7B00F824D7 /* APIKey.swift */; };
@@ -171,6 +175,8 @@
 		093160F72CF846B90074CDB7 /* RowStyleViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowStyleViewModifier.swift; sourceTree = "<group>"; };
 		093160F92CF847E30074CDB7 /* MainStyleViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainStyleViewModifier.swift; sourceTree = "<group>"; };
 		093160FF2CF84DF20074CDB7 /* FormStyleViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormStyleViewModifier.swift; sourceTree = "<group>"; };
+		094664222DCA7735004A8105 /* AppGroupID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroupID.swift; sourceTree = "<group>"; };
+		094664282DCA787B004A8105 /* DDayAppGroupStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDayAppGroupStorage.swift; sourceTree = "<group>"; };
 		095B58DA2CD2346600EC3531 /* AddDDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDDayView.swift; sourceTree = "<group>"; };
 		095B58DC2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectDDayTypeAlertView.swift; sourceTree = "<group>"; };
 		095B58E42CD3556000EC3531 /* DDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDay.swift; sourceTree = "<group>"; };
@@ -189,7 +195,6 @@
 		0966B1572CE723C600C38430 /* DearDay.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DearDay.entitlements; sourceTree = "<group>"; };
 		0966B1582CE7241200C38430 /* DearDayWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DearDayWidgetExtension.entitlements; sourceTree = "<group>"; };
 		0966B15D2CE72EA900C38430 /* RealmConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmConfiguration.swift; sourceTree = "<group>"; };
-		0966B1672CE7373600C38430 /* AppGroupID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroupID.swift; sourceTree = "<group>"; };
 		0966B1702CE9F82B00C38430 /* DDayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDayViewModel.swift; sourceTree = "<group>"; };
 		0966B1752CEF5E9300C38430 /* DDayRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DDayRepositoryProtocol.swift; sourceTree = "<group>"; };
 		0966B1772CEF5E9F00C38430 /* APIServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIServiceProtocol.swift; sourceTree = "<group>"; };
@@ -292,6 +297,14 @@
 			path = ViewModifier;
 			sourceTree = "<group>";
 		};
+		094664272DCA786D004A8105 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				094664282DCA787B004A8105 /* DDayAppGroupStorage.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
 		095B58D42CD2159A00EC3531 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -312,7 +325,6 @@
 		095B58DE2CD3544200EC3531 /* Realm */ = {
 			isa = PBXGroup;
 			children = (
-				0966B1672CE7373600C38430 /* AppGroupID.swift */,
 				0966B15D2CE72EA900C38430 /* RealmConfiguration.swift */,
 				095B58E62CD35A0C00EC3531 /* DDayRepository.swift */,
 			);
@@ -353,6 +365,7 @@
 			isa = PBXGroup;
 			children = (
 				098A2E292D1D71C30030DE14 /* InstagramAppID.swift */,
+				094664222DCA7735004A8105 /* AppGroupID.swift */,
 			);
 			path = SharedApp;
 			sourceTree = "<group>";
@@ -402,8 +415,9 @@
 				093160F42CF71B720074CDB7 /* ViewModifier */,
 				09F38C982CBE3EB300F824D7 /* Manager */,
 				095B58DE2CD3544200EC3531 /* Realm */,
-				09F38CAF2CBFBA6B00F824D7 /* Network */,
+				094664272DCA786D004A8105 /* Storage */,
 				098A2E282D1D717F0030DE14 /* SharedApp */,
+				09F38CAF2CBFBA6B00F824D7 /* Network */,
 				09F38C9C2CBE4C5B00F824D7 /* Model */,
 				09F38C9B2CBE4C4400F824D7 /* View */,
 				095B58D42CD2159A00EC3531 /* ViewModel */,
@@ -658,6 +672,7 @@
 			files = (
 				093160E72CF6E7340074CDB7 /* RealmConfiguration.swift in Sources */,
 				093160ED2CF6E7410074CDB7 /* DDay.swift in Sources */,
+				094664252DCA77BC004A8105 /* AppGroupID.swift in Sources */,
 				093160E82CF6E7360074CDB7 /* DDayRepository.swift in Sources */,
 				093160FE2CF84C800074CDB7 /* RowStyleViewModifier.swift in Sources */,
 				093160EF2CF6E7470074CDB7 /* APIServiceProtocol.swift in Sources */,
@@ -667,12 +682,12 @@
 				093160FC2CF84C7E0074CDB7 /* MainStyleViewModifier.swift in Sources */,
 				093160EE2CF6E7450074CDB7 /* DDayRepositoryProtocol.swift in Sources */,
 				093160EC2CF6E73E0074CDB7 /* SolarDateXMLParser.swift in Sources */,
-				093160E62CF6E7310074CDB7 /* AppGroupID.swift in Sources */,
 				093160E42CF6E72C0074CDB7 /* DateFormatterManager.swift in Sources */,
 				093160EA2CF6E73A0074CDB7 /* APIService.swift in Sources */,
 				093160EB2CF6E73C0074CDB7 /* SolarDataItem.swift in Sources */,
 				093160E52CF6E72F0074CDB7 /* ImageDocumentManager.swift in Sources */,
 				093160E92CF6E7380074CDB7 /* APIKey.swift in Sources */,
+				0946642B2DCA78A6004A8105 /* DDayAppGroupStorage.swift in Sources */,
 				093160D52CF6E6650074CDB7 /* AppIntent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -683,11 +698,11 @@
 			files = (
 				0966B16A2CE7393B00C38430 /* DateFormatterManager.swift in Sources */,
 				0966B1652CE7344600C38430 /* SolarDateXMLParser.swift in Sources */,
+				094664242DCA77BC004A8105 /* AppGroupID.swift in Sources */,
 				093160F12CF6E94A0074CDB7 /* AppIntent.swift in Sources */,
 				093160FD2CF84C7F0074CDB7 /* RowStyleViewModifier.swift in Sources */,
 				0966B16B2CE9CE5500C38430 /* ImageDocumentManager.swift in Sources */,
 				0966B1452CE71A8700C38430 /* DearDayWidget.swift in Sources */,
-				0966B1692CE7378000C38430 /* AppGroupID.swift in Sources */,
 				09BC12262D04974F00B18BA2 /* NetworkMonitor.swift in Sources */,
 				093160FB2CF84C7D0074CDB7 /* MainStyleViewModifier.swift in Sources */,
 				0966B1642CE7344400C38430 /* APIService.swift in Sources */,
@@ -698,6 +713,7 @@
 				0966B1432CE71A8700C38430 /* DearDayWidgetBundle.swift in Sources */,
 				0966B1632CE7344200C38430 /* APIKey.swift in Sources */,
 				0966B1552CE7216B00C38430 /* DDay.swift in Sources */,
+				0946642A2DCA78A6004A8105 /* DDayAppGroupStorage.swift in Sources */,
 				0966B1792CEF5F1400C38430 /* DDayRepositoryProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -710,7 +726,6 @@
 				09BC12152D00548D00B18BA2 /* RowStyleViewModifier.swift in Sources */,
 				09BC121F2D0054A900B18BA2 /* DDay.swift in Sources */,
 				09BC12162D00549200B18BA2 /* DateFormatterManager.swift in Sources */,
-				09BC12182D00549900B18BA2 /* AppGroupID.swift in Sources */,
 				09BC12172D00549400B18BA2 /* ImageDocumentManager.swift in Sources */,
 				09BC121C2D0054A100B18BA2 /* APIService.swift in Sources */,
 				09BC121B2D00549F00B18BA2 /* APIKey.swift in Sources */,
@@ -720,6 +735,8 @@
 				09BC12202D0054AD00B18BA2 /* DDayRepositoryProtocol.swift in Sources */,
 				09BC121D2D0054A300B18BA2 /* SolarDataItem.swift in Sources */,
 				09BC121E2D0054A500B18BA2 /* SolarDateXMLParser.swift in Sources */,
+				0946642C2DCA78A6004A8105 /* DDayAppGroupStorage.swift in Sources */,
+				094664262DCA77BC004A8105 /* AppGroupID.swift in Sources */,
 				09BC121A2D00549C00B18BA2 /* DDayRepository.swift in Sources */,
 				09BC12032D00528200B18BA2 /* DearDayAccessoryWidgetBundle.swift in Sources */,
 				09BC12052D00528200B18BA2 /* DearDayAccessoryWidget.swift in Sources */,
@@ -733,7 +750,6 @@
 				095B58F32CD8AEBB00EC3531 /* EditDDayView.swift in Sources */,
 				0966B15E2CE72EA900C38430 /* RealmConfiguration.swift in Sources */,
 				098A2E2E2D1D79E90030DE14 /* ShareDDayImageCardView.swift in Sources */,
-				0966B1682CE7373600C38430 /* AppGroupID.swift in Sources */,
 				093160FA2CF847E30074CDB7 /* MainStyleViewModifier.swift in Sources */,
 				095B58E72CD35A0C00EC3531 /* DDayRepository.swift in Sources */,
 				09F38C8E2CBCEFC000F824D7 /* DDayDetailView.swift in Sources */,
@@ -750,6 +766,7 @@
 				095B58DD2CD2433C00EC3531 /* SelectDDayTypeAlertView.swift in Sources */,
 				09F38CB12CBFBA7B00F824D7 /* APIKey.swift in Sources */,
 				098A2E2C2D1D72010030DE14 /* View+Extension.swift in Sources */,
+				094664292DCA787B004A8105 /* DDayAppGroupStorage.swift in Sources */,
 				095B59092CE3214E00EC3531 /* NotificationManager.swift in Sources */,
 				09F38C7C2CBCE7D500F824D7 /* DearDayApp.swift in Sources */,
 				095B58E52CD3556000EC3531 /* DDay.swift in Sources */,
@@ -761,6 +778,7 @@
 				09AF58042D27C4820081A8D0 /* ImageEditorView.swift in Sources */,
 				09F38C8A2CBCE80900F824D7 /* DDayView.swift in Sources */,
 				09F38CAC2CBFB1C000F824D7 /* DDayImageCardView.swift in Sources */,
+				094664232DCA7735004A8105 /* AppGroupID.swift in Sources */,
 				09BC122A2D06FE5F00B18BA2 /* ImagePicker.swift in Sources */,
 				095B58EB2CD35E3F00EC3531 /* ImageDocumentManager.swift in Sources */,
 				0966B1762CEF5E9300C38430 /* DDayRepositoryProtocol.swift in Sources */,

@@ -129,20 +129,34 @@ extension DDayEntity {
     }
 }
 
+extension DDayEntity {
+    init(fromItem item: DDayItem) {
+        self.id = item.pk
+        self.type = item.type
+        self.title = item.title
+        self.date = item.date
+        self.isLunarDate = item.isLunarDate
+        self.convertedSolarDateFromLunar = item.convertedSolarDateFromLunar
+        self.startFromDayOne = item.startFromDayOne
+        self.isRepeatOn = item.isRepeatOn
+        self.repeatType = item.repeatType
+    }
+}
+
+
 // D-Day Query 정의
 struct DDayEntityQuery: EntityQuery {
     // 특정 ID로 D-Day 엔티티 검색
     func entities(for identifiers: [DDayEntity.ID]) async throws -> [DDayEntity] {
-        let repository = DDayRepository()
-        let dDays = repository.fetchItem().filter { identifiers.contains($0.pk.stringValue) }
-        return dDays.map { DDayEntity(id: $0.pk.stringValue, type: $0.type, title: $0.title, date: $0.date, isLunarDate: $0.isLunarDate, convertedSolarDateFromLunar: $0.convertedSolarDateFromLunar, startFromDayOne: $0.startFromDayOne, isRepeatOn: $0.isRepeatOn, repeatType: $0.repeatType) }
+        let items = DDayAppGroupStorage.load()
+        let matched = items.filter { identifiers.contains($0.pk) }
+        return matched.map { DDayEntity(fromItem: $0) }
     }
 
     // 추천 D-Day 리스트 반환
     func suggestedEntities() async throws -> [DDayEntity] {
-        let repository = DDayRepository()
-        let dDays = repository.fetchItem()
-        return dDays.map { DDayEntity(id: $0.pk.stringValue, type: $0.type, title: $0.title, date: $0.date, isLunarDate: $0.isLunarDate, convertedSolarDateFromLunar: $0.convertedSolarDateFromLunar, startFromDayOne: $0.startFromDayOne, isRepeatOn: $0.isRepeatOn, repeatType: $0.repeatType) }
+        let items = DDayAppGroupStorage.load()
+        return items.map { DDayEntity(fromItem: $0) }
     }
 }
 
@@ -152,15 +166,9 @@ struct ConfigurationDearDayIntent: WidgetConfigurationIntent {
 
     @Parameter(title: "D-Day")
     var selectedDDay: DDayEntity?
-    
-    func defaultSelectedDDay() -> DDayEntity {
-        let repository = DDayRepository()
-        let dDays = repository.fetchItem()
         
-        if let firstDDay = dDays.first {
-            return DDayEntity(id: firstDDay.pk.stringValue, type: firstDDay.type, title: firstDDay.title, date: firstDDay.date, isLunarDate: firstDDay.isLunarDate, convertedSolarDateFromLunar: firstDDay.convertedSolarDateFromLunar, startFromDayOne: firstDDay.startFromDayOne, isRepeatOn: firstDDay.isRepeatOn, repeatType: firstDDay.repeatType)
-        } else {
-            return DDayEntity(defaultEntity: true)
-        }
+    func defaultSelectedDDay() -> DDayEntity {
+        let items = DDayAppGroupStorage.load()
+        return items.first.map { DDayEntity(fromItem: $0) } ?? DDayEntity(defaultEntity: true)
     }
 }

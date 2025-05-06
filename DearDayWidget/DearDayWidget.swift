@@ -17,21 +17,24 @@ struct Provider: AppIntentTimelineProvider {
         let currentDate = Date()
         let dDay = configuration.selectedDDay ?? configuration.defaultSelectedDDay()
         let dDayText = calculateDDaySync(from: dDay.date, type: dDay.type, isLunar: dDay.isLunarDate, startFromDayOne: dDay.startFromDayOne, repeatType: dDay.repeatType)
-        return SelectedDDayEntry(date: currentDate, configuration: configuration, dDay: dDay, dDayText: dDayText)
+        let image = ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(dDay.id)", maxPixelSize: 800)
+        return SelectedDDayEntry(date: currentDate, configuration: configuration, dDay: dDay, dDayText: dDayText, backgroundImage: image)
     }
 
     func snapshot(for configuration: ConfigurationDearDayIntent, in context: Context) async -> SelectedDDayEntry {
         let currentDate = Date()
         let dDay = configuration.selectedDDay ?? configuration.defaultSelectedDDay()
         let dDayText = calculateDDaySync(from: dDay.date, type: dDay.type, isLunar: dDay.isLunarDate, startFromDayOne: dDay.startFromDayOne, repeatType: dDay.repeatType)
-        return SelectedDDayEntry(date: currentDate, configuration: configuration, dDay: dDay, dDayText: dDayText)
+        let image = ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(dDay.id)", maxPixelSize: 800)
+        return SelectedDDayEntry(date: currentDate, configuration: configuration, dDay: dDay, dDayText: dDayText, backgroundImage: image)
     }
 
     func timeline(for configuration: ConfigurationDearDayIntent, in context: Context) async -> Timeline<SelectedDDayEntry> {
         let currentDate = Date()
         let dDay = configuration.selectedDDay ?? configuration.defaultSelectedDDay()
         let dDayText = calculateDDaySync(from: dDay.date, type: dDay.type, isLunar: dDay.isLunarDate, startFromDayOne: dDay.startFromDayOne, repeatType: dDay.repeatType)
-        let entry = SelectedDDayEntry(date: currentDate, configuration: configuration, dDay: dDay, dDayText: dDayText)
+        let image = ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(dDay.id)", maxPixelSize: 800)
+        let entry = SelectedDDayEntry(date: currentDate, configuration: configuration, dDay: dDay, dDayText: dDayText, backgroundImage: image)
         
         // 자정 시간 계산
         let calendar = Calendar.current
@@ -116,6 +119,7 @@ struct SelectedDDayEntry: TimelineEntry {
     let configuration: ConfigurationDearDayIntent
     let dDay: DDayEntity
     let dDayText: String
+    let backgroundImage: UIImage?
 }
 
 // MARK: - EntryView
@@ -139,7 +143,7 @@ struct SmallWidgetView: View {
     var entry: Provider.Entry
     
     var body: some View {
-        if let image = ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(entry.dDay.id)") {
+        if let image = entry.backgroundImage {
             VStack {
                 VStack(alignment: .leading) {
                     Text(entry.dDay.title)
@@ -157,7 +161,7 @@ struct SmallWidgetView: View {
                 .padding()
             }
             .background {
-                Image(uiImage: image.resized(to: 800))
+                Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
                     .clipped()
@@ -185,7 +189,7 @@ struct MediumAndLargeWidgetView: View {
     var entry: Provider.Entry
     
     var body: some View {
-        if let image = ImageDocumentManager.shared.loadImageFromDocument(fileName: "\(entry.dDay.id)") {
+        if let image = entry.backgroundImage {
             VStack {
                 VStack(alignment: .leading) {
                     Text(entry.dDay.title)
@@ -213,7 +217,7 @@ struct MediumAndLargeWidgetView: View {
                 .padding()
             }
             .background {
-                Image(uiImage: image.resized(to: 900))
+                Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
                     .clipped()
@@ -258,24 +262,5 @@ struct DearDayWidget: Widget {
         .description("Displays a single D-Day.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
         .contentMarginsDisabled()
-    }
-}
-
-// FIXME: 위젯 이미지 사이즈 조절
-extension UIImage {
-    func resized(to newWidth: CGFloat) -> UIImage {
-        let scale = newWidth / self.size.width
-        let newHeight = self.size.height * scale
-        let newSize = CGSize(width: newWidth, height: newHeight)
-        
-        let format = imageRendererFormat
-        format.opaque = true
-        
-        let resized = UIGraphicsImageRenderer(size: newSize, format: format)
-        let resizedImage = resized.image { context in
-            self.draw(in: CGRect(origin: .zero, size: newSize))
-        }
-        
-        return resizedImage
     }
 }
